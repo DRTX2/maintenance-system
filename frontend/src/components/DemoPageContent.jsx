@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Category from "./categories/Category";
-import Suppliers from "../pages/Suppliers";
+import SuppliersPageContent from "./SuppliersPageContent";
 
 function DemoPageContent({ pathname }) {
   const renderContent = (pathname) => {
@@ -10,7 +10,7 @@ function DemoPageContent({ pathname }) {
       case "/usuarios":
         return <div>Contenido de Usuarios</div>;
       case "/proveedores":
-        return <Suppliers/>;
+        return <SuppliersPageContent pathname="/suppliers"/>;
       case "/ubicaciones":
         return <div>Contenido para Ubicaciones</div>;
       case "/dispositivos":
