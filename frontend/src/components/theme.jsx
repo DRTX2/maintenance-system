@@ -29,7 +29,7 @@ export const demoTheme = createTheme({
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          color: "white",
+          color: "inherit", // Permite que los íconos hereden el color de su contexto
         },
       },
     },
