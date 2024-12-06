@@ -18,6 +18,7 @@ export const demoTheme = createTheme({
         },
       },
     },
+
     MuiAppBar: {
       styleOverrides: {
         root: {
@@ -33,17 +34,7 @@ export const demoTheme = createTheme({
         },
       },
     },
-    MuiListItem: {
-      styleOverrides: {
-        root: {
-          "&.Mui-selected": {
-            backgroundColor: "#424874",
-            color: "white",
-          },
-        },
-      },
-    },
-    MuiListItemText: {
+    MuiTypography: {
       styleOverrides: {
         root: {
           color: "white",

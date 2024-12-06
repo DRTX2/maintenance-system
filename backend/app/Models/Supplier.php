@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Supplier extends Model
 {
     use HasFactory;
-    protected $fillable=[
+    protected $fillable = [
         'nam_sup',
         'ema_sup',
         'pho_sup'
     ];
 
-    public function incomes(){
+    public function incomes()
+    {
         return $this->hasMany(Income::class);
     }
 }
