@@ -2,6 +2,14 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
+use Illuminate\Http\Request;
+
+class IncomeController extends Controller
+{
+    //
+}
+=======
 use App\Models\Income;
 use App\Models\Supplier;
 use Exception;
@@ -122,3 +130,4 @@ class IncomeController extends Controller
         }
     }
 }
+>>>>>>> fc8be86625276101af048c257ebd6aafed09090f

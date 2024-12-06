@@ -20,6 +20,12 @@ return new class extends Migration
         });
     }
 
+<<<<<<< HEAD
+    /**
+     * Reverse the migrations.
+     */
+=======
+>>>>>>> fc8be86625276101af048c257ebd6aafed09090f
     public function down(): void
     {
         Schema::dropIfExists('suppliers');

@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import { NAVIGATION } from "../components/navigationConfig";
-import { demoTheme } from "../components/theme";
+import { NAVIGATION } from "../components/NavigationConfig";
+import { demoTheme } from "../components/Theme";
 import DemoPageContent from "../components/DemoPageContent";
 
 function Dashboard({ window }) {
