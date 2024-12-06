@@ -1,9 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import Category from "./categories/Category";
+import Suppliers from "../pages/Suppliers";
 
 function DemoPageContent({ pathname }) {
+  const renderContent = (pathname) => {
+    switch (pathname) {
+      case "/usuarios":
+        return <div>Contenido de Usuarios</div>;
+      case "/proveedores":
+        return <Suppliers/>;
+      case "/ubicaciones":
+        return <div>Contenido para Ubicaciones</div>;
+      case "/dispositivos":
+        return <Category />;
+      default:
+        return <div>Bienvenido al Dashboard</div>;
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -14,7 +30,8 @@ function DemoPageContent({ pathname }) {
         textAlign: "center",
       }}
     >
-      <Typography>Dashboard content for {pathname}</Typography>
+      <h1>Ruta actual: {pathname}</h1>
+      {renderContent(pathname)}
     </Box>
   );
 }
