@@ -6,7 +6,7 @@ import { useDemoRouter } from "@toolpad/core/internal";
 import { NAVIGATION } from "../components/NavigationConfig";
 import { demoTheme } from "../components/Theme";
 import DemoPageContent from "../components/DemoPageContent";
-
+import EngineeringIcon from "@mui/icons-material/Engineering";
 function Dashboard({ window }) {
   const router = useDemoRouter("/dashboard");
   const demoWindow = window !== undefined ? window() : undefined;
@@ -17,6 +17,12 @@ function Dashboard({ window }) {
       router={router}
       theme={demoTheme}
       window={demoWindow}
+      branding={{
+        logo: <EngineeringIcon style={{ color: "white", fontSize: 35 }} />,
+        title: (
+          <span style={{ color: "white" }}>Sistema De Mantenimientos</span>
+        ),
+      }}
     >
       <DashboardLayout>
         <DemoPageContent pathname={router.pathname} />

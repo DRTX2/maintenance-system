@@ -7,7 +7,7 @@ import DevicesIcon from "@mui/icons-material/Devices";
 import BuildIcon from "@mui/icons-material/Build";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import EngineeringIcon from "@mui/icons-material/Engineering";
+import HandymanIcon from "@mui/icons-material/Handyman";
 export const NAVIGATION = [
   {
     segment: "usuarios",
@@ -47,7 +47,7 @@ export const NAVIGATION = [
   {
     segment: "mantenimientos",
     title: "Mantenimientos",
-    icon: <EngineeringIcon style={{ color: "white" }} />, // Ícono blanco
+    icon: <HandymanIcon style={{ color: "white" }} />, // Ícono blanco
   },
   {
     segment: "reports",
