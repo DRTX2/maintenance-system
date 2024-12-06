@@ -28,8 +28,8 @@ class CategoryController extends Controller
     {
 
         $request->validate([
-            'cod_dis' => 'required|string|max:10',
-            'tip_dis' => 'required|string|max:10|unique:users,email',
+            'cod_dis' => 'required|string|max:10|unique:categories,cod_dis',
+            'tip_dis' => 'required|string|max:10',
             'nom_dis' => 'required|string|max:25'
         ]);
 
@@ -39,7 +39,7 @@ class CategoryController extends Controller
 
             return response()->json([
                 'category' => $category,
-                'message' => 'Usuario almacenado correctamente'
+                'message' => 'Categoria almacenado correctamente'
             ], 201);
 
         } catch (\Exception $e) {
@@ -78,6 +78,7 @@ class CategoryController extends Controller
 
         // Valida los datos del request
         $validatedData = $request->validate([
+            'cod_dis' => 'required|string|max:10|unique:categories,cod_dis,' . $category->id,
             'tip_dis' => 'required|string|max:20',
             'nom_dis' => 'required|string|max:25',
         ]);
