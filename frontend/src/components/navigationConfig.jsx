@@ -21,7 +21,8 @@ export const NAVIGATION = [
   {
     segment: "proveedores",
     title: "Proveedores",
-    icon: <LocalShippingIcon />, // Relacionado con proveedores y envíos
+    icon: <LocalShippingIcon />,
+    path:"/suppliers"
   },
   {
     segment: "ubicaciones",
