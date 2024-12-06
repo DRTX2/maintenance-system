@@ -53,11 +53,6 @@ class SuppliersController extends Controller
     
         } catch (ValidationException $e) {
             $errors = $e->errors();
-            if (isset($errors['email']) && strpos($errors['email'][0], 'unique') !== false) {
-                return response()->json([
-                    'message' => 'El correo electrónico ya está registrado.',
-                ], 409); 
-            }
             return response()->json([
                 'message' => 'Datos no válidos',
                 'errors' => $errors,
