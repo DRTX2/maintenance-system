@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard"; // Importa el componente Dashboard
+import Dashboard from "./pages/Dashboard"; 
+import Suppliers from "./pages/Suppliers";
 
 function Prueba() {
   return "Hola";
@@ -14,7 +15,7 @@ function App() {
         {/* Puedes agregar más rutas si es necesario */}
         <Route path="/prueba" element={<Prueba />} />{" "}
         {/* Ruta para Dashboard */}
-        
+        <Route path="/suppliers" element={<Suppliers/>}/>
       </Routes>
     </Router>
   );
