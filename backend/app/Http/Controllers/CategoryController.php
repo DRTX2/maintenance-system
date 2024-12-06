@@ -28,8 +28,8 @@ class CategoryController extends Controller
     {
 
         $request->validate([
-            'cod_dis' => 'required|string|max:10',
-            'tip_dis' => 'required|string|max:10|unique:users,email',
+            'cod_dis' => 'required|string|max:10|unique:categories,cod_dis',
+            'tip_dis' => 'required|string|max:10',
             'nom_dis' => 'required|string|max:25'
         ]);
 
