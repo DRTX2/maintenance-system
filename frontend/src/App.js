@@ -14,6 +14,7 @@ function App() {
         {/* Puedes agregar más rutas si es necesario */}
         <Route path="/prueba" element={<Prueba />} />{" "}
         {/* Ruta para Dashboard */}
+        
       </Routes>
     </Router>
   );

@@ -11,6 +11,10 @@ class Supplier extends Model
     protected $fillable=[
         'nam_sup',
         'ema_sup',
-        'pho_sup'];
+        'pho_sup'
+    ];
 
+    public function incomes(){
+        return $this->hasMany(Income::class);
+    }
 }
