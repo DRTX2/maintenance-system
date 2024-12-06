@@ -26,7 +26,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-
+        // Validación de los datos del request
         $request->validate([
             'cod_dis' => 'required|string|max:10|unique:categories,cod_dis',
             'tip_dis' => 'required|string|max:10',
@@ -34,20 +34,20 @@ class CategoryController extends Controller
         ]);
 
         try {
-
+            // Intentamos crear el registro
             $category = Category::create($request->all());
 
+            // Devolvemos la respuesta
             return response()->json([
                 'category' => $category,
-                'message' => 'Categoria almacenado correctamente'
+                'message' => 'Categoría almacenada correctamente'
             ], 201);
 
         } catch (\Exception $e) {
-
+            // Devolvemos el error
             return response()->json([
                 'Error' => $e->getMessage(),
-                500
-            ]);
+            ], 500);
         }
     }
 
@@ -73,26 +73,27 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Encuentra la categoría por ID o lanza un error 404 si no la encuentra
-        $category = Category::findOrFail($id);
+        // Buscar la categoría a actualizar
+        $category = Category::find($id);
 
-        // Valida los datos del request
-        $validatedData = $request->validate([
-            'cod_dis' => 'required|string|max:10|unique:categories,cod_dis,' . $category->id,
+        // Si no se encuentra la categoría
+        if (!$category) {
+            return response()->json(['message' => 'Categoría no encontrada'], 404);
+        }
+
+        // Validación de los campos
+        $request->validate([
+            'cod_dis' => 'required|unique:categories,cod_dis,' . $category->id,
             'tip_dis' => 'required|string|max:20',
             'nom_dis' => 'required|string|max:25',
         ]);
 
-        // Actualiza la categoría con los datos validados
-        $category->update($validatedData);
+        // Actualizar la categoría con los datos validados
+        $category->update($request->all());
 
-        // Devuelve la respuesta en formato JSON
-        return response()->json([
-            'message' => 'Categoría actualizada con éxito',
-            'results' => $category,
-        ], 200);
+        // Responder con la categoría actualizada
+        return response()->json(['message' => 'Categoría actualizada', 'data' => $category], 200);
     }
-
     /**
      * Remove the specified resource from storage.
      */
