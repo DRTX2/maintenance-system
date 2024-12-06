@@ -32,8 +32,8 @@ class LocationController extends Controller
         //
 
         $request->validate([
-            'codeLocation' => 'required',
-            'nameLocation' => 'required'
+            'cod_loc' => 'required|unique:locations,cod_loc',
+            'nam_loc' => 'required'
         ]);
 
         $location = Location::create($request->all());
@@ -80,38 +80,27 @@ class LocationController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // Buscar la ubicación a actualizar
         $location = Location::find($id);
-        if (!$location) {
-            return response()->json(['message' => 'Ubicación no encontrada', 404]);
 
+        // Si no se encuentra la ubicación
+        if (!$location) {
+            return response()->json(['message' => 'Ubicación no encontrada'], 404);
         }
+
+        // Validación de los campos
         $request->validate([
-            'codeLocation' => 'required',
-            'nameLocation' => 'required'
+            'cod_loc' => 'required|unique:locations,cod_loc,' . $location->id,
+            'nam_loc' => 'required'
         ]);
 
+        // Actualizar la ubicación
         $location->update($request->all());
-        return response()->json($location, 200);
+
+        // Responder con la ubicación actualizada
+        return response()->json(['message' => 'Ubicacion actualizada', 'data' => $location], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *   $task = Task::find($id);
-
-        if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
-        }
-
-        $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-            'completed' => 'boolean',
-        ]);
-
-        $task->update($request->all());
-
-        return response()->json($task, 200);
-     */
     public function destroy(string $id)
     {
         $location = Location::find($id);
@@ -122,7 +111,7 @@ class LocationController extends Controller
         }
         $location->delete();
 
-        return response()->json(["message" => "Ubicación borrada con éxito"],200);
+        return response()->json(["message" => "Ubicación borrada con éxito"], 200);
     }
 
 
