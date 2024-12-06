@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\IncomeController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
@@ -37,3 +38,10 @@ Route::post('/locations', [LocationController::class, 'store']);
 Route::get('/locations/{id}', [LocationController::class, 'show']);
 Route::put('/locations/{id}', [LocationController::class, 'update']);
 Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
+
+Route::get('incomes', [IncomeController::class, 'index']);
+Route::get('incomes/{id}', [IncomeController::class, 'show']);
+Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
+Route::post('incomes/{supplierId}', [IncomeController::class, 'store']);
+Route::put('incomes/{id}', [IncomeController::class, 'update']);
+Route::delete('incomes/{id}', [IncomeController::class, 'destroy']);

@@ -22,7 +22,7 @@ class SuppliersController extends Controller
     
     public function show($id){
         try {
-            $supplier = Supplier::findOrFail($id);
+            $supplier = Supplier::with("incomes")->findOrFail($id);
             
             return response()->json([
                 'results' => $supplier,
