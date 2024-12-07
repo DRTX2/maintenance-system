@@ -37,7 +37,7 @@ export const demoTheme = createTheme({
     MuiTypography: {
       styleOverrides: {
         root: {
-          color: "white",
+          color: "inherit",
         },
       },
     },

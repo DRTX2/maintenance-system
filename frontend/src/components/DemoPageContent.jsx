@@ -30,7 +30,7 @@ function DemoPageContent({ pathname }) {
         textAlign: "center",
       }}
     >
-      <h1>Ruta actual: {pathname}</h1>
+
       {renderContent(pathname)}
     </Box>
   );
