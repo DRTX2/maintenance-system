@@ -16,7 +16,7 @@ const CategoryViewModal = ({
   open,
   onClose,
   item,
-  onSave,
+  onUpdate,
   isEditing,
   setIsEditing,
 }) => {
@@ -33,9 +33,9 @@ const CategoryViewModal = ({
     }));
   };
 
-  const handleSave = () => {
-    onSave(editedCategory);
-    setIsEditing(!isEditing);
+  const handleUpdate = () => {
+    onUpdate(editedCategory);
+    setIsEditing(false);
   };
 
   if (!editedCategory) return null;
@@ -113,7 +113,7 @@ const CategoryViewModal = ({
       {/* Acciones del Modal */}
       <DialogActions>
         <Box marginBottom="10px" marginRight="10px">
-          {isEditing ? <Button onClick={handleSave}>Guardar</Button> : null}
+          {isEditing ? <Button onClick={handleUpdate}>Guardar</Button> : null}
           <Button onClick={onClose} color="secondary">
             Cerrar
           </Button>
