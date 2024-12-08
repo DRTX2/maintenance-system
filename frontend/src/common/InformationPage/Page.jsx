@@ -14,7 +14,7 @@ import PageContent from "../PageContent/PageContent";
 
 axios.defaults.withCredentials = true;
 
-const InformationPage = ({ columns }) => {
+const InformationPage = ({ columns, section }) => {
   const [info, setInfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,17 +34,18 @@ const InformationPage = ({ columns }) => {
     getInformation(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
-  // Obtener categorías
+  // Obtener registros de la bd
   const getInformation = async (page = 1, rows = 3) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/category?page=${page}&rows=${rows}`
+        `http://127.0.0.1:8000/api/${section}?page=${page}&rows=${rows}`
       );
-      const { data, current_page, total } = response.data;
+      const { data} = response.data.data;
       
       setInfo(data);
-      setCurrentPage(current_page);
-      setTotalItems(total);
+      console.log(data);
+      setCurrentPage(1);
+      setTotalItems(3);
     } catch (error) {
       console.error("Something went wrong:", error);
     } finally {
@@ -56,11 +57,7 @@ const InformationPage = ({ columns }) => {
   const onSave = async (data) => {
     try {
       await axios.get("http://localhost:8000/sanctum/csrf-cookie");
-      await axios.post(`${BASE_URL}category/store`, {
-        cod_dis: data.code,
-        tip_dis: data.type,
-        nom_dis: data.name,
-      });
+      await axios.post(`${BASE_URL}${section}`, data);
       getInformation();
     } catch (error) {
       console.error("Something went wrong: ", error);
@@ -69,12 +66,9 @@ const InformationPage = ({ columns }) => {
 
   // Actualizar categoría
   const onUpdate = async (data) => {
+    console.log(data);
     try {
-      await axios.put(`${BASE_URL}category/update/${data.id}`, {
-        cod_dis: data.cod_dis,
-        nom_dis: data.nom_dis,
-        tip_dis: data.tip_dis,
-      });
+      await axios.put(`${BASE_URL}${section}/${data.id}`, data);
       await getInformation();
       setIsEditing(false);
       setModalViewOpen(false);
@@ -86,7 +80,7 @@ const InformationPage = ({ columns }) => {
   // Eliminar categoría
   const onDelete = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}category/destroy/${id}`);
+      await axios.delete(`${BASE_URL}${section}/${id}`);
       getInformation();
     } catch (error) {
       console.log("Something went wrong: ", error);
@@ -96,9 +90,8 @@ const InformationPage = ({ columns }) => {
   // Ver detalles de categoría
   const onSee = async (id) => {
     try {
-      const response = await axios.get(`${BASE_URL}category/show/${id}`);
-      console.log(response.data.result);
-      setInformation(response.data.result);
+      const response = await axios.get(`${BASE_URL}${section}/${id}`);
+      setInformation(response.data.data);
     } catch (error) {
       console.log("Something went wrong: ", error);
     }
@@ -111,7 +104,6 @@ const InformationPage = ({ columns }) => {
   };
 
   const handleCloseViewModel = () => {
-    console.log("Cerrando el modal...");
     setModalViewOpen(false);
     setIsEditing(false);
   };
@@ -140,9 +132,8 @@ const InformationPage = ({ columns }) => {
   
 
   const viewFields = generateViewFields(information);
-  const createFields = generateViewFields(info[0],true);
-
-  console.log(viewFields);
+  // Solo generar los campos de creación si hay información
+  const createFields = info.length > 0 ? generateViewFields(info[0], true) : [];
 
   return (
     <div className="information-page">

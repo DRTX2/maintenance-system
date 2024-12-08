@@ -27,14 +27,6 @@ const PageContent = ({
     );
   }
 
-  if (data.length === 0) {
-    return (
-      <div className="data-state">
-        No hay datos disponibles.
-      </div>
-    );
-  }
-
   if (!Array.isArray(data)) {
     return (
       <div className="data-state">
@@ -55,9 +47,14 @@ const PageContent = ({
       onClick: onDelete,
     },
   ];
-  console.log(actions);
 
-  return (
+  console.log(actions);
+  
+  return data.length === 0 ? (
+    <div className="data-state">
+      No hay datos disponibles.
+    </div>
+  ) : (
     <GeneralTable
       array={data}
       columns={columns}
@@ -68,6 +65,7 @@ const PageContent = ({
       setRowsPerPage={setRowsPerPage}
     />
   );
+  
 };
 
 export default PageContent;

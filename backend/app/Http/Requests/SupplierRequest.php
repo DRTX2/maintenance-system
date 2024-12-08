@@ -13,9 +13,9 @@ class SupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:25',
+            'nombre' => 'required|string|max:25',
             'email' => 'required|email|max:25|unique:suppliers,ema_sup,' . $this->route('id'),
-            'phone' => 'required|string|max:10',
+            'telefono' => 'required|string|max:10',
         ];
     }
 }
