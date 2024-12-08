@@ -6,6 +6,7 @@ import CategoryHeader from "./CategoryHeader";
 import CreateCategoryModal from "./CategoryCreateModal"; // Importamos el modal
 import CategoryContent from "./CategoryContent";
 import CategoryViewModal from "./CategoryViewModal";
+import CategoryDeleteModal from "./CategoryDeleteModal";
 import { BASE_URL } from "../../configs";
 import axios from "axios";
 
@@ -16,6 +17,7 @@ const Category = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [modalCreateOpen, setModalCreateOpen] = useState(false);
   const [modalViewOpen, setModalViewOpen] = useState(false);
+  const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [category, setCategory] = useState({
     cod_dis: "",
     tip_dis: "",
@@ -24,30 +26,34 @@ const Category = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   // Para la paginación
-  const [currentPage, setCurrentPage] = useState(1); // Partir de la primera pagina
+  const [currentPage, setCurrentPage] = useState(0); // Partir de la primera pagina
   const [rowsPerPage, setRowsPerPage] = useState(3); // Numero de filas por página
-  const [totalItems, setTotalItems] = useState(1); //
 
   useEffect(() => {
-    getCategories(currentPage, rowsPerPage);
-  }, [currentPage, rowsPerPage]);
+    getCategories();
+  }, []);
 
   // Me permite obtener las categorias.
-  const getCategories = async (page = 1, rows = 3) => {
+  const getCategories = async () => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/category?page=${page}&rows=${rows}`
-      );
-      const { data, current_page, total } = response.data;
-
-      setCategories(data);
-      setCurrentPage(current_page);
-      setTotalItems(total);
+      const response = await axios.get(`http://127.0.0.1:8000/api/category`);
+      setCategories(response.data.results);
     } catch (error) {
       console.error("Somenthing went wrong:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Handle page change
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  // Handle change in rows per page
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0); // Reset the table to the first page whenever rows per page changes
   };
 
   // Me permite añadir una categoria.
@@ -90,7 +96,21 @@ const Category = () => {
   const onDelete = async (id) => {
     try {
       await axios.delete(BASE_URL + "category/destroy/" + id);
-      getCategories();
+      await getCategories();
+
+      // Validar la página actual
+      setCategories((prevCategories) => {
+        const totalItems = prevCategories.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+
+        if (currentPage >= totalPages) {
+          setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+        }
+
+        return prevCategories;
+      });
+
+      setModalDeleteOpen(false);
     } catch (error) {
       console.log("Something went wrong: ", error);
     }
@@ -113,7 +133,6 @@ const Category = () => {
   };
 
   const handleCloseViewModel = () => {
-    console.log("Cerrando el modal...");
     setModalViewOpen(false);
     setIsEditing(false);
   };
@@ -124,6 +143,15 @@ const Category = () => {
 
   const handleCloseCreateModal = () => {
     setModalCreateOpen(false);
+  };
+
+  const handleOpenDeleteModal = async (id) => {
+    await onSee(id);
+    setModalDeleteOpen(true);
+  };
+
+  const handleCloseDeleteModel = () => {
+    setModalDeleteOpen(false);
   };
 
   return (
@@ -161,11 +189,11 @@ const Category = () => {
             isLoading={isLoading}
             categories={categories}
             onSee={handleOpenViewModel}
-            onDelete={onDelete}
+            onDelete={handleOpenDeleteModal}
             currentPage={currentPage}
-            totalItems={totalItems}
-            setCurrentPage={(page) => setCurrentPage(page)}
-            setRowsPerPage={(rows) => setRowsPerPage(rows)}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
           />
         </Box>
       </Box>
@@ -186,6 +214,13 @@ const Category = () => {
         isEditing={isEditing}
         setIsEditing={setIsEditing}
       ></CategoryViewModal>
+
+      <CategoryDeleteModal
+        open={modalDeleteOpen}
+        onClose={handleCloseDeleteModel}
+        onDelete={onDelete}
+        item={category}
+      ></CategoryDeleteModal>
     </div>
   );
 };

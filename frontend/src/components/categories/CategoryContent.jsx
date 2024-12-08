@@ -8,9 +8,9 @@ const CategoryContent = ({
   onSee,
   onDelete,
   currentPage,
-  totalItems,
-  setCurrentPage,
-  setRowsPerPage,
+  rowsPerPage,
+  handleChangePage,
+  handleChangeRowsPerPage,
 }) => {
   if (isLoading) {
     return (
@@ -42,9 +42,9 @@ const CategoryContent = ({
       onSee={onSee}
       onDelete={onDelete}
       currentPage={currentPage}
-      totalItems={totalItems}
-      setCurrentPage={setCurrentPage}
-      setRowsPerPage={setRowsPerPage}
+      rowsPerPage={rowsPerPage}
+      handleChangePage={handleChangePage}
+      handleChangeRowsPerPage={handleChangeRowsPerPage}
     />
   );
 };

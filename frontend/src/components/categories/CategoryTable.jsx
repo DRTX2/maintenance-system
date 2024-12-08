@@ -12,15 +12,16 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import CustomPaginationActions from "./CustomPaginationActions";
 
 const CategoryTable = ({
   array,
   onSee,
   onDelete,
   currentPage,
-  totalItems,
-  setCurrentPage,
-  setRowsPerPage,
+  rowsPerPage,
+  handleChangePage,
+  handleChangeRowsPerPage,
 }) => {
   return (
     <>
@@ -42,40 +43,45 @@ const CategoryTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {array.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.cod_dis}</TableCell>
-                <TableCell>{item.nom_dis}</TableCell>
-                <TableCell>{item.tip_dis}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => onSee(item.id)} color="primary">
-                    <VisibilityIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => onDelete(item.id)}
-                    color="secondary"
-                  >
-                    <DeleteForeverIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+            {array
+              .slice(
+                currentPage * rowsPerPage,
+                currentPage * rowsPerPage + rowsPerPage
+              )
+              .map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.cod_dis}</TableCell>
+                  <TableCell>{item.nom_dis}</TableCell>
+                  <TableCell>{item.tip_dis}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => onSee(item.id)} color="primary">
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => onDelete(item.id)}
+                      color="secondary"
+                    >
+                      <DeleteForeverIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         component="div"
         // Cantidad de items a mostrar
-        count={totalItems}
+        count={array.length}
         // Pagina actual
-        page={currentPage - 1}
+        page={currentPage}
         // Filas en cada pagina
-        rowsPerPage={3}
+        rowsPerPage={rowsPerPage}
         // Mostrar más filas en las paginas
         rowsPerPageOptions={[3, 5]}
         // Cambiar a la siguiente pagina
-        onPageChange={(event, newPage) => setCurrentPage(newPage + 1)}
-        onRowsPerPageChange={(event, rows) => setRowsPerPage(rows)}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       ></TablePagination>
     </>
   );
