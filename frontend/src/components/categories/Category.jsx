@@ -57,16 +57,16 @@ const Category = () => {
   };
 
   // Me permite añadir una categoria.
-  const onSave = async ({ code, type, name }) => {
+  const onCreate = async (item) => {
     try {
       await axios.get("http://localhost:8000/sanctum/csrf-cookie");
 
       // Recuerda: los campos que se envian a la base de datos deben coincidir con lo que
       // espera el servidor.
       await axios.post(BASE_URL + "category/store", {
-        cod_dis: code,
-        tip_dis: type,
-        nom_dis: name,
+        cod_dis: item.cod_dis,
+        tip_dis: item.tip_dis,
+        nom_dis: item.nom_dis,
       });
 
       // Aqui: categoria añadida exitosamente.
@@ -202,7 +202,7 @@ const Category = () => {
       <CreateCategoryModal
         open={modalCreateOpen}
         onClose={handleCloseCreateModal}
-        onCreate={onSave}
+        onCreate={onCreate}
       ></CreateCategoryModal>
 
       {/* Modal para ver las categorias */}
