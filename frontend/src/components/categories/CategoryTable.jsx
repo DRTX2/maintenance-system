@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import CustomPaginationActions from "./CustomPaginationActions";
 
 const CategoryTable = ({
   array,
