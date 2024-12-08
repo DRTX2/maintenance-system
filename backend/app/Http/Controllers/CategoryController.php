@@ -10,14 +10,15 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
 
-        // 10 Filas por defecto si no se especifica nada
-        $row = $request->input('rows', 10);
-        $categories = Category::paginate($row);
+        $categories = Category::all();
 
-        return response()->json($categories, 200);
+        return response()->json([
+            'results' => $categories,
+            'message' => 'Categoria obtenida con exito.'
+        ], 200);
     }
 
     /**
