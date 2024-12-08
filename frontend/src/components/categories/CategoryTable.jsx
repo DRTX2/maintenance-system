@@ -22,6 +22,47 @@ const CategoryTable = ({
   handleChangePage,
   handleChangeRowsPerPage,
 }) => {
+  const CustomTablePaginationActions = ({
+    count,
+    page,
+    rowsPerPage,
+    onPageChange,
+  }) => {
+    const handleBackButtonClick = (event) => {
+      onPageChange(event, page - 1);
+    };
+
+    const handleNextButtonClick = (event) => {
+      onPageChange(event, page + 1);
+    };
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <button
+          onClick={handleBackButtonClick}
+          disabled={page === 0}
+          style={{ margin: "0 8px", padding: "6px 12px", cursor: "pointer" }}
+        >
+          Anterior
+        </button>
+        <span>{`${page + 1} de ${Math.ceil(count / rowsPerPage)}`}</span>
+        <button
+          onClick={handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          style={{ margin: "0 8px", padding: "6px 12px", cursor: "pointer" }}
+        >
+          Siguiente
+        </button>
+      </div>
+    );
+  };
+
   return (
     <>
       <TableContainer

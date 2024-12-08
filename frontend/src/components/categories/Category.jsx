@@ -21,12 +21,12 @@ const Category = () => {
   const [modalCreateOpen, setModalCreateOpen] = useState(false);
   const [modalViewOpen, setModalViewOpen] = useState(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [category, setCategory] = useState({
     cod_dis: "",
     tip_dis: "",
     nom_dis: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
 
   // Para la paginación
   const [currentPage, setCurrentPage] = useState(0); // Partir de la primera pagina

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -16,10 +16,15 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
   const { category, errors, handleFieldChange, validateFields, resetFields } =
     useCategoryValidation({ cod_dis: "", tip_dis: "", nom_dis: "" });
 
+  useEffect(() => {
+    if (!open) {
+      resetFields(); // Resetea el formulario al cerrar el modal
+    }
+  }, [open]);
+
   const handleCreate = async () => {
     if (validateFields()) {
       await onCreate(category);
-      resetFields();
       onClose();
     }
   };
@@ -37,7 +42,7 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
           <TextField
             label="Codigo"
             fullWidth
-            value={category.cod_dis}
+            value={category.cod_dis || ""}
             onChange={(e) => handleFieldChange("cod_dis", e.target.value)}
             margin="normal"
             error={!!errors.cod_dis}
@@ -51,7 +56,7 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
           <TextField
             label="Tipo"
             fullWidth
-            value={category.tip_dis}
+            value={category.tip_dis || ""}
             onChange={(e) => handleFieldChange("tip_dis", e.target.value)}
             margin="normal"
             error={!!errors.tip_dis}
@@ -65,7 +70,7 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
           <TextField
             label="Nombre"
             fullWidth
-            value={category.nom_dis}
+            value={category.nom_dis || ""}
             onChange={(e) => handleFieldChange("nom_dis", e.target.value)}
             margin="normal"
             error={!!errors.nom_dis}

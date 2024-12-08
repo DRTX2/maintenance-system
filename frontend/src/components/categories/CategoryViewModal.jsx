@@ -26,7 +26,14 @@ const CategoryViewModal = ({
     errors,
     handleFieldChange,
     validateFields,
+    resetFields,
   } = useCategoryValidation(item);
+
+  useEffect(() => {
+    if (!open) {
+      resetFields(); // Resetea el formulario cuando el modal se cierra
+    }
+  }, [open]);
 
   const handleUpdate = () => {
     if (validateFields()) {
@@ -71,8 +78,6 @@ const CategoryViewModal = ({
             error={!!errors.cod_dis}
             helperText={errors.cod_dis}
             InputProps={{
-              // !isEditign --> Esta editando
-              // isEditing --> No esta editando, ya que parte desde false.
               readOnly: !isEditing,
             }}
           />
