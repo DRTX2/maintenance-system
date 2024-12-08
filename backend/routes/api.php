@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\SuppliersController;
 
+
 use App\Http\Middleware\JwtMiddleware;
 
 // Coloca aqui las rutas que no estarán protegidas.

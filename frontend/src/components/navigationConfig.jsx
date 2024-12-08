@@ -1,8 +1,5 @@
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
-import LayersIcon from "@mui/icons-material/Layers";
 import PersonIcon from "@mui/icons-material/Person";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PlaceIcon from "@mui/icons-material/Place";
@@ -10,63 +7,63 @@ import DevicesIcon from "@mui/icons-material/Devices";
 import BuildIcon from "@mui/icons-material/Build";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import EngineeringIcon from "@mui/icons-material/Engineering";
-
+import HandymanIcon from "@mui/icons-material/Handyman";
 export const NAVIGATION = [
   {
     segment: "usuarios",
     title: "Usuarios",
-    icon: <PersonIcon />, // Representa usuarios/personas
+    icon: <PersonIcon style={{ color: "white" }} />,
   },
   {
     segment: "proveedores",
     title: "Proveedores",
-    icon: <LocalShippingIcon />, // Relacionado con proveedores y envíos
+    icon: <LocalShippingIcon style={{ color: "white" }} />,
+    path:"/suppliers",
   },
   {
     segment: "ubicaciones",
     title: "Ubicaciones",
-    icon: <PlaceIcon />, // Representa ubicaciones geográficas
+    icon: <PlaceIcon style={{ color: "white" }} />,
   },
   {
     segment: "dispositivos",
     title: "Dispositivos",
-    icon: <DevicesIcon />, // Relacionado con dispositivos electrónicos
+    icon: <DevicesIcon style={{ color: "white" }} />,
   },
   {
     segment: "componentes",
     title: "Componentes",
-    icon: <BuildIcon />, // Herramientas/partes de algo más grande
+    icon: <BuildIcon style={{ color: "white" }} />,
   },
   {
     segment: "ingresos",
     title: "Ingresos",
-    icon: <AttachMoneyIcon />, // Relacionado con dinero o finanzas
+    icon: <AttachMoneyIcon style={{ color: "white" }} />,
   },
   {
     segment: "activos",
     title: "Activos",
-    icon: <InventoryIcon />, // Representa bienes o inventario
+    icon: <InventoryIcon style={{ color: "white" }} />, // Ícono blanco
   },
   {
     segment: "mantenimientos",
     title: "Mantenimientos",
-    icon: <EngineeringIcon />, // Relacionado con reparaciones o mantenimiento
+    icon: <HandymanIcon style={{ color: "white" }} />, // Ícono blanco
   },
   {
     segment: "reports",
     title: "Reports",
-    icon: <BarChartIcon />,
+    icon: <BarChartIcon style={{ color: "white" }} />, // Ícono blanco
     children: [
       {
         segment: "sales",
         title: "Sales",
-        icon: <DescriptionIcon />,
+        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
       },
       {
         segment: "traffic",
         title: "Traffic",
-        icon: <DescriptionIcon />,
+        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
       },
     ],
   },
