@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import CustomTablePaginationActions from "./CustomTablePaginationActions";
 
 const CategoryTable = ({
   array,
@@ -22,47 +23,6 @@ const CategoryTable = ({
   handleChangePage,
   handleChangeRowsPerPage,
 }) => {
-  const CustomTablePaginationActions = ({
-    count,
-    page,
-    rowsPerPage,
-    onPageChange,
-  }) => {
-    const handleBackButtonClick = (event) => {
-      onPageChange(event, page - 1);
-    };
-
-    const handleNextButtonClick = (event) => {
-      onPageChange(event, page + 1);
-    };
-
-    return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <button
-          onClick={handleBackButtonClick}
-          disabled={page === 0}
-          style={{ margin: "0 8px", padding: "6px 12px", cursor: "pointer" }}
-        >
-          Anterior
-        </button>
-        <span>{`${page + 1} de ${Math.ceil(count / rowsPerPage)}`}</span>
-        <button
-          onClick={handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          style={{ margin: "0 8px", padding: "6px 12px", cursor: "pointer" }}
-        >
-          Siguiente
-        </button>
-      </div>
-    );
-  };
-
   return (
     <>
       <TableContainer
@@ -74,11 +34,18 @@ const CategoryTable = ({
         }}
       >
         <Table>
-          <TableHead>
+          <TableHead
+            sx={{
+              backgroundColor: "#6a71a5", // Cambia el color de fondo
+              "& .MuiTableCell-root": {
+                color: "#ffffff", // Cambia el color del texto
+                fontWeight: "bold", // Aplica negrita
+              },
+            }}
+          >
             <TableRow>
               <TableCell>Código</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Tipo</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -92,7 +59,6 @@ const CategoryTable = ({
                 <TableRow key={item.id}>
                   <TableCell>{item.cod_dis}</TableCell>
                   <TableCell>{item.nom_dis}</TableCell>
-                  <TableCell>{item.tip_dis}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => onSee(item.id)} color="primary">
                       <VisibilityIcon />
@@ -119,9 +85,30 @@ const CategoryTable = ({
         rowsPerPage={rowsPerPage}
         // Mostrar más filas en las paginas
         rowsPerPageOptions={[3, 5]}
+        sx={{
+          "& .MuiTablePagination-select": {
+            color: "#8d91af", // Cambia el color del número
+            fontWeight: "bold", // Negrita
+            fontSize: "14px", // Tamaño de fuente
+          },
+          "& .MuiTablePagination-selectIcon": {
+            color: "#8d91af", // Cambia el color del icono del desplegable
+          },
+        }}
         // Cambiar a la siguiente pagina
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        // Mensaje de las filas por pagina
+        labelRowsPerPage={
+          <span style={{ color: "#6a71a5", fontWeight: "bold" }}>
+            Filas por página
+          </span>
+        }
+        // Quitar ese mensjae de 1-3 of 3
+        labelDisplayedRows={() => ""}
+        ActionsComponent={(props) => (
+          <CustomTablePaginationActions {...props} />
+        )}
       ></TablePagination>
     </>
   );
