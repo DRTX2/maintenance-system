@@ -12,6 +12,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import useCategoryValidation from "../../hooks/useCategoryValidation";
+import categoryViewStyles from "./CategoryViewStyles";
 
 const CategoryViewModal = ({
   open,
@@ -26,7 +27,14 @@ const CategoryViewModal = ({
     errors,
     handleFieldChange,
     validateFields,
+    resetFields,
   } = useCategoryValidation(item);
+
+  useEffect(() => {
+    if (!open) {
+      resetFields(); // Resetea el formulario cuando el modal se cierra
+    }
+  }, [open]);
 
   const handleUpdate = () => {
     if (validateFields()) {
@@ -60,7 +68,7 @@ const CategoryViewModal = ({
       {/* Contenido del Modal */}
       <DialogContent>
         {/* Fila para el código */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Código</Typography>
           <TextField
             label="Código"
@@ -71,15 +79,13 @@ const CategoryViewModal = ({
             error={!!errors.cod_dis}
             helperText={errors.cod_dis}
             InputProps={{
-              // !isEditign --> Esta editando
-              // isEditing --> No esta editando, ya que parte desde false.
               readOnly: !isEditing,
             }}
           />
         </Box>
 
         {/* Fila para el tipo */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Tipo</Typography>
           <TextField
             label="Tipo"
@@ -96,7 +102,7 @@ const CategoryViewModal = ({
         </Box>
 
         {/* Fila para el nombre */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Nombre</Typography>
           <TextField
             label="Nombre"
@@ -116,8 +122,16 @@ const CategoryViewModal = ({
       {/* Acciones del Modal */}
       <DialogActions>
         <Box marginBottom="10px" marginRight="10px">
-          {isEditing ? <Button onClick={handleUpdate}>Guardar</Button> : null}
-          <Button onClick={onClose} color="secondary">
+          {isEditing ? (
+            <Button onClick={handleUpdate} sx={categoryViewStyles.buttonStyle2}>
+              Guardar
+            </Button>
+          ) : null}
+          <Button
+            onClick={onClose}
+            color="secondary"
+            sx={categoryViewStyles.buttonStyle1}
+          >
             Cerrar
           </Button>
         </Box>

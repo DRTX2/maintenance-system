@@ -7,6 +7,7 @@ import {
   DialogTitle,
   Button,
 } from "@mui/material";
+import categoryDeleteStyles from "./CategoryDeleteStyles";
 
 const DeleteConfirmationModal = ({ open, onClose, onDelete, item }) => {
   return (
@@ -25,13 +26,18 @@ const DeleteConfirmationModal = ({ open, onClose, onDelete, item }) => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button
+          onClick={onClose}
+          color="primary"
+          sx={categoryDeleteStyles.buttonStyle1}
+        >
           Cancelar
         </Button>
         <Button
           onClick={() => onDelete(item.id)}
           color="secondary"
           variant="contained"
+          sx={categoryDeleteStyles.buttonStyle2}
         >
           Eliminar
         </Button>

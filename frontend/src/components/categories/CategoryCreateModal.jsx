@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -11,15 +11,21 @@ import {
 
 import Box from "@mui/material/Box";
 import useCategoryValidation from "../../hooks/useCategoryValidation";
+import categoryCreateStyles from "./CategoryCreateStyles";
 
 const CreateCategoryModal = ({ open, onClose, onCreate }) => {
   const { category, errors, handleFieldChange, validateFields, resetFields } =
     useCategoryValidation({ cod_dis: "", tip_dis: "", nom_dis: "" });
 
+  useEffect(() => {
+    if (!open) {
+      resetFields(); // Resetea el formulario al cerrar el modal
+    }
+  }, [open]);
+
   const handleCreate = async () => {
     if (validateFields()) {
       await onCreate(category);
-      resetFields();
       onClose();
     }
   };
@@ -32,12 +38,12 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
       {/* Aqui se encuentra todo el contenido */}
       <DialogContent>
         {/* Fila para el codigo */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Codigo</Typography>
           <TextField
             label="Codigo"
             fullWidth
-            value={category.cod_dis}
+            value={category.cod_dis || ""}
             onChange={(e) => handleFieldChange("cod_dis", e.target.value)}
             margin="normal"
             error={!!errors.cod_dis}
@@ -46,12 +52,12 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
         </Box>
 
         {/* Fila para el tipo */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Tipo</Typography>
           <TextField
             label="Tipo"
             fullWidth
-            value={category.tip_dis}
+            value={category.tip_dis || ""}
             onChange={(e) => handleFieldChange("tip_dis", e.target.value)}
             margin="normal"
             error={!!errors.tip_dis}
@@ -60,12 +66,12 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
         </Box>
 
         {/* Fila para el nombrer */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Nombre</Typography>
           <TextField
             label="Nombre"
             fullWidth
-            value={category.nom_dis}
+            value={category.nom_dis || ""}
             onChange={(e) => handleFieldChange("nom_dis", e.target.value)}
             margin="normal"
             error={!!errors.nom_dis}
@@ -77,10 +83,18 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
       {/* Lo que se puede hacer */}
       <DialogActions>
         <Box marginBottom="10px" marginRight="10px">
-          <Button onClick={onClose} color="secondary">
+          <Button
+            onClick={onClose}
+            color="secondary"
+            sx={categoryCreateStyles.buttonStyle1}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleCreate} color="primary">
+          <Button
+            onClick={handleCreate}
+            color="primary"
+            sx={categoryCreateStyles.buttonStyle2}
+          >
             Guardar
           </Button>
         </Box>

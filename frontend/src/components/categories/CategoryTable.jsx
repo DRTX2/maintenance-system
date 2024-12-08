@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import CustomTablePaginationActions from "./CustomTablePaginationActions";
+import tableStyles from "./CategoryTableStyles";
 
 const CategoryTable = ({
   array,
@@ -25,19 +27,15 @@ const CategoryTable = ({
   return (
     <>
       <TableContainer
+        className="table-container"
         component={Paper}
-        style={{
-          overFlowX: "hidde",
-          margin: "0 auto",
-          maxWidth: "100%",
-        }}
+        sx={tableStyles.tableContainer}
       >
         <Table>
-          <TableHead>
+          <TableHead sx={tableStyles.tableHead}>
             <TableRow>
               <TableCell>Código</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Tipo</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -51,7 +49,6 @@ const CategoryTable = ({
                 <TableRow key={item.id}>
                   <TableCell>{item.cod_dis}</TableCell>
                   <TableCell>{item.nom_dis}</TableCell>
-                  <TableCell>{item.tip_dis}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => onSee(item.id)} color="primary">
                       <VisibilityIcon />
@@ -81,6 +78,18 @@ const CategoryTable = ({
         // Cambiar a la siguiente pagina
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        // Mensaje de las filas por pagina
+        labelRowsPerPage={
+          <span style={tableStyles.labelRowsPerPage}>Filas por página</span>
+        }
+        // Quitar ese mensjae de 1-3 of 3
+        labelDisplayedRows={() => ""}
+        // Poner los botones de siguiente y anterior
+        ActionsComponent={(props) => (
+          <CustomTablePaginationActions {...props} />
+        )}
+        // Cambiar estilos
+        sx={tableStyles.pagination}
       ></TablePagination>
     </>
   );
