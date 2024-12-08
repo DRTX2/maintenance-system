@@ -11,6 +11,7 @@ import {
   Switch,
   FormControlLabel,
 } from "@mui/material";
+import useCategoryValidation from "../../hooks/useCategoryValidation";
 
 const CategoryViewModal = ({
   open,
@@ -20,22 +21,18 @@ const CategoryViewModal = ({
   isEditing,
   setIsEditing,
 }) => {
-  const [editedCategory, setEditedCategory] = useState(item);
-
-  useEffect(() => {
-    setEditedCategory(item);
-  }, [item]);
-
-  const handleChange = (field, value) => {
-    setEditedCategory((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const {
+    category: editedCategory,
+    errors,
+    handleFieldChange,
+    validateFields,
+  } = useCategoryValidation(item);
 
   const handleUpdate = () => {
-    onUpdate(editedCategory);
-    setIsEditing(false);
+    if (validateFields()) {
+      onUpdate(editedCategory);
+      setIsEditing(false);
+    }
   };
 
   if (!editedCategory) return null;
@@ -69,8 +66,10 @@ const CategoryViewModal = ({
             label="Código"
             fullWidth
             value={editedCategory.cod_dis || ""}
-            onChange={(e) => handleChange("cod_dis", e.target.value)}
+            onChange={(e) => handleFieldChange("cod_dis", e.target.value)}
             margin="normal"
+            error={!!errors.cod_dis}
+            helperText={errors.cod_dis}
             InputProps={{
               // !isEditign --> Esta editando
               // isEditing --> No esta editando, ya que parte desde false.
@@ -86,8 +85,10 @@ const CategoryViewModal = ({
             label="Tipo"
             fullWidth
             value={editedCategory.tip_dis || ""}
-            onChange={(e) => handleChange("tip_dis", e.target.value)}
+            onChange={(e) => handleFieldChange("tip_dis", e.target.value)}
             margin="normal"
+            error={!!errors.tip_dis}
+            helperText={errors.tip_dis}
             InputProps={{
               readOnly: !isEditing,
             }}
@@ -101,8 +102,10 @@ const CategoryViewModal = ({
             label="Nombre"
             fullWidth
             value={editedCategory.nom_dis || ""}
-            onChange={(e) => handleChange("nom_dis", e.target.value)}
+            onChange={(e) => handleFieldChange("nom_dis", e.target.value)}
             margin="normal"
+            error={!!errors.nom_dis}
+            helperText={errors.nom_dis}
             InputProps={{
               readOnly: !isEditing,
             }}

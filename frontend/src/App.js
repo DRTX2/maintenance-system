@@ -1,18 +1,24 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard"; 
+import Dashboard from "./pages/Dashboard";
 import Suppliers from "./pages/Suppliers";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        
-        {/* Ruta para Dashboard */}
-        <Route path="/suppliers" element={<Suppliers pathname="/suppliers" />}/>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </Router>
+    <>
+      <ToastContainer autoClose={2000} pauseOnFocusLoss={false} />
+      <Router>
+        <Routes>
+          <Route
+            path="/suppliers"
+            element={<Suppliers pathname="/suppliers" />}
+          />
+          <Route path="/" element={<Dashboard />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

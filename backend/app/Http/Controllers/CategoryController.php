@@ -46,7 +46,7 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
             // Devolvemos el error
             return response()->json([
-                'Error' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

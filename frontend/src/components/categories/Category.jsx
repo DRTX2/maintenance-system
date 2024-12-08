@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import Box from "@mui/material/Box";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
+import { toast } from "react-toastify";
+
 import CategoryHeader from "./CategoryHeader";
 import CreateCategoryModal from "./CategoryCreateModal"; // Importamos el modal
 import CategoryContent from "./CategoryContent";
 import CategoryViewModal from "./CategoryViewModal";
 import CategoryDeleteModal from "./CategoryDeleteModal";
-import { BASE_URL } from "../../configs";
-import axios from "axios";
+import { BASE_API, BASE_URL } from "../../utils/configs";
+import MESSAGES from "../../utils/messages";
 
 axios.defaults.withCredentials = true;
 
@@ -33,18 +36,6 @@ const Category = () => {
     getCategories();
   }, []);
 
-  // Me permite obtener las categorias.
-  const getCategories = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/category`);
-      setCategories(response.data.results);
-    } catch (error) {
-      console.error("Somenthing went wrong:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Handle page change
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -56,46 +47,62 @@ const Category = () => {
     setCurrentPage(0); // Reset the table to the first page whenever rows per page changes
   };
 
-  // Me permite añadir una categoria.
+  const getCategories = async () => {
+    try {
+      const response = await axios.get(BASE_API + "category");
+      setCategories(response.data.results);
+    } catch (error) {
+      toast.error(MESSAGES.ERROR.FETCH_CATEGORIES);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const onCreate = async (item) => {
     try {
-      await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+      await axios.get(BASE_URL + "sanctum/csrf-cookie");
 
       // Recuerda: los campos que se envian a la base de datos deben coincidir con lo que
       // espera el servidor.
-      await axios.post(BASE_URL + "category/store", {
+      await axios.post(BASE_API + "category/store", {
         cod_dis: item.cod_dis,
         tip_dis: item.tip_dis,
         nom_dis: item.nom_dis,
       });
 
-      // Aqui: categoria añadida exitosamente.
-      getCategories();
+      await getCategories();
+      toast.success(MESSAGES.SUCCESS.CATEGORY_CREATED);
     } catch (error) {
-      // Aqui: errores, codigo ya existente.
-      console.error("Somenthing went wrong: ", error);
+      if (error.response) {
+        const status = error.response.status;
+        const message = MESSAGES.ERROR[status] || MESSAGES.DEFAULT;
+        toast.error(message);
+      } else {
+        toast.error(MESSAGES.ERROR.CONNECTION);
+      }
     }
   };
 
   const onUpdate = async (item) => {
     try {
-      await axios.put(BASE_URL + "category/update/" + item.id, {
+      await axios.put(BASE_API + "category/update/" + item.id, {
         cod_dis: item.cod_dis,
         nom_dis: item.nom_dis,
         tip_dis: item.tip_dis,
       });
 
       await getCategories();
+      toast.success(MESSAGES.SUCCESS.CATEGORY_UPDATED);
       setIsEditing(false);
       setModalViewOpen(false);
     } catch (error) {
-      console.log("Something went wrong:", error);
+      toast.error(MESSAGES.ERROR.UPDATE_CATEGORY);
     }
   };
 
   const onDelete = async (id) => {
     try {
-      await axios.delete(BASE_URL + "category/destroy/" + id);
+      await axios.delete(BASE_API + "category/destroy/" + id);
       await getCategories();
 
       // Validar la página actual
@@ -110,18 +117,19 @@ const Category = () => {
         return prevCategories;
       });
 
+      toast.success(MESSAGES.SUCCESS.CATEGORY_DELETED);
       setModalDeleteOpen(false);
     } catch (error) {
-      console.log("Something went wrong: ", error);
+      toast.success(MESSAGES.ERROR.DELETE_CATEGORY);
     }
   };
 
   const onSee = async (id) => {
     try {
-      const response = await axios.get(BASE_URL + "category/show/" + id);
+      const response = await axios.get(BASE_API + "category/show/" + id);
       setCategory(response.data.result);
     } catch (error) {
-      console.log("Something went wrong: ", error);
+      toast.error(MESSAGES.ERROR.FETCH_CATEGORY);
       return;
     }
   };
