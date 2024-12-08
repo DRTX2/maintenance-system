@@ -11,6 +11,7 @@ import {
 
 import Box from "@mui/material/Box";
 import useCategoryValidation from "../../hooks/useCategoryValidation";
+import categoryCreateStyles from "./CategoryCreateStyles";
 
 const CreateCategoryModal = ({ open, onClose, onCreate }) => {
   const { category, errors, handleFieldChange, validateFields, resetFields } =
@@ -37,7 +38,7 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
       {/* Aqui se encuentra todo el contenido */}
       <DialogContent>
         {/* Fila para el codigo */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Codigo</Typography>
           <TextField
             label="Codigo"
@@ -51,7 +52,7 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
         </Box>
 
         {/* Fila para el tipo */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Tipo</Typography>
           <TextField
             label="Tipo"
@@ -65,7 +66,7 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
         </Box>
 
         {/* Fila para el nombrer */}
-        <Box className="flexRowCenter">
+        <Box className="flexRowCenterStart">
           <Typography style={{ marginRight: "16px" }}>Nombre</Typography>
           <TextField
             label="Nombre"
@@ -82,10 +83,18 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
       {/* Lo que se puede hacer */}
       <DialogActions>
         <Box marginBottom="10px" marginRight="10px">
-          <Button onClick={onClose} color="secondary">
+          <Button
+            onClick={onClose}
+            color="secondary"
+            sx={categoryCreateStyles.buttonStyle1}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleCreate} color="primary">
+          <Button
+            onClick={handleCreate}
+            color="primary"
+            sx={categoryCreateStyles.buttonStyle2}
+          >
             Guardar
           </Button>
         </Box>

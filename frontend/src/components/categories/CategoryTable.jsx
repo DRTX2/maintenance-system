@@ -13,6 +13,7 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CustomTablePaginationActions from "./CustomTablePaginationActions";
+import tableStyles from "./CategoryTableStyles";
 
 const CategoryTable = ({
   array,
@@ -26,23 +27,12 @@ const CategoryTable = ({
   return (
     <>
       <TableContainer
+        className="table-container"
         component={Paper}
-        style={{
-          overFlowX: "hidde",
-          margin: "0 auto",
-          maxWidth: "100%",
-        }}
+        sx={tableStyles.tableContainer}
       >
         <Table>
-          <TableHead
-            sx={{
-              backgroundColor: "#6a71a5", // Cambia el color de fondo
-              "& .MuiTableCell-root": {
-                color: "#ffffff", // Cambia el color del texto
-                fontWeight: "bold", // Aplica negrita
-              },
-            }}
-          >
+          <TableHead sx={tableStyles.tableHead}>
             <TableRow>
               <TableCell>Código</TableCell>
               <TableCell>Nombre</TableCell>
@@ -85,30 +75,21 @@ const CategoryTable = ({
         rowsPerPage={rowsPerPage}
         // Mostrar más filas en las paginas
         rowsPerPageOptions={[3, 5]}
-        sx={{
-          "& .MuiTablePagination-select": {
-            color: "#8d91af", // Cambia el color del número
-            fontWeight: "bold", // Negrita
-            fontSize: "14px", // Tamaño de fuente
-          },
-          "& .MuiTablePagination-selectIcon": {
-            color: "#8d91af", // Cambia el color del icono del desplegable
-          },
-        }}
         // Cambiar a la siguiente pagina
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         // Mensaje de las filas por pagina
         labelRowsPerPage={
-          <span style={{ color: "#6a71a5", fontWeight: "bold" }}>
-            Filas por página
-          </span>
+          <span style={tableStyles.labelRowsPerPage}>Filas por página</span>
         }
         // Quitar ese mensjae de 1-3 of 3
         labelDisplayedRows={() => ""}
+        // Poner los botones de siguiente y anterior
         ActionsComponent={(props) => (
           <CustomTablePaginationActions {...props} />
         )}
+        // Cambiar estilos
+        sx={tableStyles.pagination}
       ></TablePagination>
     </>
   );

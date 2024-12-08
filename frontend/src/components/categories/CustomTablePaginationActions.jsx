@@ -1,3 +1,6 @@
+import { Button } from "@mui/material";
+import categoryStyles from "./CategoryStyles";
+
 const CustomTablePaginationActions = (props) => {
   const { count, page, rowsPerPage, onPageChange } = props;
 

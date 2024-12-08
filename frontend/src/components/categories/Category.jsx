@@ -6,10 +6,11 @@ import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 
 import CategoryHeader from "./CategoryHeader";
-import CreateCategoryModal from "./CategoryCreateModal"; // Importamos el modal
+import CreateCategoryModal from "./CategoryCreateModal";
 import CategoryContent from "./CategoryContent";
 import CategoryViewModal from "./CategoryViewModal";
 import CategoryDeleteModal from "./CategoryDeleteModal";
+import categoryStyles from "./CategoryStyles";
 import { BASE_API, BASE_URL } from "../../utils/configs";
 import MESSAGES from "../../utils/messages";
 
@@ -163,21 +164,14 @@ const Category = () => {
   };
 
   return (
-    <div className="category">
-      <Box
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+    <div className="flexColumnCenter">
+      <Box className="flewColumnCenter">
         {/* Caja para el boton de agregar */}
-        <Box>
+        <Box className="flexRowCenterEnd">
           <Button
             onClick={handleOpenCreateModal}
-            color="primary"
             variant="contained"
+            sx={categoryStyles.buttonStyle}
             startIcon={<AddIcon />}
           >
             Agregar
@@ -185,14 +179,7 @@ const Category = () => {
         </Box>
 
         {/* Caja para el contenido de la tabla*/}
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          height="auto"
-          style={{ paddingTop: "20px" }}
-        >
+        <Box className="flexColumnCenter" paddingTop="20px">
           <CategoryContent
             isLoading={isLoading}
             categories={categories}
