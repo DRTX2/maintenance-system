@@ -21,11 +21,11 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
       alert("Por favor ingresa un datos validos.");
       return;
     }
-    onCreate({ code, type, name }); // Llamar la función para crear la categoría
-    setType(""); // Limpiar el campo
+    onCreate({ code, type, name });
+    setType("");
     setCode("");
     setName("");
-    onClose(); // Cerrar el modal
+    onClose();
   };
 
   return (

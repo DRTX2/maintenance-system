@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -12,20 +12,33 @@ import {
   FormControlLabel,
 } from "@mui/material";
 
-const CategoryViewModal = ({ open, onClose, item }) => {
-  // Aseguramos que `item` tenga un valor válido
-  const [isEditing, setIsEditing] = useState(false);
-  const [code, setCode] = useState("");
-  const [type, setType] = useState("");
-  const [name, setName] = useState("");
+const CategoryViewModal = ({
+  open,
+  onClose,
+  item,
+  onSave,
+  isEditing,
+  setIsEditing,
+}) => {
+  const [editedCategory, setEditedCategory] = useState(item);
 
-  if (!item) return null;
+  useEffect(() => {
+    setEditedCategory(item);
+  }, [item]);
 
-  const toggleEditMode = () => {
+  const handleChange = (field, value) => {
+    setEditedCategory((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSave = () => {
+    onSave(editedCategory);
     setIsEditing(!isEditing);
   };
 
-  const save = async (id) => {};
+  if (!editedCategory) return null;
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -38,7 +51,7 @@ const CategoryViewModal = ({ open, onClose, item }) => {
             control={
               <Switch
                 checked={isEditing}
-                onChange={toggleEditMode}
+                onChange={() => setIsEditing(!isEditing)}
                 name="editModeSwitch"
                 color={isEditing ? "primary" : "secondary"}
               />
@@ -55,12 +68,13 @@ const CategoryViewModal = ({ open, onClose, item }) => {
           <TextField
             label="Código"
             fullWidth
-            value={item.cod_dis || ""}
+            value={editedCategory.cod_dis || ""}
+            onChange={(e) => handleChange("cod_dis", e.target.value)}
             margin="normal"
             InputProps={{
               // !isEditign --> Esta editando
               // isEditing --> No esta editando, ya que parte desde false.
-              readOnly: !isEditing, // Hacemos que el campo sea solo lectura
+              readOnly: !isEditing,
             }}
           />
         </Box>
@@ -71,10 +85,11 @@ const CategoryViewModal = ({ open, onClose, item }) => {
           <TextField
             label="Tipo"
             fullWidth
-            value={item.tip_dis || ""}
+            value={editedCategory.tip_dis || ""}
+            onChange={(e) => handleChange("tip_dis", e.target.value)}
             margin="normal"
             InputProps={{
-              readOnly: !isEditing, // Hacemos que el campo sea solo lectura
+              readOnly: !isEditing,
             }}
           />
         </Box>
@@ -85,10 +100,11 @@ const CategoryViewModal = ({ open, onClose, item }) => {
           <TextField
             label="Nombre"
             fullWidth
-            value={item.nom_dis || ""}
+            value={editedCategory.nom_dis || ""}
+            onChange={(e) => handleChange("nom_dis", e.target.value)}
             margin="normal"
             InputProps={{
-              readOnly: !isEditing, // Hacemos que el campo sea solo lectura
+              readOnly: !isEditing,
             }}
           />
         </Box>
@@ -97,9 +113,7 @@ const CategoryViewModal = ({ open, onClose, item }) => {
       {/* Acciones del Modal */}
       <DialogActions>
         <Box marginBottom="10px" marginRight="10px">
-          {isEditing ? (
-            <Button onClick={() => save(item.id)}>Guardar</Button>
-          ) : null}
+          {isEditing ? <Button onClick={handleSave}>Guardar</Button> : null}
           <Button onClick={onClose} color="secondary">
             Cerrar
           </Button>
