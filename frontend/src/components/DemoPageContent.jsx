@@ -10,7 +10,7 @@ function DemoPageContent({ pathname }) {
       case "/usuarios":
         return <div>Contenido de Usuarios</div>;
       case "/proveedores":
-        return <SuppliersPageContent pathname="/suppliers"/>;
+        return <SuppliersPageContent pathname="/suppliers" />;
       case "/ubicaciones":
         return <div>Contenido para Ubicaciones</div>;
       case "/dispositivos":
@@ -30,7 +30,6 @@ function DemoPageContent({ pathname }) {
         textAlign: "center",
       }}
     >
-
       {renderContent(pathname)}
     </Box>
   );

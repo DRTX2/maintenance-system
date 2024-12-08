@@ -11,19 +11,21 @@ use \Illuminate\Validation\ValidationException;
 
 class SuppliersController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $suppliers = Supplier::all();
-        
+
         return response()->json([
             'results' => $suppliers,
             'message' => 'Operación exitosa',
         ], 200);
     }
-    
-    public function show($id){
+
+    public function show($id)
+    {
         try {
             $supplier = Supplier::with("incomes")->findOrFail($id);
-            
+
             return response()->json([
                 'results' => $supplier,
                 'message' => 'Operación exitosa',
@@ -39,25 +41,25 @@ class SuppliersController extends Controller
     public function store(SupplierRequest $request)
     {
         try {
-            $validated = $request->validated();  
+            $validated = $request->validated();
             $supplier = Supplier::create([
                 'nam_sup' => $validated['name'],
                 'ema_sup' => $validated['email'],
                 'pho_sup' => $validated['phone'],
             ]);
-    
+
             return response()->json([
                 'message' => 'Proveedor creado con éxito',
                 'results' => $supplier,
-            ], 201); 
-    
+            ], 201);
+
         } catch (ValidationException $e) {
             $errors = $e->errors();
             return response()->json([
                 'message' => 'Datos no válidos',
                 'errors' => $errors,
             ], 422);
-    
+
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Hubo un error al crear el proveedor.',
@@ -66,7 +68,8 @@ class SuppliersController extends Controller
         }
     }
 
-    public function update(SupplierRequest $request, $id){
+    public function update(SupplierRequest $request, $id)
+    {
         $supplier = Supplier::findOrFail($id);
 
         $validated = $request->validated();
@@ -82,7 +85,8 @@ class SuppliersController extends Controller
         ], 200);
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         // Buscar el proveedor y manejar errores si no existe
         try {
             $supplier = Supplier::findOrFail($id);

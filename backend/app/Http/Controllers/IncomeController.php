@@ -17,10 +17,11 @@ class IncomeController extends Controller
         return response()->json($incomes);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         try {
             $supplier = Income::find($id);
-            
+
             return response()->json([
                 'results' => $supplier,
                 'message' => 'Operación exitosa',
@@ -32,12 +33,12 @@ class IncomeController extends Controller
             ], 404);
         }
     }
-    
+
     public function showBySupplier($supplierId)
     {
-        $incomes = Income::where('id_sup_inc',$supplierId)->get();
+        $incomes = Income::where('id_sup_inc', $supplierId)->get();
 
-        return response()->json(["data"=>$incomes, "message"=>"Operation ends well"],200); 
+        return response()->json(["data" => $incomes, "message" => "Operation ends well"], 200);
     }
 
     public function store(Request $request, $supplierId)
@@ -104,17 +105,17 @@ class IncomeController extends Controller
     {
         try {
             $income = Income::find($incomeId);
-            $message="Ingreso eliminado con éxito.";
-            if(!$income){
+            $message = "Ingreso eliminado con éxito.";
+            if (!$income) {
                 return response()->json([
-                    "message" => $income?"Ingreso eliminado con éxito.":"El ingreso no existe"
-                ],404);
+                    "message" => $income ? "Ingreso eliminado con éxito." : "El ingreso no existe"
+                ], 404);
             }
             $income->delete();
             return response()->json([
                 "message" => "Ingreso eliminado con éxito."
-            ],200);
-           
+            ], 200);
+
         } catch (Exception $exception) {
             return response()->json([
                 "message" => "Ocurrió un error inesperado."
