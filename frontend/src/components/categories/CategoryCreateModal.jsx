@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogActions,
@@ -10,22 +10,18 @@ import {
 } from "@mui/material";
 
 import Box from "@mui/material/Box";
+import useCategoryValidation from "../../hooks/useCategoryValidation";
 
 const CreateCategoryModal = ({ open, onClose, onCreate }) => {
-  const [code, setCode] = useState("");
-  const [type, setType] = useState("");
-  const [name, setName] = useState("");
+  const { category, errors, handleFieldChange, validateFields, resetFields } =
+    useCategoryValidation({ cod_dis: "", tip_dis: "", nom_dis: "" });
 
-  const handleCreate = () => {
-    if (type.trim() === "" || code.trim() === "" || name.trim() === "") {
-      alert("Por favor ingresa un datos validos.");
-      return;
+  const handleCreate = async () => {
+    if (validateFields()) {
+      await onCreate(category);
+      resetFields();
+      onClose();
     }
-    onCreate({ code, type, name });
-    setType("");
-    setCode("");
-    setName("");
-    onClose();
   };
 
   return (
@@ -41,9 +37,11 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
           <TextField
             label="Codigo"
             fullWidth
-            value={type}
-            onChange={(e) => setType(e.target.value)}
+            value={category.cod_dis}
+            onChange={(e) => handleFieldChange("cod_dis", e.target.value)}
             margin="normal"
+            error={!!errors.cod_dis}
+            helperText={errors.cod_dis}
           />
         </Box>
 
@@ -53,9 +51,11 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
           <TextField
             label="Tipo"
             fullWidth
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
+            value={category.tip_dis}
+            onChange={(e) => handleFieldChange("tip_dis", e.target.value)}
             margin="normal"
+            error={!!errors.tip_dis}
+            helperText={errors.tip_dis}
           />
         </Box>
 
@@ -65,9 +65,11 @@ const CreateCategoryModal = ({ open, onClose, onCreate }) => {
           <TextField
             label="Nombre"
             fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={category.nom_dis}
+            onChange={(e) => handleFieldChange("nom_dis", e.target.value)}
             margin="normal"
+            error={!!errors.nom_dis}
+            helperText={errors.nom_dis}
           />
         </Box>
       </DialogContent>
