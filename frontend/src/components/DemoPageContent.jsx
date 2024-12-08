@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Category from "./categories/Category";
 import SuppliersPageContent from "./SuppliersPageContent";
+import LocationsPageContent from "./LocationsPageContent";
 
 function DemoPageContent({ pathname }) {
   const renderContent = (pathname) => {
@@ -12,7 +13,7 @@ function DemoPageContent({ pathname }) {
       case "/proveedores":
         return <SuppliersPageContent/>;
       case "/ubicaciones":
-        return <div>Contenido para Ubicaciones</div>;
+        return <LocationsPageContent/>;
       case "/dispositivos":
         return <Category />;
       default:

@@ -7,21 +7,25 @@ use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        /**
-         *    $tasks = Task::all();
+        $row = $request->input('rows', 10);
+        $ubications = Location::paginate($row);
+        // Renombrar las columnas
+        $ubications->getCollection()->transform(function ($item) {
+            return [
+                'id'=>$item->id,
+                'codigo' => $item->cod_loc, 
+                'nombre' => $item->nam_loc, 
+                'created_at' => $item->created_at->toDateString(), 
+                'updated_at' => $item->updated_at->toDateString(),
+            ];
+        });
 
-        return response()->json(['results' => $tasks], 200);
-
-                 */
-
-        $ubications = Location::all();
-
-        return response()->json(['results' => $ubications], 200);
+        return response()->json([
+            'data' => $ubications,
+            'message' => 'Operación exitosa',
+        ], 200);
     }
 
     /**
@@ -29,32 +33,21 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        //
-
         $request->validate([
-            'cod_loc' => 'required|unique:locations,cod_loc',
-            'nam_loc' => 'required'
+            'codigo' => 'required|unique:locations,cod_loc',
+            'nombre' => 'required'
         ]);
 
-        $location = Location::create($request->all());
+        $location = Location::create([
+            'cod_loc'=> $request['codigo'],
+            'nam_loc'=> $request['nombre'],
+        ]);
         return response()->json([
             'message' => 'Ubicación creada con éxito',
             'data' => $location
         ], 201);
     }
 
-    /**
-     *   $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'completed' => 'boolean',
-        ]);
-
-        $task = Task::create($request->all());
-
-        return response()->json($task, 201);
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
 
@@ -65,37 +58,37 @@ class LocationController extends Controller
 
         }
 
-        return response()->json($location, 200);
+        $transformedLocation = [
+            'id'=>$location->id,
+            'codigo' => $location->cod_loc,  
+            'nombre' => $location->nam_loc, 
+            'created_at' => $location->created_at->toDateString(), 
+            'updated_at' => $location->updated_at->toDateString(), 
+        ];
 
-        //
-
-        /**
-  
-         * 
-         */
+        return response()->json([
+            'data' => $transformedLocation,
+            'message' => 'Operación exitosa',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        // Buscar la ubicación a actualizar
         $location = Location::find($id);
 
-        // Si no se encuentra la ubicación
         if (!$location) {
             return response()->json(['message' => 'Ubicación no encontrada'], 404);
         }
 
-        // Validación de los campos
         $request->validate([
-            'cod_loc' => 'required|unique:locations,cod_loc,' . $location->id,
-            'nam_loc' => 'required'
+            'codigo' => 'required|unique:locations,cod_loc,' . $location->id,
+            'nombre' => 'required'
         ]);
-
-        // Actualizar la ubicación
-        $location->update($request->all());
+        
+        $location->update([
+            'cod_loc'=>$request['codigo'],
+            'nam_loc'=>$request['nombre'],
+        ]);
 
         // Responder con la ubicación actualizada
         return response()->json(['message' => 'Ubicacion actualizada', 'data' => $location], 200);
