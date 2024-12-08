@@ -24,9 +24,9 @@ const Category = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   // Para la paginación
-  const [rowsPerPage, setRowsPerPage] = useState(3);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1); // Partir de la primera pagina
+  const [rowsPerPage, setRowsPerPage] = useState(3); // Numero de filas por página
+  const [totalItems, setTotalItems] = useState(1); //
 
   useEffect(() => {
     getCategories(currentPage, rowsPerPage);
@@ -81,6 +81,7 @@ const Category = () => {
 
       await getCategories();
       setIsEditing(false);
+      setModalViewOpen(false);
     } catch (error) {
       console.log("Something went wrong:", error);
     }
@@ -112,6 +113,7 @@ const Category = () => {
   };
 
   const handleCloseViewModel = () => {
+    console.log("Cerrando el modal...");
     setModalViewOpen(false);
     setIsEditing(false);
   };
