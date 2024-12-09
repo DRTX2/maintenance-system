@@ -36,7 +36,7 @@ const CategoryTable = ({
             <TableRow>
               <TableCell>Código</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Acciones</TableCell>
+              <TableCell align="center">Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -49,7 +49,7 @@ const CategoryTable = ({
                 <TableRow key={item.id}>
                   <TableCell>{item.cod_dis}</TableCell>
                   <TableCell>{item.nom_dis}</TableCell>
-                  <TableCell>
+                  <TableCell align="center">
                     <IconButton onClick={() => onSee(item.id)} color="primary">
                       <VisibilityIcon />
                     </IconButton>

@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 
-import { BASE_URL } from "../../configs";
+import { BASE_URL } from "../../utils/configs";
 import axios from "axios";
 import "../Form.css";
 
@@ -40,8 +40,8 @@ const InformationPage = ({ columns, section }) => {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/${section}?page=${page}&rows=${rows}`
       );
-      const { data} = response.data.data;
-      
+      const { data } = response.data.data;
+
       setInfo(data);
       console.log(data);
       setCurrentPage(1);
@@ -112,15 +112,15 @@ const InformationPage = ({ columns, section }) => {
     if (!myData || Object.keys(myData).length === 0) {
       return [];
     }
-  
+
     // Excluir campos no deseados
     const filteredData = Object.keys(myData).filter(
       (key) => !["id", "created_at", "updated_at"].includes(key)
     );
-  
+
     return filteredData.map((key, index) => {
       const fieldValue = resetValues ? "" : myData[key] || "";
-  
+
       return {
         name: key,
         label: key.toUpperCase(),
@@ -129,7 +129,6 @@ const InformationPage = ({ columns, section }) => {
       };
     });
   };
-  
 
   const viewFields = generateViewFields(information);
   // Solo generar los campos de creación si hay información
