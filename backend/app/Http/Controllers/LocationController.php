@@ -9,22 +9,12 @@ class LocationController extends Controller
 {
     public function index(Request $request)
     {
-        $row = $request->input('rows', 10);
-        $ubications = Location::paginate($row);
-        // Renombrar las columnas
-        $ubications->getCollection()->transform(function ($item) {
-            return [
-                'id'=>$item->id,
-                'codigo' => $item->cod_loc, 
-                'nombre' => $item->nam_loc, 
-                'created_at' => $item->created_at->toDateString(), 
-                'updated_at' => $item->updated_at->toDateString(),
-            ];
-        });
+
+        $locations = Location::all();
 
         return response()->json([
-            'data' => $ubications,
-            'message' => 'Operación exitosa',
+            'results' => $locations,
+            'message' => 'Categoria obtenida con exito.'
         ], 200);
     }
 
@@ -34,13 +24,13 @@ class LocationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'codigo' => 'required|unique:locations,cod_loc',
-            'nombre' => 'required'
+            'cod_loc' => 'required|unique:locations,cod_loc',
+            'nam_loc' => 'required'
         ]);
 
         $location = Location::create([
-            'cod_loc'=> $request['codigo'],
-            'nam_loc'=> $request['nombre'],
+            'cod_loc' => $request['cod_loc'],
+            'nam_loc' => $request['nam_loc'],
         ]);
         return response()->json([
             'message' => 'Ubicación creada con éxito',
@@ -58,16 +48,16 @@ class LocationController extends Controller
 
         }
 
-        $transformedLocation = [
-            'id'=>$location->id,
-            'codigo' => $location->cod_loc,  
-            'nombre' => $location->nam_loc, 
-            'created_at' => $location->created_at->toDateString(), 
-            'updated_at' => $location->updated_at->toDateString(), 
-        ];
+        // $transformedLocation = [
+        //     'id' => $location->id,
+        //     'codigo' => $location->cod_loc,
+        //     'nombre' => $location->nam_loc,
+        //     'created_at' => $location->created_at->toDateString(),
+        //     'updated_at' => $location->updated_at->toDateString(),
+        // ];
 
         return response()->json([
-            'data' => $transformedLocation,
+            'result' => $location,
             'message' => 'Operación exitosa',
         ], 200);
     }
@@ -81,13 +71,13 @@ class LocationController extends Controller
         }
 
         $request->validate([
-            'codigo' => 'required|unique:locations,cod_loc,' . $location->id,
-            'nombre' => 'required'
+            'cod_loc' => 'required|unique:locations,cod_loc,' . $location->id,
+            'nam_loc' => 'required'
         ]);
-        
+
         $location->update([
-            'cod_loc'=>$request['codigo'],
-            'nam_loc'=>$request['nombre'],
+            'cod_loc' => $request['cod_loc'],
+            'nam_loc' => $request['nam_loc'],
         ]);
 
         // Responder con la ubicación actualizada

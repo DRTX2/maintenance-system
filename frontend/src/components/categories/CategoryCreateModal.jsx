@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -10,18 +10,41 @@ import {
 } from "@mui/material";
 
 import Box from "@mui/material/Box";
-import useCategoryValidation from "../../hooks/useCategoryValidation";
 import categoryCreateStyles from "./CategoryCreateStyles";
+import { validateField, validateCategoryFields } from "../../utils/validations";
 
 const CreateCategoryModal = ({ open, onClose, onCreate }) => {
-  const { category, errors, handleFieldChange, validateFields, resetFields } =
-    useCategoryValidation({ cod_dis: "", tip_dis: "", nom_dis: "" });
+  const [category, setCategory] = useState({
+    cod_dis: "",
+    tip_dis: "",
+    nom_dis: "",
+  });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!open) {
       resetFields(); // Resetea el formulario al cerrar el modal
     }
   }, [open]);
+
+  const handleFieldChange = (field, value) => {
+    setCategory((prev) => ({ ...prev, [field]: value }));
+
+    // Validar el campo actual mientras se escribe
+    const errorMessage = validateField(field, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: errorMessage }));
+  };
+
+  const validateFields = () => {
+    const validationErrors = validateCategoryFields(category);
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const resetFields = () => {
+    setCategory({ cod_dis: "", tip_dis: "", nom_dis: "" });
+    setErrors({});
+  };
 
   const handleCreate = async () => {
     if (validateFields()) {
