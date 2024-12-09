@@ -16,11 +16,11 @@ Route::post('register', [JWTAuthController::class, 'register']);
 Route::post('login', [JWTAuthController::class, 'login']);
 
 
-Route::get('suppliers', [SuppliersController::class, 'index']);
-Route::get('suppliers/{id}', [SuppliersController::class, 'show']);
-Route::post('suppliers', [SuppliersController::class, 'store']);
-Route::put('suppliers/{id}', [SuppliersController::class, 'update']);
-Route::delete('suppliers/{id}', [SuppliersController::class, 'destroy']);
+Route::get('/suppliers', [SuppliersController::class, 'index']);
+Route::get('/suppliers/{id}', [SuppliersController::class, 'show']);
+Route::post('/suppliers', [SuppliersController::class, 'store']);
+Route::put('/suppliers/{id}', [SuppliersController::class, 'update']);
+Route::delete('/suppliers/{id}', [SuppliersController::class, 'destroy']);
 
 Route::get('category', [CategoryController::class, 'index']);
 Route::post('category/store', [CategoryController::class, 'store']);

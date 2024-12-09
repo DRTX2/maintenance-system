@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import Category from "./categories/Category";
-import SuppliersPageContent from "./SuppliersPageContent";
-import LocationsPageContent from "./LocationsPageContent";
+import SuplierMaganer from "../generic/implementations/SuplierManager";
+import LocationManager from "../generic/implementations/LocationManager";
+import CategoryManager from "../generic/implementations/CategoryManager";
 
 function DemoPageContent({ pathname }) {
   const renderContent = (pathname) => {
@@ -11,11 +11,11 @@ function DemoPageContent({ pathname }) {
       case "/usuarios":
         return <div>Contenido de Usuarios</div>;
       case "/proveedores":
-        return <SuppliersPageContent/>;
+        return <SuplierMaganer />;
       case "/ubicaciones":
-        return <LocationsPageContent/>;
+        return <LocationManager />;
       case "/dispositivos":
-        return <Category />;
+        return <CategoryManager />;
       default:
         return <div>Bienvenido al Dashboard</div>;
     }

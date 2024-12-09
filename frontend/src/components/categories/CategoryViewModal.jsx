@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -11,7 +11,7 @@ import {
   Switch,
   FormControlLabel,
 } from "@mui/material";
-import useCategoryValidation from "../../hooks/useCategoryValidation";
+import { validateField, validateCategoryFields } from "../../utils/validations";
 import categoryViewStyles from "./CategoryViewStyles";
 
 const CategoryViewModal = ({
@@ -22,19 +22,32 @@ const CategoryViewModal = ({
   isEditing,
   setIsEditing,
 }) => {
-  const {
-    category: editedCategory,
-    errors,
-    handleFieldChange,
-    validateFields,
-    resetFields,
-  } = useCategoryValidation(item);
+  const [editedCategory, setEditedCategory] = useState(item);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    setEditedCategory(item);
     if (!open) {
-      resetFields(); // Resetea el formulario cuando el modal se cierra
+      resetFields(); // Resetear el formulario cuando el modal se cierra
     }
   }, [open]);
+
+  const handleFieldChange = (field, value) => {
+    setEditedCategory((prev) => ({ ...prev, [field]: value }));
+
+    const errorMessage = validateField(field, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: errorMessage }));
+  };
+
+  const validateFields = () => {
+    const validationErrors = validateCategoryFields(editedCategory);
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const resetFields = () => {
+    setErrors({});
+  };
 
   const handleUpdate = () => {
     if (validateFields()) {
