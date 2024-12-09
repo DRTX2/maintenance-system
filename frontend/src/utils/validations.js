@@ -23,6 +23,22 @@ const validationRules = {
     minLength: 3,
     message: "El nombre debe tener al menos 3 caracteres",
   },
+  // Proveedores
+  nam_sup: {
+    required: true,
+    minLength: 3,
+    message: "El nombre debe tener al menos 3 caracteres",
+  },
+  ema_sup: {
+    required: true,
+    regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    message: "Debe ingresar un correo electrónico válido",
+  },
+  pho_sup: {
+    required: true,
+    regex: /^[0-9]{10,15}$/,
+    message: "Debe ingresar un número de teléfono válido (10-15 dígitos)",
+  },
 };
 
 export const validateFields = (data, fields) => {
