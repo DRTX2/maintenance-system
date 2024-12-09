@@ -1,6 +1,6 @@
 const tableStyles = {
   tableContainer: {
-    overFlowX: "hidden",
+    overFlowX: "auto",
     margin: "0 auto",
     maxWidth: "100%",
   },

@@ -5,7 +5,6 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 
-import CategoryHeader from "./CategoryHeader";
 import CreateCategoryModal from "./CategoryCreateModal";
 import CategoryContent from "./CategoryContent";
 import CategoryViewModal from "./CategoryViewModal";
@@ -164,7 +163,10 @@ const Category = () => {
   };
 
   return (
-    <div className="flexColumnCenter">
+    <div
+      className="flexColumnCenter"
+      style={{ width: "80%", marginTop: "40px" }}
+    >
       <Box className="flewColumnCenter">
         {/* Caja para el boton de agregar */}
         <Box className="flexRowCenterEnd">
