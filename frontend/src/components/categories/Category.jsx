@@ -29,8 +29,8 @@ const Category = () => {
   });
 
   // Para la paginación
-  const [currentPage, setCurrentPage] = useState(0); // Partir de la primera pagina
-  const [rowsPerPage, setRowsPerPage] = useState(3); // Numero de filas por página
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(3);
 
   useEffect(() => {
     getCategories();
@@ -60,7 +60,7 @@ const Category = () => {
 
   const onCreate = async (item) => {
     try {
-      await axios.get(BASE_URL + "sanctum/csrf-cookie");
+      //await axios.get(BASE_URL + "sanctum/csrf-cookie");
 
       // Recuerda: los campos que se envian a la base de datos deben coincidir con lo que
       // espera el servidor.

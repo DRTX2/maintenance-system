@@ -113,4 +113,21 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Error al eliminar la categoría'], 500);
         }
     }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'term' => 'required|string|max:25',
+        ]);
+
+        $term = $request->input('term');
+
+        $categories = Category::where('nom_dis', 'LIKE', "%{$term}%")->get();
+
+        return response()->json([
+            'results' => $categories,
+            'message' => 'Búsqueda realizada con éxito.',
+        ], 200);
+    }
+
 }

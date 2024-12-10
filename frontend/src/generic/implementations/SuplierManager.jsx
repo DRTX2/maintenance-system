@@ -33,6 +33,7 @@ const SuplierManager = () => {
     <GenericManager
       apiConfig={apiConfig}
       entityName="Proveedores"
+      entityNameAdd="Proveedor"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}
