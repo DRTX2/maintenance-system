@@ -26,7 +26,7 @@ const CategoryManager = () => {
     { key: "nom_dis", label: "Nombre" },
   ];
 
-  const message = ["nom_dis"];
+  const message = "nom_dis";
 
   return (
     <GenericManager

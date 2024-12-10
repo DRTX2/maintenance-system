@@ -12,6 +12,7 @@ import {
   Box,
 } from "@mui/material";
 import { validateField, validateFields } from "../utils/validations";
+import ViewStyles from "./styles/ViewStyles";
 
 const ViewModal = ({
   open,
@@ -22,6 +23,7 @@ const ViewModal = ({
   setIsEditing,
   fields,
 }) => {
+  // { att_1, att_2, att_3 }
   const [entity, setEntity] = useState(item);
   const [errors, setErrors] = useState({});
 
@@ -33,12 +35,12 @@ const ViewModal = ({
   }, [item, open]);
 
   // Basicamente validar un solo campo
-  const handleFieldChange = (field, value) => {
-    setEntity((prev) => ({ ...prev, [field]: value }));
+  const handleFieldChange = (key, value) => {
+    setEntity((prev) => ({ ...prev, [key]: value }));
 
     // Validar el campo actual
-    const errorMessage = validateField(field, value);
-    setErrors((prevErrors) => ({ ...prevErrors, [field]: errorMessage }));
+    const errorMessage = validateField(key, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
 
   // CUando intente actualizar validar todos los campos.
@@ -58,7 +60,7 @@ const ViewModal = ({
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        {isEditing ? "Editar" : "Ver"}
+        Ver dispositivo
         <Box style={{ position: "absolute", right: "20px", top: "16px" }}>
           <FormControlLabel
             control={
@@ -68,13 +70,12 @@ const ViewModal = ({
                 color="primary"
               />
             }
-            label={isEditing ? "Modo Editar" : "Modo Ver"}
           />
         </Box>
       </DialogTitle>
       <DialogContent>
         {fields.map(({ key, label }) => (
-          <Box key={key} className="flexRowCenterStart" marginBottom="16px">
+          <Box key={key} className="flexRowCenterStart" sx={ViewStyles.box}>
             <Typography style={{ marginRight: "16px" }}>{label}</Typography>
             <TextField
               label={label}
@@ -86,17 +87,26 @@ const ViewModal = ({
               InputProps={{
                 readOnly: !isEditing,
               }}
+              sx={{ marginTop: "15px" }}
             />
           </Box>
         ))}
       </DialogContent>
       <DialogActions>
         {isEditing ? (
-          <Button onClick={handleUpdate} color="primary">
+          <Button
+            onClick={handleUpdate}
+            color="primary"
+            sx={ViewStyles.buttonStyle2}
+          >
             Guardar
           </Button>
         ) : null}
-        <Button onClick={onClose} color="secondary">
+        <Button
+          onClick={onClose}
+          color="secondary"
+          sx={ViewStyles.buttonStyle1}
+        >
           Cerrar
         </Button>
       </DialogActions>
