@@ -12,6 +12,7 @@ import {
   Box,
 } from "@mui/material";
 import { validateField, validateFields } from "../utils/validations";
+import ViewStyles from "./styles/ViewStyles";
 
 const ViewModal = ({
   open,
@@ -58,7 +59,7 @@ const ViewModal = ({
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        {isEditing ? "Editar" : "Ver"}
+        Ver dispositivo
         <Box style={{ position: "absolute", right: "20px", top: "16px" }}>
           <FormControlLabel
             control={
@@ -68,13 +69,12 @@ const ViewModal = ({
                 color="primary"
               />
             }
-            label={isEditing ? "Modo Editar" : "Modo Ver"}
           />
         </Box>
       </DialogTitle>
       <DialogContent>
         {fields.map(({ key, label }) => (
-          <Box key={key} className="flexRowCenterStart" marginBottom="16px">
+          <Box key={key} className="flexRowCenterStart" sx={ViewStyles.box}>
             <Typography style={{ marginRight: "16px" }}>{label}</Typography>
             <TextField
               label={label}
@@ -86,17 +86,26 @@ const ViewModal = ({
               InputProps={{
                 readOnly: !isEditing,
               }}
+              sx={{ marginTop: "15px" }}
             />
           </Box>
         ))}
       </DialogContent>
       <DialogActions>
         {isEditing ? (
-          <Button onClick={handleUpdate} color="primary">
+          <Button
+            onClick={handleUpdate}
+            color="primary"
+            sx={ViewStyles.buttonStyle2}
+          >
             Guardar
           </Button>
         ) : null}
-        <Button onClick={onClose} color="secondary">
+        <Button
+          onClick={onClose}
+          color="secondary"
+          sx={ViewStyles.buttonStyle1}
+        >
           Cerrar
         </Button>
       </DialogActions>

@@ -13,7 +13,7 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CustomTablePaginationActions from "./CustomTablePaginationActions";
-import tableStyles from "./styles/CategoryTableStyles";
+import tableStyles from "./styles/TableStyles";
 
 const ContentTable = ({
   data,

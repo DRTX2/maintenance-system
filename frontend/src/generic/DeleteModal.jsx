@@ -7,6 +7,7 @@ import {
   DialogTitle,
   Button,
 } from "@mui/material";
+import DeleteStyles from "./styles/DeleteStyles";
 
 const DeleteModal = ({ open, onClose, onDelete, item, message }) => {
   return (
@@ -22,18 +23,25 @@ const DeleteModal = ({ open, onClose, onDelete, item, message }) => {
       <DialogContent>
         <DialogContentText id="delete-confirmation-description">
           ¿Estás seguro de que deseas eliminar el{" "}
-          <strong>{item[message] || item?.id}</strong>? Esta acción no se puede
-          deshacer.
+          <strong style={{ color: "#6068A5" }}>
+            {item[message] || item?.id}
+          </strong>
+          ? Esta acción no se puede deshacer.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button
+          onClick={onClose}
+          color="primary"
+          sx={DeleteStyles.buttonStyle1}
+        >
           Cancelar
         </Button>
         <Button
           onClick={() => onDelete(item?.id)}
           color="secondary"
           variant="contained"
+          sx={DeleteStyles.buttonStyle2}
         >
           Eliminar
         </Button>

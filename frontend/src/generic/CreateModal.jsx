@@ -10,6 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import { validateField, validateFields } from "../utils/validations";
+import CreateStyles from "./styles/CreateStyles";
 
 const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
   const [entity, setEntity] = useState(defaultState);
@@ -52,7 +53,7 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
       <DialogTitle>Crear</DialogTitle>
       <DialogContent>
         {fields.map(({ key, label }) => (
-          <Box key={key} className="flexRowCenterStart" marginBottom="16px">
+          <Box key={key} className="flexRowCenterStart" sx={CreateStyles.box}>
             <Typography style={{ marginRight: "16px" }}>{label}</Typography>
             <TextField
               label={label}
@@ -61,15 +62,27 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
               onChange={(e) => handleFieldChange(key, e.target.value)}
               error={!!errors[key]}
               helperText={errors[key]}
+              sx={{ marginTop: "10px" }}
+              InputLabelProps={{
+                shrink: true, // Esto fuerza al label a permanecer arriba
+              }}
             />
           </Box>
         ))}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button
+          onClick={onClose}
+          color="secondary"
+          sx={CreateStyles.buttonStyle1}
+        >
           Cancelar
         </Button>
-        <Button onClick={handleCreate} color="primary">
+        <Button
+          onClick={handleCreate}
+          color="primary"
+          sx={CreateStyles.buttonStyle2}
+        >
           Guardar
         </Button>
       </DialogActions>

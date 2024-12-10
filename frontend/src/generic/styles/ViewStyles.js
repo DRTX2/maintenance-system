@@ -15,6 +15,14 @@ const categoryViewStyles = {
     marginBottom: "10px",
     padding: "2px 20px",
   },
+  box: {
+    maxWidth: "500px",
+    maxHeight: "300px",
+    minWidth: "50px",
+    minHeight: "50px",
+    marginBottom: "10px",
+    marginTop: "10px",
+  },
 };
 
 export default categoryViewStyles;
