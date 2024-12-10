@@ -104,6 +104,7 @@ const GenericManager = ({
     try {
       const response = await axios.get(`${apiConfig.fetchOne}/${id}`);
       setEntity(response.data.result);
+      console.log(response);
     } catch {
       toast.error(`Error al obtener ${entityName}.`);
     }

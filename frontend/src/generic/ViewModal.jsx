@@ -23,6 +23,7 @@ const ViewModal = ({
   setIsEditing,
   fields,
 }) => {
+  // { att_1, att_2, att_3 }
   const [entity, setEntity] = useState(item);
   const [errors, setErrors] = useState({});
 
@@ -34,12 +35,12 @@ const ViewModal = ({
   }, [item, open]);
 
   // Basicamente validar un solo campo
-  const handleFieldChange = (field, value) => {
-    setEntity((prev) => ({ ...prev, [field]: value }));
+  const handleFieldChange = (key, value) => {
+    setEntity((prev) => ({ ...prev, [key]: value }));
 
     // Validar el campo actual
-    const errorMessage = validateField(field, value);
-    setErrors((prevErrors) => ({ ...prevErrors, [field]: errorMessage }));
+    const errorMessage = validateField(key, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
 
   // CUando intente actualizar validar todos los campos.
