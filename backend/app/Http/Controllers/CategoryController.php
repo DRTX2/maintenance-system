@@ -45,15 +45,22 @@ class CategoryController extends Controller
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Captura los errores de validación
+            
+            $errors = $e->errors();
+        
+            $errorMessages = collect($errors)
+                ->flatten()
+                ->implode(' ');
+
             return response()->json([
                 'message' => 'Errores de validación',
-                'errors' => $e->errors()
+                'errors' => $errorMessages
             ], 422);
         } catch (\Exception $e) {
             // Captura cualquier otro error
             return response()->json([
-                'error' => $e->getMessage(),
+                "message"=>'Error inesperado',
+                'errors' => $e->getMessage(),
             ], 500);
         }
     }
