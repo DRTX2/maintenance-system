@@ -5,7 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 
-import categoryStyles from "./styles/CategoryStyles";
+import GenericStyles from "./styles/GenericStyles";
 import CreateModal from "./CreateModal";
 import ViewModal from "./ViewModal";
 import DeleteModal from "./DeleteModal";
@@ -104,8 +104,8 @@ const GenericManager = ({
   const handleView = async (id) => {
     try {
       const response = await axios.get(`${apiConfig.fetchOne}/${id}`);
-      console.log(response);
       setEntity(response.data.result);
+      console.log(response);
     } catch {
       toast.error(`Error al obtener ${entityName}.`);
     }
@@ -146,7 +146,7 @@ const GenericManager = ({
           <Button
             onClick={openCreateModal}
             variant="contained"
-            sx={categoryStyles.buttonStyle}
+            sx={GenericStyles.buttonStyle}
             startIcon={<AddIcon />}
           >
             Agregar {entityNameAdd}

@@ -5,12 +5,15 @@ const validationRules = {
     minLength: 3,
     message: "El código debe tener al menos 3 caracteres",
   },
-  tip_dis: { required: true, maxLength: 50, message: "El tipo es obligatorio" },
+  tip_dis: {
+    required: true,
+    minLength: 3,
+    message: "El tipo debe tener al menos 3 caracteres",
+  },
   nom_dis: {
     required: true,
     minLength: 3,
-    maxLength: 50,
-    message: "El nombre no puede exceder 50 caracteres",
+    message: "El nombre debe tener al menos 3 caracteres",
   },
   // Ubicaciones
   cod_loc: {
@@ -36,11 +39,11 @@ const validationRules = {
   },
   pho_sup: {
     required: true,
-    regex: /^[0-9]{10,15}$/,
-    message: "Debe ingresar un número de teléfono válido (10-15 dígitos)",
+    regex: /^[0-9]{10}$/,
+    message: "Debe ingresar un número de teléfono válido",
   },
 };
-
+// Todos los campos
 export const validateFields = (data, fields) => {
   const errors = {};
 
@@ -48,27 +51,34 @@ export const validateFields = (data, fields) => {
     const rule = validationRules[key];
     const value = data[key];
 
+    // Valida campos requeridos
     if (rule?.required && !value) {
       errors[key] = rule.message;
+      // Valida longitud minima
     } else if (rule?.minLength && value?.length < rule.minLength) {
       errors[key] = `Debe tener al menos ${rule.minLength} caracteres`;
-    } else if (rule?.maxLength && value?.length > rule.maxLength) {
-      errors[key] = `No puede exceder ${rule.maxLength} caracteres`;
+      // Valida las expresiones regulares
+    } else if (rule?.regex && !rule.regex.test(value)) {
+      errors[key] = rule.message;
     }
   });
 
   return errors;
 };
 
+// Un solo campo en tiempo real
 export const validateField = (key, value) => {
   const rule = validationRules[key];
 
+  // Valida el campo requerido
   if (rule?.required && !value) {
     return rule.message;
+    // Valida la olngitud minima
   } else if (rule?.minLength && value?.length < rule.minLength) {
-    return `Debe tener al menos ${rule.minLength} caracteres`;
-  } else if (rule?.maxLength && value?.length > rule.maxLength) {
-    return `No puede exceder ${rule.maxLength} caracteres`;
+    return rule.message;
+    // Validar expresiones regulares
+  } else if (rule?.regex && !rule.regex.test(value)) {
+    return rule.message;
   }
 
   return ""; // Sin error
