@@ -27,6 +27,15 @@ const validationRules = {
     message: "El nombre debe tener al menos 3 caracteres",
   },
   // Proveedores
+
+  id_num_sup: {
+    required: true,
+    minLength: 10,
+    maxLength: 10,
+    message: "La cédula debe tener 10 caracteres numéricos",
+    regex: /^[0-9]+$/,
+  },
+
   nam_sup: {
     required: true,
     minLength: 3,
@@ -57,7 +66,10 @@ export const validateFields = (data, fields) => {
       // Valida longitud minima
     } else if (rule?.minLength && value?.length < rule.minLength) {
       errors[key] = `Debe tener al menos ${rule.minLength} caracteres`;
+
       // Valida las expresiones regulares
+    } else if (rule?.maxLength && value?.length > rule.maxLength) {
+      errors[key] = `No debe exceder de ${rule.maxLength} caracteres`;
     } else if (rule?.regex && !rule.regex.test(value)) {
       errors[key] = rule.message;
     }
@@ -82,4 +94,22 @@ export const validateField = (key, value) => {
   }
 
   return ""; // Sin error
+};
+
+export const generateErrorMessage = (errors, fields) => {
+  let message = "";
+
+  console.log(errors);
+  console.log(fields);
+  fields.forEach((field) => {
+    console.log(errors[field.key]);
+    if (errors[field.key]) {
+      console.log("where am i", errors[field.key]);
+      message += errors[field.key] + " ";
+    }
+  });
+
+  console.log(message);
+
+  return message.trim();
 };

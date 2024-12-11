@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Category;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -12,12 +12,11 @@ class CategoryController extends Controller
      */
     public function index()
     {
-
         $categories = Category::all();
 
         return response()->json([
             'results' => $categories,
-            'message' => 'Categoria obtenida con exito.'
+            'message' => 'Categoría obtenida con éxito.'
         ], 200);
     }
 
@@ -26,16 +25,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        // Validación de los datos del request
-        $request->validate([
-            'cod_dis' => 'required|string|max:10|unique:categories,cod_dis',
-            'tip_dis' => 'required|string|max:10',
-            'nom_dis' => 'required|string|max:25'
-        ]);
-
         try {
+            // Validación de los datos del request
+            $validated = $request->validate([
+                'cod_dis' => 'required|string|max:10|unique:categories,cod_dis',
+                'tip_dis' => 'required|string|max:10',
+                'nom_dis' => 'required|string|max:25'
+            ], [
+                'cod_dis.unique' => 'El código de la categoría ya existe. Por favor, elija otro.'
+            ]);
+
             // Intentamos crear el registro
-            $category = Category::create($request->all());
+            $category = Category::create($validated);
 
             // Devolvemos la respuesta
             return response()->json([
@@ -43,10 +44,23 @@ class CategoryController extends Controller
                 'message' => 'Categoría almacenada correctamente'
             ], 201);
 
-        } catch (\Exception $e) {
-            // Devolvemos el error
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            $errors = $e->errors();
+
+            $errorMessages = collect($errors)
+                ->flatten()
+                ->implode(' ');
+
             return response()->json([
-                'error' => $e->getMessage(),
+                'message' => 'Errores de validación',
+                'errors' => $errorMessages
+            ], 422);
+        } catch (\Exception $e) {
+            // Captura cualquier otro error
+            return response()->json([
+                "message" => 'Error inesperado',
+                'errors' => $e->getMessage(),
             ], 500);
         }
     }
@@ -59,12 +73,12 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json(['message' => 'Categoria no encontrada'], 404);
+            return response()->json(['message' => 'Categoría no encontrada'], 404);
         }
 
         return response()->json([
             'result' => $category,
-            'message' => 'Categoria obtenida con exito.'
+            'message' => 'Categoría obtenida con éxito.'
         ], 200);
     }
 
@@ -73,27 +87,46 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Buscar la categoría a actualizar
         $category = Category::find($id);
 
-        // Si no se encuentra la categoría
         if (!$category) {
             return response()->json(['message' => 'Categoría no encontrada'], 404);
         }
 
-        // Validación de los campos
-        $request->validate([
-            'cod_dis' => 'required|unique:categories,cod_dis,' . $category->id,
-            'tip_dis' => 'required|string|max:20',
-            'nom_dis' => 'required|string|max:25',
-        ]);
+        try {
+            // Validación de los campos
+            $validated = $request->validate([
+                'cod_dis' => 'required|unique:categories,cod_dis,' . $category->id,
+                'tip_dis' => 'required|string|max:20',
+                'nom_dis' => 'required|string|max:25',
+            ], [
+                'cod_dis.unique' => 'El código de la categoría ya existe. Por favor, elija otro.'
+            ]);
 
-        // Actualizar la categoría con los datos validados
-        $category->update($request->all());
+            // Actualizar la categoría con los datos validados
+            $category->update($validated);
 
-        // Responder con la categoría actualizada
-        return response()->json(['message' => 'Categoría actualizada', 'data' => $category], 200);
+            // Responder con la categoría actualizada
+            return response()->json(['message' => 'Categoría actualizada', 'data' => $category], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->errors();
+
+            $errorMessages = collect($errors)
+                ->flatten()
+                ->implode(' ');
+
+            return response()->json([
+                'message' => 'Errores de validación',
+                'errors' => $errorMessages
+            ], 422);
+
+        } catch (\Exception $e) {
+            // Captura cualquier otro error
+            return response()->json(['message' => 'Error al actualizar la categoría'], 500);
+        }
     }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -102,15 +135,44 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if (!$category) {
-            return response()->json(['message' => 'Categoria no encontrada'], 404);
+            return response()->json(['message' => 'Categoría no encontrada'], 404);
         }
 
         try {
             $category->delete();
-            return response()->json(['message' => 'Categoria eliminada exitosamente'], 200);
+            return response()->json(['message' => 'Categoría eliminada exitosamente'], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al eliminar la categoría'], 500);
+        }
+    }
+
+    /**
+     * Search categories based on term.
+     */
+    public function search(Request $request)
+    {
+        try {
+            $request->validate([
+                'term' => 'required|string|max:25',
+            ]);
+
+            $term = $request->input('term');
+            $categories = Category::where('cod_dis', 'LIKE', "%{$term}%")->get();
+
+            return response()->json([
+                'results' => $categories,
+                'message' => 'Búsqueda realizada con éxito.',
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Captura los errores de validación
+            return response()->json([
+                'message' => 'Errores de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            // Captura cualquier otro error
+            return response()->json(['message' => 'Error al realizar la búsqueda'], 500);
         }
     }
 }

@@ -21,12 +21,14 @@ Route::get('/suppliers/{id}', [SuppliersController::class, 'show']);
 Route::post('/suppliers', [SuppliersController::class, 'store']);
 Route::put('/suppliers/{id}', [SuppliersController::class, 'update']);
 Route::delete('/suppliers/{id}', [SuppliersController::class, 'destroy']);
+Route::post('/suppliers/search', [SuppliersController::class, 'search']);
 
 Route::get('category', [CategoryController::class, 'index']);
 Route::post('category/store', [CategoryController::class, 'store']);
 Route::get('category/show/{id}', [CategoryController::class, 'show']);
 Route::put('category/update/{id}', [CategoryController::class, 'update']);
 Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
+Route::post('/categories/search', [CategoryController::class, 'search']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
     // Coloca aqui las rutas que estarán protegidas.
@@ -39,6 +41,7 @@ Route::post('/locations', [LocationController::class, 'store']);
 Route::get('/locations/{id}', [LocationController::class, 'show']);
 Route::put('/locations/{id}', [LocationController::class, 'update']);
 Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
+Route::post('/locations/search', [LocationController::class, 'search']);
 
 Route::get('incomes', [IncomeController::class, 'index']);
 Route::get('incomes/{id}', [IncomeController::class, 'show']);

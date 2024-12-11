@@ -4,6 +4,7 @@ const UbicationsManager = () => {
   const apiConfig = {
     fetchAll: "http://127.0.0.1:8000/api/locations",
     fetchOne: "http://127.0.0.1:8000/api/locations",
+    fetchSearch: "http://127.0.0.1:8000/api/locations/search?term=",
     create: "http://127.0.0.1:8000/api/locations",
     update: "http://127.0.0.1:8000/api/locations",
     delete: "http://127.0.0.1:8000/api/locations",
@@ -27,16 +28,19 @@ const UbicationsManager = () => {
     { key: "nam_loc", label: "Nombre" },
   ];
 
-  const message = ["nam_loc"];
+  const message = "nam_loc";
+  const searchBy = "codigo";
 
   return (
     <GenericManager
       apiConfig={apiConfig}
-      entityName="Ubicaciones"
+      entityNamePlural="Ubicaciones"
+      entityNameSingular="Ubicacion"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}
       message={message}
+      searchBy={searchBy}
     />
   );
 };
