@@ -27,12 +27,13 @@ const SuplierManager = () => {
     { key: "pho_sup", label: "Telefono" },
   ];
 
-  const message = ["nam_sup"];
+  const message = "nam_sup";
 
   return (
     <GenericManager
       apiConfig={apiConfig}
       entityName="Proveedores"
+      entityNameAdd="Proveedor"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}

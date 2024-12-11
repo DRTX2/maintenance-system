@@ -4,6 +4,7 @@ const CategoryManager = () => {
   const apiConfig = {
     fetchAll: "http://127.0.0.1:8000/api/category",
     fetchOne: "http://127.0.0.1:8000/api/category/show",
+    fetchSearch: "http://127.0.0.1:8000/api/categories/search?term=",
     create: "http://127.0.0.1:8000/api/category/store",
     update: "http://127.0.0.1:8000/api/category/update",
     delete: "http://127.0.0.1:8000/api/category/destroy",
@@ -23,6 +24,7 @@ const CategoryManager = () => {
 
   const columns = [
     { key: "cod_dis", label: "Código" },
+    { key: "tip_dis", label: "Tipo" },
     { key: "nom_dis", label: "Nombre" },
   ];
 
@@ -31,7 +33,8 @@ const CategoryManager = () => {
   return (
     <GenericManager
       apiConfig={apiConfig}
-      entityName="Categoría"
+      entityName="Categorías"
+      entityNameAdd="Categoria"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}

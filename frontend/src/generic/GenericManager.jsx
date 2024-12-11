@@ -5,6 +5,11 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+
 import GenericStyles from "./styles/GenericStyles";
 import CreateModal from "./CreateModal";
 import ViewModal from "./ViewModal";
@@ -16,6 +21,7 @@ axios.defaults.withCredentials = true;
 const GenericManager = ({
   apiConfig,
   entityName,
+  entityNameAdd,
   defaultEntityState,
   fields,
   columns,
@@ -41,6 +47,21 @@ const GenericManager = ({
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(0);
+  };
+
+  const fetchSearch = async (param) => {
+    if (param === "") {
+      await fetchEntities();
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${apiConfig.fetchSearch}${param}`);
+      setEntities(response.data.results);
+    } catch (error) {
+      toast.error(`Error al obtener ${entityName}.`);
+    } finally {
+    }
   };
 
   const fetchEntities = async () => {
@@ -104,7 +125,6 @@ const GenericManager = ({
     try {
       const response = await axios.get(`${apiConfig.fetchOne}/${id}`);
       setEntity(response.data.result);
-      console.log(response);
     } catch {
       toast.error(`Error al obtener ${entityName}.`);
     }
@@ -137,14 +157,42 @@ const GenericManager = ({
       style={{ width: "80%", marginTop: "40px" }}
     >
       <Box className="flewColumnCenter">
-        <Box className="flexRowCenterEnd">
+        <Box
+          className="flexRowCenterEnd"
+          style={{ justifyContent: "space-between", width: "100%" }}
+        >
+          <h2>{entityName}</h2>
+
+          {/* Busqueda por search */}
+          <Paper
+            component="form"
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              margin: "0 15px",
+              width: 400,
+            }}
+          >
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder="Buscar en base al nombre..."
+              inputProps={{ "aria-label": "Buscar ..." }}
+              onChange={(e) => fetchSearch(e.target.value)}
+            />
+            <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+
+          {/* Boton para añadir */}
           <Button
             onClick={openCreateModal}
             variant="contained"
             sx={GenericStyles.buttonStyle}
             startIcon={<AddIcon />}
           >
-            Agregar {entityName}
+            Agregar {entityNameAdd}
           </Button>
         </Box>
 

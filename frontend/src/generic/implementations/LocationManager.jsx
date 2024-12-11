@@ -27,12 +27,13 @@ const UbicationsManager = () => {
     { key: "nam_loc", label: "Nombre" },
   ];
 
-  const message = ["nam_loc"];
+  const message = "nam_loc";
 
   return (
     <GenericManager
       apiConfig={apiConfig}
       entityName="Ubicaciones"
+      entityNameAdd="Ubicacion"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}

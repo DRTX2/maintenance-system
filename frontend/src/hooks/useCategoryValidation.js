@@ -26,7 +26,7 @@ const useCategoryValidation = (initialValues) => {
   };
 
   const resetFields = () => {
-    isInitialMount.current = true; // Resetea la bandera para permitir reinicio
+    isInitialMount.current = true; 
     setCategory(initialValues);
     setErrors({});
   };
