@@ -101,7 +101,7 @@ export const generateErrorMessage = (errors, fields) => {
 
   fields.forEach((field) => {
     if (errors[field.key]) {
-      message += errors[field.key] + " ";
+      message += errors[field.key] + "\t";
     }
   });
 

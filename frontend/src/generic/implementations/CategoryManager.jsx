@@ -10,18 +10,21 @@ const CategoryManager = () => {
     delete: "http://127.0.0.1:8000/api/category/destroy",
   };
 
+  // El estado inicial del objeto, necesario para saber que enviar al backend y lo que este devuelva.
   const defaultEntityState = {
     cod_dis: "",
     tip_dis: "",
     nom_dis: "",
   };
 
+  // Campos que se muestran en los modales.
   const fields = [
     { key: "cod_dis", label: "Código" },
     { key: "tip_dis", label: "Tipo" },
     { key: "nom_dis", label: "Nombre" },
   ];
 
+  // Campos que se muestran en las tablas.
   const columns = [
     { key: "cod_dis", label: "Código" },
     { key: "tip_dis", label: "Tipo" },
@@ -34,8 +37,8 @@ const CategoryManager = () => {
   return (
     <GenericManager
       apiConfig={apiConfig}
-      entityName="Categorías"
-      entityNameAdd="Categoria"
+      entityNamePlural="Categorías"
+      entityNameSingular="Categoria"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}

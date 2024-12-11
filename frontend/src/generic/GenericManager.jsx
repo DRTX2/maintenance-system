@@ -21,8 +21,8 @@ axios.defaults.withCredentials = true;
 
 const GenericManager = ({
   apiConfig,
-  entityName,
-  entityNameAdd,
+  entityNamePlural,
+  entityNameSingular,
   defaultEntityState,
   fields,
   columns,
@@ -66,7 +66,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityName}`);
+        toast.error(`Error inesperado al crear ${entityNamePlural}`);
       }
     }
   };
@@ -81,7 +81,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityName}`);
+        toast.error(`Error inesperado al crear ${entityNamePlural}`);
       }
     } finally {
       setIsLoading(false);
@@ -92,14 +92,14 @@ const GenericManager = ({
     try {
       await axios.post(apiConfig.create, item);
       await fetchEntities();
-      toast.success(`${entityName} creado con éxito.`);
+      toast.success(`${entityNameSingular} creado con éxito.`);
     } catch (error) {
       if (error.response && error.response.data.errors) {
         const errors = error.response.data.errors;
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityName}`);
+        toast.error(`Error inesperado al crear ${entityNamePlural}`);
       }
     }
   };
@@ -108,7 +108,7 @@ const GenericManager = ({
     try {
       await axios.put(`${apiConfig.update}/${item.id}`, item);
       await fetchEntities();
-      toast.success(`${entityName} actualizado con éxito.`);
+      toast.success(`${entityNameSingular} actualizado con éxito.`);
       setIsEditing(false);
       setModalViewOpen(false);
     } catch (error) {
@@ -117,7 +117,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityName}`);
+        toast.error(`Error inesperado al crear ${entityNameSingular}`);
       }
     }
   };
@@ -139,7 +139,7 @@ const GenericManager = ({
         return prevEntities;
       });
 
-      toast.success(`${entityName} eliminado con éxito.`);
+      toast.success(`${entityNameSingular} eliminado con éxito.`);
       setModalDeleteOpen(false);
     } catch (error) {
       if (error.response && error.response.data.errors) {
@@ -147,7 +147,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityName}`);
+        toast.error(`Error inesperado al eliminar ${entityNameSingular}`);
       }
     }
   };
@@ -162,7 +162,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityName}`);
+        toast.error(`Error inesperado al ver ${entityNameSingular}`);
       }
     }
   };
@@ -198,7 +198,7 @@ const GenericManager = ({
           className="flexRowCenterEnd"
           style={{ justifyContent: "space-between", width: "100%" }}
         >
-          <h2>{entityName}</h2>
+          <h2>{entityNamePlural}</h2>
 
           {/* Busqueda por search */}
           <Paper
@@ -229,7 +229,7 @@ const GenericManager = ({
             sx={GenericStyles.buttonStyle}
             startIcon={<AddIcon />}
           >
-            Agregar {entityNameAdd}
+            Agregar {entityNameSingular}
           </Button>
         </Box>
 
