@@ -110,11 +110,17 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Categoría actualizada', 'data' => $category], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Captura los errores de validación
+            $errors = $e->errors();
+        
+            $errorMessages = collect($errors)
+                ->flatten()
+                ->implode(' ');
+
             return response()->json([
                 'message' => 'Errores de validación',
-                'errors' => $e->errors()
+                'errors' => $errorMessages
             ], 422);
+
         } catch (\Exception $e) {
             // Captura cualquier otro error
             return response()->json(['message' => 'Error al actualizar la categoría'], 500);

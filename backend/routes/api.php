@@ -21,7 +21,7 @@ Route::get('/suppliers/{id}', [SuppliersController::class, 'show']);
 Route::post('/suppliers', [SuppliersController::class, 'store']);
 Route::put('/suppliers/{id}', [SuppliersController::class, 'update']);
 Route::delete('/suppliers/{id}', [SuppliersController::class, 'destroy']);
-Route::get('/suppliers/search', [SuppliersController::class, 'search']);
+Route::post('/suppliers/search', [SuppliersController::class, 'search']);
 
 Route::get('category', [CategoryController::class, 'index']);
 Route::post('category/store', [CategoryController::class, 'store']);
