@@ -98,4 +98,22 @@ class LocationController extends Controller
     }
 
 
+    public function search(Request $request)
+    {
+        $request->validate([
+            'term' => 'required|string|max:25',
+        ]);
+
+        $term = $request->input('term');
+
+        $locations = Location::where('cod_loc', 'LIKE', "%{$term}%")->get();
+
+        return response()->json([
+            'results' => $locations,
+            'message' => 'Búsqueda realizada con éxito.',
+        ], 200);
+    }
+
+
+
 }

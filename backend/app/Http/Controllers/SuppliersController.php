@@ -17,7 +17,7 @@ class SuppliersController extends Controller
 
         return response()->json([
             'results' => $supliers,
-            'message' => 'Categoria obtenida con exito.'
+            'message' => 'Proveedor obtenido con exito.'
         ], 200);
     }
 
@@ -25,18 +25,8 @@ class SuppliersController extends Controller
     {
         try {
             $supplier = Supplier::findOrFail($id);
-
-            $transformedSupplier = [
-                'id' => $supplier->id,
-                'nam_sup' => $supplier->nam_sup,
-                'ema_sup' => $supplier->ema_sup,
-                'pho_sup' => $supplier->pho_sup,
-                'created_at' => $supplier->created_at->toDateString(),
-                'updated_at' => $supplier->updated_at->toDateString(),
-            ];
-
             return response()->json([
-                'result' => $transformedSupplier,
+                'result' => $supplier,
                 'message' => 'Operación exitosa',
             ], 200);
         } catch (ModelNotFoundException $e) {
@@ -52,6 +42,7 @@ class SuppliersController extends Controller
         try {
             $validated = $request->validated();
             $supplier = Supplier::create([
+                'id_num_sup' => $validated['id_num_sup'],
                 'nam_sup' => $validated['nam_sup'],
                 'ema_sup' => $validated['ema_sup'],
                 'pho_sup' => $validated['pho_sup'],
@@ -79,19 +70,48 @@ class SuppliersController extends Controller
 
     public function update(SupplierRequest $request, $id)
     {
-        $supplier = Supplier::findOrFail($id);
+        try {
+            // Buscar al proveedor por el ID
+            $supplier = Supplier::findOrFail($id);
 
-        $validated = $request->validated();
-        $supplier->update([
-            'nam_sup' => $validated['nam_sup'],
-            'ema_sup' => $validated['ema_sup'],
-            'pho_sup' => $validated['pho_sup'],
-        ]);
+            // Validar los datos recibidos
+            $validated = $request->validated();
 
-        return response()->json([
-            'message' => 'Proveedor actualizado con éxito',
-            'data' => $supplier,
-        ], 200);
+            // Actualizar el proveedor
+            $supplier->update([
+                'id_num_sup' => $validated['id_num_sup'],
+                'nam_sup' => $validated['nam_sup'],
+                'ema_sup' => $validated['ema_sup'],
+                'pho_sup' => $validated['pho_sup'],
+            ]);
+
+            // Respuesta exitosa
+            return response()->json([
+                'message' => 'Proveedor actualizado con éxito',
+                'data' => $supplier,
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            // Si el proveedor no se encuentra
+            return response()->json([
+                'message' => 'Proveedor no encontrado',
+                'error' => $e->getMessage(),
+            ], 404);
+
+        } catch (ValidationException $e) {
+            // Manejar errores de validación
+            return response()->json([
+                'message' => 'Datos no válidos',
+                'errors' => $e->errors(),  // Retorna los errores de validación
+            ], 422);
+
+        } catch (Exception $e) {
+            // Capturar otros errores generales
+            return response()->json([
+                'message' => 'Hubo un error al actualizar el proveedor.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy($id)
@@ -111,4 +131,21 @@ class SuppliersController extends Controller
             ], 404);
         }
     }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'term' => 'required|string|max:25',
+        ]);
+
+        $term = $request->input('term');
+
+        $suppliers = Supplier::where('pho_sup', 'LIKE', "%{$term}%")->get();
+
+        return response()->json([
+            'results' => $suppliers,
+            'message' => 'Búsqueda realizada con éxito.',
+        ], 200);
+    }
+
 }

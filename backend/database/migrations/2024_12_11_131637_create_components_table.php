@@ -10,20 +10,20 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('suppliers', function (Blueprint $table) {
+        Schema::create('components', function (Blueprint $table) {
             $table->id();
-            $table->string("id_num_sup", 10)->unique();
-            $table->string("nam_sup", 25);
-            $table->string("ema_sup", 25)->unique();
-            $table->string("pho_sup", 10)->unique();
+            $table->string("cod_com", 10)->unique();
+            $table->string("nom_com", 25);
+            $table->string("des_com", 50);
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('components');
     }
-
-
 };
