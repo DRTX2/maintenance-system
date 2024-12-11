@@ -136,9 +136,9 @@ class SuppliersController extends Controller
         $request->validate([
             'term' => 'required|string|max:25',
         ]);
-        $term=$request["term"]??"";
-        $suppliers = Supplier::where('nam_sup', 'LIKE', "%$term%")->get();
-    
+        $term = $request["term"] ?? "";
+        $suppliers = Supplier::where('id_num_sup', 'LIKE', "%$term%")->get();
+
         return response()->json([
             'results' => $suppliers,
             'message' => 'Búsqueda realizada con éxito.',
