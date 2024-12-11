@@ -29,7 +29,6 @@ Route::put('category/update/{id}', [CategoryController::class, 'update']);
 Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
 Route::get('/categories/search', [CategoryController::class, 'search']);
 
-
 Route::middleware([JwtMiddleware::class])->group(function () {
     // Coloca aqui las rutas que estarán protegidas.
 });
