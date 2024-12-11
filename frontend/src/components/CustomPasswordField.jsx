@@ -9,7 +9,8 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-function CustomPasswordField() {
+// Componente que recibe 'value' y 'onChange' para controlar el estado
+function CustomPasswordField({ value, onChange }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -25,6 +26,8 @@ function CustomPasswordField() {
         type={showPassword ? "text" : "password"}
         name="password"
         size="small"
+        value={value}  // Valor controlado
+        onChange={onChange}  // Actualiza el estado
         endAdornment={
           <InputAdornment position="end">
             <IconButton

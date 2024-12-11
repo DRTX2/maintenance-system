@@ -21,6 +21,11 @@ export default function SlotsSignIn() {
 
   const handleLogin = async () => {
     try {
+      if(!email || !password)
+        throw new Error("Campos vacios");
+      console.log(email);
+      console.log(password);
+
       const response = await axios.post(`${BASE_API}/login`, {
         email,
         password,
