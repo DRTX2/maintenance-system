@@ -16,6 +16,7 @@ axios.defaults.withCredentials = true;
 const GenericManager = ({
   apiConfig,
   entityName,
+  entityNameAdd,
   defaultEntityState,
   fields,
   columns,
@@ -137,14 +138,18 @@ const GenericManager = ({
       style={{ width: "80%", marginTop: "40px" }}
     >
       <Box className="flewColumnCenter">
-        <Box className="flexRowCenterEnd">
+        <Box
+          className="flexRowCenterEnd"
+          style={{ justifyContent: "space-between", width: "100%" }}
+        >
+          <h2>{entityName}</h2>
           <Button
             onClick={openCreateModal}
             variant="contained"
             sx={GenericStyles.buttonStyle}
             startIcon={<AddIcon />}
           >
-            Agregar {entityName}
+            Agregar {entityNameAdd}
           </Button>
         </Box>
 

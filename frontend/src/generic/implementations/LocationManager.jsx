@@ -33,6 +33,7 @@ const UbicationsManager = () => {
     <GenericManager
       apiConfig={apiConfig}
       entityName="Ubicaciones"
+      entityNameAdd="Ubicacion"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}

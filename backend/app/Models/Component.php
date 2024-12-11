@@ -3,8 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Component extends Model
 {
-    //
+    protected $hidden = ['created_at', 'updated_at'];
+    protected $fillable = ["cod_com", "cod_com", "des_com"];
+
+
+    public function categories(): BelongsToMany
+    {
+
+        return $this->belongsToMany(Category::class);
+    }
+
 }

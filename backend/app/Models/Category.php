@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
@@ -14,5 +15,11 @@ class Category extends Model
         'tip_dis',
         'nom_dis'
     ];
+
+    public function components(): BelongsToMany
+    {
+
+        return $this->belongsToMany(Component::class);
+    }
 
 }

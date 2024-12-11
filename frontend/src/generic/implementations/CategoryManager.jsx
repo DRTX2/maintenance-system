@@ -23,6 +23,7 @@ const CategoryManager = () => {
 
   const columns = [
     { key: "cod_dis", label: "Código" },
+    { key: "tip_dis", label: "Tipo" },
     { key: "nom_dis", label: "Nombre" },
   ];
 
@@ -31,7 +32,8 @@ const CategoryManager = () => {
   return (
     <GenericManager
       apiConfig={apiConfig}
-      entityName="Categoría"
+      entityName="Categorías"
+      entityNameAdd="Categoria"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}
