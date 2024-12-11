@@ -45,9 +45,9 @@ class CategoryController extends Controller
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            
+
             $errors = $e->errors();
-        
+
             $errorMessages = collect($errors)
                 ->flatten()
                 ->implode(' ');
@@ -59,7 +59,7 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
             // Captura cualquier otro error
             return response()->json([
-                "message"=>'Error inesperado',
+                "message" => 'Error inesperado',
                 'errors' => $e->getMessage(),
             ], 500);
         }
@@ -111,7 +111,7 @@ class CategoryController extends Controller
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->errors();
-        
+
             $errorMessages = collect($errors)
                 ->flatten()
                 ->implode(' ');
@@ -158,7 +158,7 @@ class CategoryController extends Controller
             ]);
 
             $term = $request->input('term');
-            $categories = Category::where('nom_dis', 'LIKE', "%{$term}%")->get();
+            $categories = Category::where('cod_dis', 'LIKE', "%{$term}%")->get();
 
             return response()->json([
                 'results' => $categories,
