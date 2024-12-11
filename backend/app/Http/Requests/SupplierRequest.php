@@ -22,5 +22,13 @@ class SupplierRequest extends FormRequest
             'pho_sup' => 'required|string|max:20|unique:suppliers,pho_sup,' . $id,
         ];
     }
+    public function messages()
+    {
+        return [
+            'id_num_sup.unique' => 'El número de cédula ya está registrado.',
+            'ema_sup.unique' => 'El correo electrónico ya está registrado.',
+            'pho_sup.unique' => 'El número de teléfono ya está registrado.',
+        ];
+    }
 
 }

@@ -52,7 +52,6 @@ class SuppliersController extends Controller
                 'message' => 'Proveedor creado con éxito',
                 'data' => $supplier,
             ], 201);
-
         } catch (ValidationException $e) {
             $errors = $e->errors();
             return response()->json([
@@ -140,7 +139,7 @@ class SuppliersController extends Controller
 
         $term = $request->input('term');
 
-        $suppliers = Supplier::where('pho_sup', 'LIKE', "%{$term}%")->get();
+        $suppliers = Supplier::where('id_num_sup', 'LIKE', "%{$term}%")->get();
 
         return response()->json([
             'results' => $suppliers,

@@ -21,6 +21,7 @@ Route::get('/suppliers/{id}', [SuppliersController::class, 'show']);
 Route::post('/suppliers', [SuppliersController::class, 'store']);
 Route::put('/suppliers/{id}', [SuppliersController::class, 'update']);
 Route::delete('/suppliers/{id}', [SuppliersController::class, 'destroy']);
+Route::get('/suppliers/search', [SuppliersController::class, 'search']);
 
 Route::get('category', [CategoryController::class, 'index']);
 Route::post('category/store', [CategoryController::class, 'store']);
@@ -41,6 +42,7 @@ Route::post('/locations', [LocationController::class, 'store']);
 Route::get('/locations/{id}', [LocationController::class, 'show']);
 Route::put('/locations/{id}', [LocationController::class, 'update']);
 Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
+Route::get('/locations/search', [LocationController::class, 'search']);
 
 Route::get('incomes', [IncomeController::class, 'index']);
 Route::get('incomes/{id}', [IncomeController::class, 'show']);
