@@ -45,15 +45,22 @@ class CategoryController extends Controller
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Captura los errores de validación
+
+            $errors = $e->errors();
+
+            $errorMessages = collect($errors)
+                ->flatten()
+                ->implode(' ');
+
             return response()->json([
                 'message' => 'Errores de validación',
-                'errors' => $e->errors()
+                'errors' => $errorMessages
             ], 422);
         } catch (\Exception $e) {
             // Captura cualquier otro error
             return response()->json([
-                'error' => $e->getMessage(),
+                "message" => 'Error inesperado',
+                'errors' => $e->getMessage(),
             ], 500);
         }
     }
@@ -103,11 +110,17 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Categoría actualizada', 'data' => $category], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Captura los errores de validación
+            $errors = $e->errors();
+
+            $errorMessages = collect($errors)
+                ->flatten()
+                ->implode(' ');
+
             return response()->json([
                 'message' => 'Errores de validación',
-                'errors' => $e->errors()
+                'errors' => $errorMessages
             ], 422);
+
         } catch (\Exception $e) {
             // Captura cualquier otro error
             return response()->json(['message' => 'Error al actualizar la categoría'], 500);
@@ -145,7 +158,7 @@ class CategoryController extends Controller
             ]);
 
             $term = $request->input('term');
-            $categories = Category::where('nom_dis', 'LIKE', "%{$term}%")->get();
+            $categories = Category::where('cod_dis', 'LIKE', "%{$term}%")->get();
 
             return response()->json([
                 'results' => $categories,
