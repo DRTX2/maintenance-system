@@ -32,7 +32,7 @@ const CategoryManager = () => {
   ];
 
   const message = "nom_dis";
-  const searchBy = "nombre";
+  const searchBy = "codigo";
 
   return (
     <GenericManager

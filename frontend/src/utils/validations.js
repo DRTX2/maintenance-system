@@ -99,11 +99,17 @@ export const validateField = (key, value) => {
 export const generateErrorMessage = (errors, fields) => {
   let message = "";
 
+  console.log(errors);
+  console.log(fields);
   fields.forEach((field) => {
+    console.log(errors[field.key]);
     if (errors[field.key]) {
-      message += errors[field.key] + "\t";
+      console.log("where am i", errors[field.key]);
+      message += errors[field.key] + " ";
     }
   });
+
+  console.log(message);
 
   return message.trim();
 };

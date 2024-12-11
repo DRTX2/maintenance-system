@@ -58,7 +58,7 @@ const GenericManager = ({
     }
 
     try {
-      const response = await axios.get(`${apiConfig.fetchSearch}${param}`);
+      const response = await axios.post(`${apiConfig.fetchSearch}${param}`);
       setEntities(response.data.results);
     } catch (error) {
       if (error.response && error.response.data.errors) {
