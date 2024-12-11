@@ -4,6 +4,7 @@ const UbicationsManager = () => {
   const apiConfig = {
     fetchAll: "http://127.0.0.1:8000/api/locations",
     fetchOne: "http://127.0.0.1:8000/api/locations",
+    fetchSearch: "http://127.0.0.1:8000/api/locations/search?term=",
     create: "http://127.0.0.1:8000/api/locations",
     update: "http://127.0.0.1:8000/api/locations",
     delete: "http://127.0.0.1:8000/api/locations",
@@ -28,6 +29,7 @@ const UbicationsManager = () => {
   ];
 
   const message = "nam_loc";
+  const searchBy = "codigo";
 
   return (
     <GenericManager
@@ -38,6 +40,7 @@ const UbicationsManager = () => {
       fields={fields}
       columns={columns}
       message={message}
+      searchBy={searchBy}
     />
   );
 };

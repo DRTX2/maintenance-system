@@ -95,3 +95,15 @@ export const validateField = (key, value) => {
 
   return ""; // Sin error
 };
+
+export const generateErrorMessage = (errors, fields) => {
+  let message = "";
+
+  fields.forEach((field) => {
+    if (errors[field.key]) {
+      message += errors[field.key] + " ";
+    }
+  });
+
+  return message.trim();
+};

@@ -29,6 +29,7 @@ const CategoryManager = () => {
   ];
 
   const message = "nom_dis";
+  const searchBy = "nombre";
 
   return (
     <GenericManager
@@ -39,6 +40,7 @@ const CategoryManager = () => {
       fields={fields}
       columns={columns}
       message={message}
+      searchBy={searchBy}
     />
   );
 };

@@ -15,6 +15,7 @@ import CreateModal from "./CreateModal";
 import ViewModal from "./ViewModal";
 import DeleteModal from "./DeleteModal";
 import ContentGenericTable from "./ContentGenericTable";
+import { generateErrorMessage } from "../utils/validations";
 
 axios.defaults.withCredentials = true;
 
@@ -26,6 +27,7 @@ const GenericManager = ({
   fields,
   columns,
   message,
+  searchBy,
 }) => {
   const [entities, setEntities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,8 +61,13 @@ const GenericManager = ({
       const response = await axios.get(`${apiConfig.fetchSearch}${param}`);
       setEntities(response.data.results);
     } catch (error) {
-      toast.error(`Error al obtener ${entityName}.`);
-    } finally {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al crear ${entityName}`);
+      }
     }
   };
 
@@ -69,7 +76,13 @@ const GenericManager = ({
       const response = await axios.get(apiConfig.fetchAll);
       setEntities(response.data.results);
     } catch (error) {
-      toast.error(`Error al obtener ${entityName}s.`);
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al crear ${entityName}`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -80,8 +93,14 @@ const GenericManager = ({
       await axios.post(apiConfig.create, item);
       await fetchEntities();
       toast.success(`${entityName} creado con éxito.`);
-    } catch {
-      toast.error(`Error al crear ${entityName}.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al crear ${entityName}`);
+      }
     }
   };
 
@@ -92,8 +111,14 @@ const GenericManager = ({
       toast.success(`${entityName} actualizado con éxito.`);
       setIsEditing(false);
       setModalViewOpen(false);
-    } catch {
-      toast.error(`Error al actualizar ${entityName}.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al crear ${entityName}`);
+      }
     }
   };
 
@@ -116,8 +141,14 @@ const GenericManager = ({
 
       toast.success(`${entityName} eliminado con éxito.`);
       setModalDeleteOpen(false);
-    } catch {
-      toast.error(`Error al eliminar ${entityName}.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al crear ${entityName}`);
+      }
     }
   };
 
@@ -125,8 +156,14 @@ const GenericManager = ({
     try {
       const response = await axios.get(`${apiConfig.fetchOne}/${id}`);
       setEntity(response.data.result);
-    } catch {
-      toast.error(`Error al obtener ${entityName}.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al crear ${entityName}`);
+      }
     }
   };
 
@@ -176,7 +213,7 @@ const GenericManager = ({
           >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Buscar en base al nombre..."
+              placeholder={"Buscar por " + searchBy}
               inputProps={{ "aria-label": "Buscar ..." }}
               onChange={(e) => fetchSearch(e.target.value)}
             />

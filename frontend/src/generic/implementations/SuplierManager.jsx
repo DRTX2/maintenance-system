@@ -4,6 +4,7 @@ const SuplierManager = () => {
   const apiConfig = {
     fetchAll: "http://127.0.0.1:8000/api/suppliers",
     fetchOne: "http://127.0.0.1:8000/api/suppliers",
+    fetchSearch: "http://127.0.0.1:8000/api/suppliers/search?term=",
     create: "http://127.0.0.1:8000/api/suppliers",
     update: "http://127.0.0.1:8000/api/suppliers",
     delete: "http://127.0.0.1:8000/api/suppliers",
@@ -31,6 +32,7 @@ const SuplierManager = () => {
   ];
 
   const message = "nam_sup";
+  const searchBy = "cedula";
 
   return (
     <GenericManager
@@ -41,6 +43,7 @@ const SuplierManager = () => {
       fields={fields}
       columns={columns}
       message={message}
+      searchBy={searchBy}
     />
   );
 };
