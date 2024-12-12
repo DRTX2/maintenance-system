@@ -13,4 +13,8 @@ class Income extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
+
+    public function assets(){
+        return $this->hasMany(Asset::class,"id_inc_ass");
+    }
 }
