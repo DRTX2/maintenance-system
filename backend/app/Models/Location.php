@@ -10,4 +10,7 @@ class Location extends Model
     protected $hidden = ['created_at', 'updated_at'];
     protected $fillable = ["cod_loc", "nam_loc"];
 
+    public function assets(){
+        return $this->hasMany(Asset::class, 'id_loc_ass');
+    }
 }
