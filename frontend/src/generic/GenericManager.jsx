@@ -244,6 +244,7 @@ const GenericManager = ({
             rowsPerPage={rowsPerPage}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
+            entityName={entityNamePlural}
           />
         </Box>
       </Box>
