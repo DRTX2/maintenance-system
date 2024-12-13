@@ -66,7 +66,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityNamePlural}`);
+        toast.error(`Error inesperado al obtener ${entityNamePlural}`);
       }
     }
   };
@@ -81,7 +81,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityNamePlural}`);
+        toast.error(`Error inesperado al obtener ${entityNamePlural}`);
       }
     } finally {
       setIsLoading(false);
@@ -92,7 +92,7 @@ const GenericManager = ({
     try {
       await axios.post(apiConfig.create, item);
       await fetchEntities();
-      toast.success(`${entityNameSingular} creado con éxito.`);
+      toast.success(`Registro creado correctamente.`);
     } catch (error) {
       if (error.response && error.response.data.errors) {
         const errors = error.response.data.errors;
@@ -108,7 +108,7 @@ const GenericManager = ({
     try {
       await axios.put(`${apiConfig.update}/${item.id}`, item);
       await fetchEntities();
-      toast.success(`${entityNameSingular} actualizado con éxito.`);
+      toast.success(`Registro actualizado correctamente.`);
       setIsEditing(false);
       setModalViewOpen(false);
     } catch (error) {
@@ -117,7 +117,7 @@ const GenericManager = ({
         let errorMessage = generateErrorMessage(errors, fields);
         toast.error(`${errorMessage}`);
       } else {
-        toast.error(`Error inesperado al crear ${entityNameSingular}`);
+        toast.error(`Error inesperado al actualizar ${entityNameSingular}`);
       }
     }
   };
@@ -139,7 +139,7 @@ const GenericManager = ({
         return prevEntities;
       });
 
-      toast.success(`${entityNameSingular} eliminado con éxito.`);
+      toast.success(`Registro eliminado con éxito.`);
       setModalDeleteOpen(false);
     } catch (error) {
       if (error.response && error.response.data.errors) {
