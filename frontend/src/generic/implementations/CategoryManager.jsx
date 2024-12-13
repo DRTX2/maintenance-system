@@ -37,8 +37,8 @@ const CategoryManager = () => {
   return (
     <GenericManager
       apiConfig={apiConfig}
-      entityNamePlural="Categorías"
-      entityNameSingular="Categoria"
+      entityNamePlural="Dispositivos"
+      entityNameSingular="Dispositivo"
       defaultEntityState={defaultEntityState}
       fields={fields}
       columns={columns}
