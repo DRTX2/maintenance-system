@@ -47,36 +47,45 @@ export default function SlotsSignIn() {
         {showRegister ? (
           <SignUpForm onBackToLogin={() => setShowRegister(false)} />
         ) : (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              marginTop: "10%",
-            }}
-          >
-            <Typography variant="h5">Login</Typography>
-            {/* Campo de correo electrónico */}
-            <CustomEmailField
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {/* Campo de contraseña */}
-            <CustomPasswordField
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {/* Botón de Login */}
-            <CustomButton label="Log In" onClick={handleLogin} />
-            {/* Enlace para ir al registro */}
-            <Typography variant="body2">
-              Don’t have an account?{" "}
-              <Link href="#" onClick={() => setShowRegister(true)}>
-                Sign up
-              </Link>
-            </Typography>
-          </Box>
+          <>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center", // Centrar horizontalmente
+                alignItems: "center", // Centrar verticalmente
+                minHeight: "100vh", // Altura completa de la pantalla
+                padding: "16px", // Espaciado interno
+                boxSizing: "border-box", // Incluir padding en el tamaño total
+              }}
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  maxWidth: "400px", // Ancho máximo del formulario
+                  backgroundColor: "#fff", // Opcional: color de fondo
+                  padding: "24px", // Espaciado interno
+                  borderRadius: "8px", // Bordes redondeados
+                  boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Sombra para destacar
+                }}
+              >
+                <Typography variant="h5" sx={{ marginBottom: "20px" }}>
+                  Login
+                </Typography>
+                {/* Campo de correo electrónico */}
+                <CustomEmailField
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                {/* Campo de contraseña */}
+                <CustomPasswordField
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {/* Botón de Login */}
+                <CustomButton label="Log In" onClick={handleLogin} />
+              </Box>
+            </Box>
+          </>
         )}
 
         {/* Snackbar para mostrar el error */}
