@@ -1,22 +1,59 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import { NAVIGATION } from "../components/NavigationConfig";
+import { navigation } from "../components/NavigationConfig";
 import { demoTheme } from "../components/Theme";
 import DemoPageContent from "../components/DemoPageContent";
 import EngineeringIcon from "@mui/icons-material/Engineering";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/api";
+
 function Dashboard({ window }) {
+  const navigate = useNavigate();
+
+  // Obteniendo el token
+  const token = localStorage.getItem("jwt_token");
+  const [session, setSession] = useState(() => {
+    if (token) {
+      try {
+        // Decodifica el token
+        const data = jwtDecode(token);
+
+        // Devuelve la información del usuario para la sesión
+        return {
+          user: {
+            name: data.name,
+            email: data.email,
+          },
+        };
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        return null;
+      }
+    }
+    return null;
+  });
+
+  const authentication = {
+    signOut: async () => {
+      await axiosInstance.post("/logout");
+      localStorage.removeItem("jwt_token");
+      setSession(null);
+      navigate("/");
+    },
+  };
+
   const router = useDemoRouter("/dashboard");
-  const demoWindow = window !== undefined ? window() : undefined;
 
   return (
     <AppProvider
-      navigation={NAVIGATION}
+      session={session}
+      authentication={authentication}
+      navigation={navigation}
       router={router}
       theme={demoTheme}
-      window={demoWindow}
       branding={{
         logo: <EngineeringIcon style={{ color: "white", fontSize: 35 }} />,
         title: (
@@ -30,9 +67,5 @@ function Dashboard({ window }) {
     </AppProvider>
   );
 }
-
-Dashboard.propTypes = {
-  window: PropTypes.func,
-};
 
 export default Dashboard;

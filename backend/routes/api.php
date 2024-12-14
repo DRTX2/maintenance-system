@@ -14,6 +14,7 @@ use App\Http\Middleware\JwtMiddleware;
 // Coloca aqui las rutas que no estarán protegidas.
 Route::post('register', [JWTAuthController::class, 'register']);
 Route::post('login', [JWTAuthController::class, 'login']);
+Route::post('logout', [JWTAuthController::class, 'logout']);
 
 
 Route::get('/suppliers', [SuppliersController::class, 'index']);

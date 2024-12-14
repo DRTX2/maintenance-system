@@ -8,7 +8,8 @@ import BuildIcon from "@mui/icons-material/Build";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import HandymanIcon from "@mui/icons-material/Handyman";
-export const NAVIGATION = [
+
+export const navigation = [
   {
     segment: "usuarios",
     title: "Usuarios",
@@ -18,7 +19,7 @@ export const NAVIGATION = [
     segment: "proveedores",
     title: "Proveedores",
     icon: <LocalShippingIcon style={{ color: "white" }} />,
-    path:"/suppliers",
+    path: "/suppliers",
   },
   {
     segment: "ubicaciones",

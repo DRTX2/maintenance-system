@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import SuplierMaganer from "../generic/implementations/SuplierManager";
 import LocationManager from "../generic/implementations/LocationManager";
 import CategoryManager from "../generic/implementations/CategoryManager";
-import SlotsSignIn from "./SlotsSignIn";
 
 function DemoPageContent({ pathname }) {
-  const [isRegistered, setregister] = useState(false);
-
   const renderContent = (pathname) => {
     switch (pathname) {
       case "/usuarios":
