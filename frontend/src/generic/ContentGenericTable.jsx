@@ -12,6 +12,7 @@ const ContentGenericTable = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  entityName,
 }) => {
   if (isLoading) {
     return (
@@ -32,7 +33,7 @@ const ContentGenericTable = ({
   if (data.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
-        No hay nada que mostrar.
+        No hay {entityName} registrados.
       </div>
     );
   }

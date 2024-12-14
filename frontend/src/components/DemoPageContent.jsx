@@ -8,11 +8,11 @@ import SlotsSignIn from "./SlotsSignIn";
 
 function DemoPageContent({ pathname }) {
   const [isRegistered, setregister] = useState(false);
-  
+
   const renderContent = (pathname) => {
     switch (pathname) {
       case "/usuarios":
-        return <SlotsSignIn />;
+        return <div>Bienvenido a usarios</div>;
       case "/proveedores":
         return <SuplierMaganer />;
       case "/ubicaciones":

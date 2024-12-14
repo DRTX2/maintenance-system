@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -19,7 +20,9 @@ return new class extends Migration {
             $table->string('role')->default('user');
             $table->rememberToken();
             $table->timestamps();
+
         });
+        DB::statement("ALTER TABLE users ADD CONSTRAINT check_role CHECK (role IN ('user', 'admin'));");
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

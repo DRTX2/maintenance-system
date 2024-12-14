@@ -48,13 +48,10 @@ class CategoryController extends Controller
 
             $errors = $e->errors();
 
-            $errorMessages = collect($errors)
-                ->flatten()
-                ->implode(' ');
 
             return response()->json([
                 'message' => 'Errores de validación',
-                'errors' => $errorMessages
+                'errors' => $errors
             ], 422);
         } catch (\Exception $e) {
             // Captura cualquier otro error
@@ -112,13 +109,11 @@ class CategoryController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->errors();
 
-            $errorMessages = collect($errors)
-                ->flatten()
-                ->implode(' ');
+
 
             return response()->json([
                 'message' => 'Errores de validación',
-                'errors' => $errorMessages
+                'errors' => $errors
             ], 422);
 
         } catch (\Exception $e) {
