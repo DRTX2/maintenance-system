@@ -2,12 +2,12 @@ import GenericManager from "../GenericManager";
 
 const UbicationsManager = () => {
   const apiConfig = {
-    fetchAll: "http://127.0.0.1:8000/api/locations",
-    fetchOne: "http://127.0.0.1:8000/api/locations",
-    fetchSearch: "http://127.0.0.1:8000/api/locations/search?term=",
-    create: "http://127.0.0.1:8000/api/locations",
-    update: "http://127.0.0.1:8000/api/locations",
-    delete: "http://127.0.0.1:8000/api/locations",
+    fetchAll: "/locations",
+    fetchOne: "/locations",
+    fetchSearch: "/locations/search?term=",
+    create: "/locations",
+    update: "/locations",
+    delete: "/locations",
   };
 
   // La definción del objeto, utilizado para obtener valores y otras cosas

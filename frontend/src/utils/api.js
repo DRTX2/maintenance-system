@@ -8,10 +8,8 @@ const axiosInstance = axios.create({
 // Interceptor para añadir el token a las solicitudes
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Obtén el token del localStorage
     const token = localStorage.getItem("jwt_token");
 
-    // Si hay token, agrega el encabezado Authorization
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

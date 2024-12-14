@@ -2,12 +2,12 @@ import GenericManager from "../GenericManager";
 
 const SuplierManager = () => {
   const apiConfig = {
-    fetchAll: "http://127.0.0.1:8000/api/suppliers",
-    fetchOne: "http://127.0.0.1:8000/api/suppliers",
-    fetchSearch: "http://127.0.0.1:8000/api/suppliers/search?term=",
-    create: "http://127.0.0.1:8000/api/suppliers",
-    update: "http://127.0.0.1:8000/api/suppliers",
-    delete: "http://127.0.0.1:8000/api/suppliers",
+    fetchAll: "/suppliers",
+    fetchOne: "/suppliers",
+    fetchSearch: "/suppliers/search?term=",
+    create: "/suppliers",
+    update: "/suppliers",
+    delete: "/suppliers",
   };
 
   const defaultEntityState = {

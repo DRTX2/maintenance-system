@@ -4,7 +4,6 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 
 // Componente que recibe 'value' y 'onChange' para controlar el estado
 function CustomEmailField({ value, onChange, errors }) {
-  console.log(errors);
   return (
     <TextField
       id="input-with-icon-textfield"

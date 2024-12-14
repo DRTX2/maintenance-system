@@ -15,9 +15,8 @@ import CreateModal from "./CreateModal";
 import ViewModal from "./ViewModal";
 import DeleteModal from "./DeleteModal";
 import ContentGenericTable from "./ContentGenericTable";
+import axiosInstance from "../utils/api";
 import { generateErrorMessage } from "../utils/validations";
-
-axios.defaults.withCredentials = true;
 
 const GenericManager = ({
   apiConfig,
@@ -58,7 +57,9 @@ const GenericManager = ({
     }
 
     try {
-      const response = await axios.post(`${apiConfig.fetchSearch}${param}`);
+      const response = await axiosInstance.post(
+        `${apiConfig.fetchSearch}${param}`
+      );
       setEntities(response.data.results);
     } catch (error) {
       if (error.response && error.response.data.errors) {
@@ -73,7 +74,7 @@ const GenericManager = ({
 
   const fetchEntities = async () => {
     try {
-      const response = await axios.get(apiConfig.fetchAll);
+      const response = await axiosInstance.get(apiConfig.fetchAll);
       setEntities(response.data.results);
     } catch (error) {
       if (error.response && error.response.data.errors) {
@@ -90,7 +91,7 @@ const GenericManager = ({
 
   const handleCreate = async (item) => {
     try {
-      await axios.post(apiConfig.create, item);
+      await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();
       toast.success(`Registro creado correctamente.`);
     } catch (error) {
@@ -106,7 +107,7 @@ const GenericManager = ({
 
   const handleUpdate = async (item) => {
     try {
-      await axios.put(`${apiConfig.update}/${item.id}`, item);
+      await axiosInstance.put(`${apiConfig.update}/${item.id}`, item);
       await fetchEntities();
       toast.success(`Registro actualizado correctamente.`);
       setIsEditing(false);
@@ -124,7 +125,7 @@ const GenericManager = ({
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${apiConfig.delete}/${id}`);
+      await axiosInstance.delete(`${apiConfig.delete}/${id}`);
       await fetchEntities();
 
       // Validar la página actual
@@ -154,7 +155,7 @@ const GenericManager = ({
 
   const handleView = async (id) => {
     try {
-      const response = await axios.get(`${apiConfig.fetchOne}/${id}`);
+      const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
       setEntity(response.data.result);
     } catch (error) {
       if (error.response && error.response.data.errors) {

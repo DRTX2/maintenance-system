@@ -2,12 +2,12 @@ import GenericManager from "../GenericManager";
 
 const CategoryManager = () => {
   const apiConfig = {
-    fetchAll: "http://127.0.0.1:8000/api/category",
-    fetchOne: "http://127.0.0.1:8000/api/category/show",
-    fetchSearch: "http://127.0.0.1:8000/api/categories/search?term=",
-    create: "http://127.0.0.1:8000/api/category/store",
-    update: "http://127.0.0.1:8000/api/category/update",
-    delete: "http://127.0.0.1:8000/api/category/destroy",
+    fetchAll: "/category",
+    fetchOne: "/category/show",
+    fetchSearch: "/categories/search?term=",
+    create: "/category/store",
+    update: "/category/update",
+    delete: "/category/destroy",
   };
 
   // El estado inicial del objeto, necesario para saber que enviar al backend y lo que este devuelva.

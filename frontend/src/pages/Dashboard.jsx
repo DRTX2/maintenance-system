@@ -18,10 +18,10 @@ function Dashboard({ window }) {
   const [session, setSession] = useState(() => {
     if (token) {
       try {
-        // Decodifica el token
+        // Decodificando el token
         const data = jwtDecode(token);
 
-        // Devuelve la información del usuario para la sesión
+        // Devolviendo la información para la sesión
         return {
           user: {
             name: data.name,
