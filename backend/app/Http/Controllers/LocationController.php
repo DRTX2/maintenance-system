@@ -105,27 +105,17 @@ class LocationController extends Controller
 
     public function search(Request $request)
     {
-        try {
-            // Validación de la búsqueda
-            $validated = $request->validate([
-                'term' => 'required|string|max:25',
-            ]);
+        $request->validate([
+            'term' => 'required|string|max:25',
+        ]);
 
-            $term = $validated['term'];
+        $term = $request["term"] ?? "";
+        $locations = Location::where('cod_loc', 'LIKE', "%$term%")->get();
 
-            // Buscar ubicaciones que coincidan con el término
-            $locations = Location::where('cod_loc', 'LIKE', "%{$term}%")->get();
-
-            return response()->json([
-                'results' => $locations,
-                'message' => 'Búsqueda realizada con éxito.',
-            ], 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Captura los errores de validación
-            return response()->json([
-                'message' => 'Errores de validación',
-                'errors' => $e->errors()
-            ], 422);
-        }
+        return response()->json([
+            'results' => $locations,
+            'message' => 'Búsqueda realizada con éxito.',
+        ], 200);
     }
+
 }

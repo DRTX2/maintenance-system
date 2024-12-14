@@ -32,7 +32,6 @@ class JWTAuthController extends Controller
             ]);
 
             $token = JWTAuth::fromUser($user);
-
             return response()->json(compact('user', 'token'), 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Could not create user', 'message' => $e->getMessage()], 500);

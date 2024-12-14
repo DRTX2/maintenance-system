@@ -49,26 +49,44 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Crear</DialogTitle>
       <DialogContent>
-        {fields.map(({ key, label }) => (
-          <Box key={key} className="flexRowCenterStart" sx={CreateStyles.box}>
-            <Typography style={{ marginRight: "16px" }}>{label}</Typography>
-            <TextField
-              label={label}
-              fullWidth
-              value={entity[key] || ""}
-              onChange={(e) => handleFieldChange(key, e.target.value)}
-              error={!!errors[key]}
-              helperText={errors[key]}
-              sx={{ marginTop: "10px" }}
-              InputLabelProps={{
-                shrink: true, // Esto fuerza al label a permanecer arriba
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          {fields.map(({ key, label }) => (
+            <Box
+              key={key}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
               }}
-            />
-          </Box>
-        ))}
+            >
+              <Typography style={{ width: "100px", marginRight: "15px" }}>
+                {label}
+              </Typography>
+              <TextField
+                label={label}
+                fullWidth
+                value={entity[key] || ""}
+                onChange={(e) => handleFieldChange(key, e.target.value)}
+                error={!!errors[key]}
+                helperText={errors[key]}
+                sx={{ marginTop: "20px" }}
+                InputLabelProps={{
+                  shrink: true, // Esto fuerza al label a permanecer arriba
+                }}
+              />
+            </Box>
+          ))}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button

@@ -58,9 +58,9 @@ const ViewModal = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
-        Ver dispositivo
+        Ver
         <Box style={{ position: "absolute", right: "20px", top: "16px" }}>
           <FormControlLabel
             control={
@@ -74,23 +74,41 @@ const ViewModal = ({
         </Box>
       </DialogTitle>
       <DialogContent>
-        {fields.map(({ key, label }) => (
-          <Box key={key} className="flexRowCenterStart" sx={ViewStyles.box}>
-            <Typography style={{ marginRight: "16px" }}>{label}</Typography>
-            <TextField
-              label={label}
-              fullWidth
-              value={entity[key] || ""}
-              onChange={(e) => handleFieldChange(key, e.target.value)}
-              error={!!errors[key]}
-              helperText={errors[key]}
-              InputProps={{
-                readOnly: !isEditing,
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          {fields.map(({ key, label }) => (
+            <Box
+              key={key}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
               }}
-              sx={{ marginTop: "15px" }}
-            />
-          </Box>
-        ))}
+            >
+              <Typography style={{ width: "100px", marginRight: "15px" }}>
+                {label}
+              </Typography>
+              <TextField
+                label={label}
+                fullWidth
+                value={entity[key] || ""}
+                onChange={(e) => handleFieldChange(key, e.target.value)}
+                error={!!errors[key]}
+                helperText={errors[key]}
+                InputProps={{
+                  readOnly: !isEditing,
+                }}
+                sx={{ marginTop: "15px" }}
+              />
+            </Box>
+          ))}
+        </Box>
       </DialogContent>
       <DialogActions>
         {isEditing ? (

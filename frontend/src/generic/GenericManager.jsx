@@ -5,22 +5,29 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+
 import GenericStyles from "./styles/GenericStyles";
 import CreateModal from "./CreateModal";
 import ViewModal from "./ViewModal";
 import DeleteModal from "./DeleteModal";
 import ContentGenericTable from "./ContentGenericTable";
+import { generateErrorMessage } from "../utils/validations";
 
 axios.defaults.withCredentials = true;
 
 const GenericManager = ({
   apiConfig,
-  entityName,
-  entityNameAdd,
+  entityNamePlural,
+  entityNameSingular,
   defaultEntityState,
   fields,
   columns,
   message,
+  searchBy,
 }) => {
   const [entities, setEntities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,12 +51,38 @@ const GenericManager = ({
     setCurrentPage(0);
   };
 
+  const fetchSearch = async (param) => {
+    if (param === "") {
+      await fetchEntities();
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${apiConfig.fetchSearch}${param}`);
+      setEntities(response.data.results);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al obtener ${entityNamePlural}`);
+      }
+    }
+  };
+
   const fetchEntities = async () => {
     try {
       const response = await axios.get(apiConfig.fetchAll);
       setEntities(response.data.results);
     } catch (error) {
-      toast.error(`Error al obtener ${entityName}s.`);
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al obtener ${entityNamePlural}`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -59,9 +92,15 @@ const GenericManager = ({
     try {
       await axios.post(apiConfig.create, item);
       await fetchEntities();
-      toast.success(`${entityName} creado con éxito.`);
-    } catch {
-      toast.error(`Error al crear ${entityName}.`);
+      toast.success(`Registro creado correctamente.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al crear ${entityNamePlural}`);
+      }
     }
   };
 
@@ -69,11 +108,17 @@ const GenericManager = ({
     try {
       await axios.put(`${apiConfig.update}/${item.id}`, item);
       await fetchEntities();
-      toast.success(`${entityName} actualizado con éxito.`);
+      toast.success(`Registro actualizado correctamente.`);
       setIsEditing(false);
       setModalViewOpen(false);
-    } catch {
-      toast.error(`Error al actualizar ${entityName}.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al actualizar ${entityNameSingular}`);
+      }
     }
   };
 
@@ -94,10 +139,16 @@ const GenericManager = ({
         return prevEntities;
       });
 
-      toast.success(`${entityName} eliminado con éxito.`);
+      toast.success(`Registro eliminado con éxito.`);
       setModalDeleteOpen(false);
-    } catch {
-      toast.error(`Error al eliminar ${entityName}.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al eliminar ${entityNameSingular}`);
+      }
     }
   };
 
@@ -105,9 +156,14 @@ const GenericManager = ({
     try {
       const response = await axios.get(`${apiConfig.fetchOne}/${id}`);
       setEntity(response.data.result);
-      console.log(response);
-    } catch {
-      toast.error(`Error al obtener ${entityName}.`);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        let errorMessage = generateErrorMessage(errors, fields);
+        toast.error(`${errorMessage}`);
+      } else {
+        toast.error(`Error inesperado al ver ${entityNameSingular}`);
+      }
     }
   };
 
@@ -142,14 +198,38 @@ const GenericManager = ({
           className="flexRowCenterEnd"
           style={{ justifyContent: "space-between", width: "100%" }}
         >
-          <h2>{entityName}</h2>
+          <h2>{entityNamePlural}</h2>
+
+          {/* Busqueda por search */}
+          <Paper
+            component="form"
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              margin: "0 15px",
+              width: 400,
+            }}
+          >
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder={"Buscar por " + searchBy}
+              inputProps={{ "aria-label": "Buscar ..." }}
+              onChange={(e) => fetchSearch(e.target.value)}
+            />
+            <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+
+          {/* Boton para añadir */}
           <Button
             onClick={openCreateModal}
             variant="contained"
             sx={GenericStyles.buttonStyle}
             startIcon={<AddIcon />}
           >
-            Agregar {entityNameAdd}
+            Agregar {entityNameSingular}
           </Button>
         </Box>
 
@@ -164,6 +244,7 @@ const GenericManager = ({
             rowsPerPage={rowsPerPage}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
+            entityName={entityNamePlural}
           />
         </Box>
       </Box>

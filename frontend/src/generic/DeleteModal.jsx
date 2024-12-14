@@ -11,14 +11,9 @@ import DeleteStyles from "./styles/DeleteStyles";
 
 const DeleteModal = ({ open, onClose, onDelete, item, message }) => {
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      aria-labelledby="delete-confirmation-title"
-      aria-describedby="delete-confirmation-description"
-    >
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle id="delete-confirmation-title">
-        Confirmar Eliminación
+        Confirmar eliminación
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-confirmation-description">
@@ -26,7 +21,7 @@ const DeleteModal = ({ open, onClose, onDelete, item, message }) => {
           <strong style={{ color: "#6068A5" }}>
             {item[message] || item?.id}
           </strong>
-          ? Esta acción no se puede deshacer.
+          {""}?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
