@@ -21,6 +21,7 @@ const DeleteModal = ({ open, onClose, onDelete, item, message }) => {
           <strong style={{ color: "#6068A5" }}>
             {item[message] || item?.id}
           </strong>
+          {""}?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
