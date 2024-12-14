@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('components', function (Blueprint $table) {
             $table->id();
             $table->string("cod_com", 10)->unique();
-            $table->string("nom_com", 25);
+            $table->string("nam_com", 25);
             $table->string("des_com", 50);
             $table->timestamps();
         });

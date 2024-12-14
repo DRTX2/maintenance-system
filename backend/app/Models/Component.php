@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Component extends Model
 {
     protected $hidden = ['created_at', 'updated_at'];
-    protected $fillable = ["cod_com", "cod_com", "des_com"];
+    protected $fillable = ["cod_com", "nam_com", "des_com"];
 
 
     public function categories(): BelongsToMany
