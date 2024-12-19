@@ -17,8 +17,10 @@ return new class extends Migration
             $table->timestamp("ended_at")
             ->nullable();// como el created_at de un time_stamp seria un dateTime para saber cuando termino
             $table->string("cod_man",10);
-            $table->string("typ_man",40);
-            //no estoy seguro de la relacion activo->responsable->mantenimiento
+            $table->string("typ_man",45);
+            // necesita la tabla de referencia
+            // $table->foreignId("dni_res_man")
+            // ->constrained("responsibles","dni_res")->onDelete("restrict");
 
         });
     }
