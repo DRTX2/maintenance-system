@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SlotsSignIn from "./components/SlotsSignIn";
+import LogIn from "./components/login/LogIn";
+import PrivateRoute from "./components/protected/PrivateRoute";
 
 function App() {
   return (
@@ -11,8 +12,15 @@ function App() {
       <ToastContainer autoClose={2000} pauseOnFocusLoss={false} />
       <Router>
         <Routes>
-          <Route path="/" element={<SlotsSignIn />}></Route>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<LogIn />}></Route>
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
     </>

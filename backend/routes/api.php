@@ -22,7 +22,7 @@ Route::post('/users/search', [UserController::class, 'search']);
 // Coloca aqui las rutas que no estarán protegidas.
 Route::post('register', [JWTAuthController::class, 'register']);
 Route::post('login', [JWTAuthController::class, 'login']);
-
+Route::post('logout', [JWTAuthController::class, 'logout']);
 
 Route::get('/suppliers', [SuppliersController::class, 'index']);
 Route::post('/suppliers', [SuppliersController::class, 'store']);

@@ -5,19 +5,27 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
+  FormHelperText,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 // Componente que recibe 'value' y 'onChange' para controlar el estado
-function CustomPasswordField({ value, onChange }) {
+function CustomPasswordField({ value, onChange, errors }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
+  const hasError = !!errors["pas_log"]; // Comprueba si hay error
+
   return (
-    <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
+    <FormControl
+      sx={{ my: 2 }}
+      fullWidth
+      variant="outlined"
+      error={hasError} // Aplica el estilo de error al FormControl
+    >
       <InputLabel size="small" htmlFor="outlined-adornment-password">
         Password
       </InputLabel>
@@ -26,8 +34,8 @@ function CustomPasswordField({ value, onChange }) {
         type={showPassword ? "text" : "password"}
         name="password"
         size="small"
-        value={value}  // Valor controlado
-        onChange={onChange}  // Actualiza el estado
+        value={value}
+        onChange={onChange}
         endAdornment={
           <InputAdornment position="end">
             <IconButton
@@ -47,6 +55,9 @@ function CustomPasswordField({ value, onChange }) {
         }
         label="Password"
       />
+      {hasError && (
+        <FormHelperText>{errors["pas_log"]}</FormHelperText> // Muestra el mensaje de error
+      )}
     </FormControl>
   );
 }

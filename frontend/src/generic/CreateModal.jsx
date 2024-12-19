@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { validateField, validateFields } from "../utils/validations";
 import CreateStyles from "./styles/CreateStyles";
+import DynamicField from "./DynamicField";
 
 const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
   const [entity, setEntity] = useState(defaultState);
@@ -59,9 +60,9 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
             alignItems: "flex-start",
           }}
         >
-          {fields.map(({ key, label }) => (
+          {fields.map((field) => (
             <Box
-              key={key}
+              key={field.key}
               sx={{
                 display: "flex",
                 flexDirection: "row",
@@ -70,19 +71,17 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
               }}
             >
               <Typography style={{ width: "100px", marginRight: "15px" }}>
-                {label}
+                {field.label}
               </Typography>
-              <TextField
-                label={label}
-                fullWidth
-                value={entity[key] || ""}
-                onChange={(e) => handleFieldChange(key, e.target.value)}
-                error={!!errors[key]}
-                helperText={errors[key]}
-                sx={{ marginTop: "20px" }}
-                InputLabelProps={{
-                  shrink: true, // Esto fuerza al label a permanecer arriba
-                }}
+
+              <DynamicField
+                key={field.key}
+                field={field}
+                value={entity[field.key]}
+                onChange={handleFieldChange}
+                error={errors[field.key]}
+                helperText={errors[field.key]}
+                readOnly={false}
               />
             </Box>
           ))}
