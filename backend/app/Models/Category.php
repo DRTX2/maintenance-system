@@ -18,8 +18,11 @@ class Category extends Model
 
     public function components(): BelongsToMany
     {
-
         return $this->belongsToMany(Component::class);
+    }
+
+    public function assets(){
+        return $this->hasMany(Asset::class,"id_inc_ass");
     }
 
 }

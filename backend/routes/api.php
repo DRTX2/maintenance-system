@@ -7,9 +7,17 @@ use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\SuppliersController;
-
-
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\JwtMiddleware;
+
+// no probadas
+Route::get('/users', [UserController::class, 'index']);
+Route::post('/users', [UserController::class, 'store']);
+Route::get('/users/{id}', [UserController::class, 'show']);
+Route::put('/users/{id}', [UserController::class, 'update']);
+Route::delete('/users/{id}', [UserController::class, 'destroy']);
+Route::post('/users/search', [UserController::class, 'search']);
+
 
 // Coloca aqui las rutas que no estarán protegidas.
 Route::post('register', [JWTAuthController::class, 'register']);
@@ -17,8 +25,8 @@ Route::post('login', [JWTAuthController::class, 'login']);
 Route::post('logout', [JWTAuthController::class, 'logout']);
 
 Route::get('/suppliers', [SuppliersController::class, 'index']);
-Route::get('/suppliers/{id}', [SuppliersController::class, 'show']);
 Route::post('/suppliers', [SuppliersController::class, 'store']);
+Route::get('/suppliers/{id}', [SuppliersController::class, 'show']);
 Route::put('/suppliers/{id}', [SuppliersController::class, 'update']);
 Route::delete('/suppliers/{id}', [SuppliersController::class, 'destroy']);
 Route::post('/suppliers/search', [SuppliersController::class, 'search']);
