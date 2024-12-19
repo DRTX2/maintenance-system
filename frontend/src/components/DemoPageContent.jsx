@@ -4,12 +4,13 @@ import Box from "@mui/material/Box";
 import SuplierMaganer from "../generic/implementations/SuplierManager";
 import LocationManager from "../generic/implementations/LocationManager";
 import CategoryManager from "../generic/implementations/CategoryManager";
+import UserManager from "../generic/implementations/UserManager";
 
 function DemoPageContent({ pathname }) {
   const renderContent = (pathname) => {
     switch (pathname) {
       case "/usuarios":
-        return <div>Bienvenido a usarios</div>;
+        return <UserManager />;
       case "/proveedores":
         return <SuplierMaganer />;
       case "/ubicaciones":

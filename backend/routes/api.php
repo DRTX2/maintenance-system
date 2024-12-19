@@ -16,7 +16,6 @@ Route::post('register', [JWTAuthController::class, 'register']);
 Route::post('login', [JWTAuthController::class, 'login']);
 Route::post('logout', [JWTAuthController::class, 'logout']);
 
-
 Route::get('/suppliers', [SuppliersController::class, 'index']);
 Route::get('/suppliers/{id}', [SuppliersController::class, 'show']);
 Route::post('/suppliers', [SuppliersController::class, 'store']);
