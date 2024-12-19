@@ -75,7 +75,6 @@ const GenericManager = ({
   const fetchEntities = async () => {
     try {
       const response = await axiosInstance.get(apiConfig.fetchAll);
-      console.log(response);
       setEntities(response.data.results);
     } catch (error) {
       if (error.response && error.response.data.errors) {
@@ -92,6 +91,7 @@ const GenericManager = ({
 
   const handleCreate = async (item) => {
     try {
+      console.log(item);
       await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();
       toast.success(`Registro creado correctamente.`);

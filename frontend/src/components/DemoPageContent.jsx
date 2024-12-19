@@ -3,20 +3,20 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import SuplierMaganer from "../generic/implementations/SuplierManager";
 import LocationManager from "../generic/implementations/LocationManager";
-import CategoryManager from "../generic/implementations/CategoryManager";
 import UserManager from "../generic/implementations/UserManager";
+import ResponsibleManager from "../generic/implementations/ResponsibleManager";
 
 function DemoPageContent({ pathname }) {
   const renderContent = (pathname) => {
     switch (pathname) {
       case "/usuarios":
         return <UserManager />;
+      case "/responsables":
+        return <ResponsibleManager />;
       case "/proveedores":
         return <SuplierMaganer />;
       case "/ubicaciones":
         return <LocationManager />;
-      case "/dispositivos":
-        return <CategoryManager />;
       default:
         return <div>Bienvenido al Dashboard</div>;
     }

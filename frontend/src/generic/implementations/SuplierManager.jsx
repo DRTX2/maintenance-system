@@ -18,10 +18,10 @@ const SuplierManager = () => {
   };
 
   const fields = [
-    { key: "id_num_sup", label: "Cédula" },
-    { key: "nam_sup", label: "Nombre" },
-    { key: "ema_sup", label: "Correo" },
-    { key: "pho_sup", label: "Telefono" },
+    { key: "id_num_sup", label: "Cédula", type: "text" },
+    { key: "nam_sup", label: "Nombre", type: "text" },
+    { key: "ema_sup", label: "Correo", type: "text" },
+    { key: "pho_sup", label: "Telefono", type: "text" },
   ];
 
   const columns = [

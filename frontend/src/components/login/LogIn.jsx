@@ -35,7 +35,7 @@ const LogIn = () => {
 
   const validateAll = () => {
     const validationErrors = validateFields(unkow, [
-      { key: "ema_pas" },
+      { key: "ema_log" },
       { key: "pas_log" },
     ]);
     setErrors(validationErrors);
@@ -50,8 +50,14 @@ const LogIn = () => {
         password: unkow.pas_log,
       });
       const { token } = response.data;
-      localStorage.setItem("jwt_token", token);
-      navigate("/dashboard");
+
+      if (token) {
+        localStorage.setItem("jwt_token", token);
+        navigate("/dashboard");
+      } else {
+        toast.error("Token invalido recibido.");
+        return;
+      }
     } catch (error) {
       if (error.response && error.response.data) {
         const message = error.response.data.error;

@@ -11,9 +11,10 @@ const UserManager = () => {
   };
 
   const defaultEntityState = {
+    role: "",
     name: "",
     email: "",
-    role: "",
+    password: "",
   };
 
   //   En los modales
@@ -23,12 +24,14 @@ const UserManager = () => {
       label: "Rol",
       type: "select",
       options: [
-        { value: "admin", label: "Adminitrador" },
+        { value: "admin", label: "Administrador" },
         { value: "user", label: "Usuario" },
       ],
     },
-    { key: "name", label: "Nombre" },
-    { key: "email", label: "Correo" },
+    { key: "name", label: "Nombre", type: "text" },
+    { key: "email", label: "Correo", type: "text" },
+    // Corregir.
+    { key: "password", label: "Contraseña", type: "password" },
   ];
 
   //   En la tabla
