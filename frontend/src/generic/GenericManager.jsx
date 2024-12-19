@@ -75,6 +75,7 @@ const GenericManager = ({
   const fetchEntities = async () => {
     try {
       const response = await axiosInstance.get(apiConfig.fetchAll);
+      console.log(response);
       setEntities(response.data.results);
     } catch (error) {
       if (error.response && error.response.data.errors) {
@@ -125,7 +126,8 @@ const GenericManager = ({
 
   const handleDelete = async (id) => {
     try {
-      await axiosInstance.delete(`${apiConfig.delete}/${id}`);
+      const response = await axiosInstance.delete(`${apiConfig.delete}/${id}`);
+      console.log(response);
       await fetchEntities();
 
       // Validar la página actual
@@ -156,6 +158,7 @@ const GenericManager = ({
   const handleView = async (id) => {
     try {
       const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
+      console.log(response);
       setEntity(response.data.result);
     } catch (error) {
       if (error.response && error.response.data.errors) {

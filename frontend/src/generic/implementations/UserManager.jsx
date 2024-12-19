@@ -1,34 +1,46 @@
 import GenericManager from "../GenericManager";
 
 const UserManager = () => {
-  const apiConfig = {};
+  const apiConfig = {
+    fetchAll: "/users",
+    fetchOne: "/users",
+    fetchSearch: "/locations/search?term=",
+    create: "/users",
+    update: "/users",
+    delete: "/users",
+  };
 
   const defaultEntityState = {
-    nom_usu: "",
-    ape_usu: "",
-    email_usu: "",
-    rol_usu: "",
+    name: "",
+    email: "",
+    role: "",
   };
 
   //   En los modales
   const fields = [
-    { key: "nom_usu", label: "Nombre" },
-    { key: "ape_usu", label: "Apellido" },
-    { key: "email_usu", label: "Correo" },
-    { key: "pass_usu", label: "Contraseña" },
+    {
+      key: "role",
+      label: "Rol",
+      type: "select",
+      options: [
+        { value: "admin", label: "Adminitrador" },
+        { value: "user", label: "Usuario" },
+      ],
+    },
+    { key: "name", label: "Nombre" },
+    { key: "email", label: "Correo" },
   ];
 
   //   En la tabla
   const columns = [
-    { key: "nom_usu", label: "Nombre" },
-    { key: "ape_usu", label: "Apellido" },
-    { key: "email_usu", label: "Correo" },
-    { key: "pass_usu", label: "Contraseña" },
+    { key: "name", label: "Nombre" },
+    { key: "email", label: "Correo" },
+    { key: "role", label: "Rol" },
   ];
 
-  const message = "nom_usu";
+  const message = "name";
 
-  const searchBy = "cedula";
+  const searchBy = "correo";
 
   return (
     <GenericManager

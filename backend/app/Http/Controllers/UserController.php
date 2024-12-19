@@ -59,7 +59,7 @@ class UserController extends Controller
             ], 404);
 
         return response()->json([
-            "results" => $user,
+            "result" => $user,
             "message" => "Usuario obtenido exitosamente"
         ], 200);
     }

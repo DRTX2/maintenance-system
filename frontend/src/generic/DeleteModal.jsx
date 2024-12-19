@@ -19,7 +19,7 @@ const DeleteModal = ({ open, onClose, onDelete, item, message }) => {
         <DialogContentText id="delete-confirmation-description">
           ¿Estás seguro de que deseas eliminar el{" "}
           <strong style={{ color: "#6068A5" }}>
-            {item[message] || item?.id}
+            {item[message] || item?.id || "Por defecto"}
           </strong>
           {""}?
         </DialogContentText>
