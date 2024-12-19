@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -34,7 +35,7 @@ class UserController extends Controller
             $user = User::create([
                 "name" => $validated["name"],
                 "email" => $validated["email"],
-                "password" => bcrypt($validated["password"]),
+                "password" => Hash::make($validated["password"]),
                 "role" => $validated["role"] ?? "user",
             ]);
 
@@ -80,6 +81,12 @@ class UserController extends Controller
             ], [
                 "email.unique" => "Correo electronico duplicado"
             ]);
+            //si no esta quitarlo del arreglo
+            if(!empty($validatedData["password"])){
+                $validatedData["password"]=Hash::make($validatedData["password"]);
+            }else{ // eliminar clave
+                unset($validatedData["password"]);
+            }
 
             $user->update($validatedData);
 
