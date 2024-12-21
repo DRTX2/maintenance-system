@@ -9,7 +9,12 @@ import PrivateRoute from "./components/protected/PrivateRoute";
 function App() {
   return (
     <>
-      <ToastContainer autoClose={2000} pauseOnFocusLoss={false} />
+      <ToastContainer
+        autoClose={2000}
+        pauseOnFocusLoss={false}
+        limit={1}
+        position="top-right"
+      />
       <Router>
         <Routes>
           <Route path="/" element={<LogIn />}></Route>

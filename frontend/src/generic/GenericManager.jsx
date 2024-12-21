@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Box from "@mui/material/Box";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 
-import Paper from "@mui/material/Paper";
-import InputBase from "@mui/material/InputBase";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-
 import GenericStyles from "./styles/GenericStyles";
 import CreateModal from "./CreateModal";
 import ViewModal from "./ViewModal";
 import DeleteModal from "./DeleteModal";
+import SearchBar from "./SearchBar";
 import ContentGenericTable from "./ContentGenericTable";
 import axiosInstance from "../utils/api";
 import { generateErrorMessage } from "../utils/validations";
@@ -62,13 +57,7 @@ const GenericManager = ({
       );
       setEntities(response.data.results);
     } catch (error) {
-      if (error.response && error.response.data.errors) {
-        const errors = error.response.data.errors;
-        let errorMessage = generateErrorMessage(errors, fields);
-        toast.error(`${errorMessage}`);
-      } else {
-        toast.error(`Error inesperado al obtener ${entityNamePlural}`);
-      }
+      handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
     }
   };
 
@@ -77,13 +66,7 @@ const GenericManager = ({
       const response = await axiosInstance.get(apiConfig.fetchAll);
       setEntities(response.data.results);
     } catch (error) {
-      if (error.response && error.response.data.errors) {
-        const errors = error.response.data.errors;
-        let errorMessage = generateErrorMessage(errors, fields);
-        toast.error(`${errorMessage}`);
-      } else {
-        toast.error(`Error inesperado al obtener ${entityNamePlural}`);
-      }
+      handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
     } finally {
       setIsLoading(false);
     }
@@ -96,13 +79,7 @@ const GenericManager = ({
       await fetchEntities();
       toast.success(`Registro creado correctamente.`);
     } catch (error) {
-      if (error.response && error.response.data.errors) {
-        const errors = error.response.data.errors;
-        let errorMessage = generateErrorMessage(errors, fields);
-        toast.error(`${errorMessage}`);
-      } else {
-        toast.error(`Error inesperado al crear ${entityNamePlural}`);
-      }
+      handleError(error, `Error inesperado al crear ${entityNameSingular}`);
     }
   };
 
@@ -114,13 +91,10 @@ const GenericManager = ({
       setIsEditing(false);
       setModalViewOpen(false);
     } catch (error) {
-      if (error.response && error.response.data.errors) {
-        const errors = error.response.data.errors;
-        let errorMessage = generateErrorMessage(errors, fields);
-        toast.error(`${errorMessage}`);
-      } else {
-        toast.error(`Error inesperado al actualizar ${entityNameSingular}`);
-      }
+      handleError(
+        error,
+        `Error inesperado al actualizar ${entityNameSingular}`
+      );
     }
   };
 
@@ -145,13 +119,7 @@ const GenericManager = ({
       toast.success(`Registro eliminado con éxito.`);
       setModalDeleteOpen(false);
     } catch (error) {
-      if (error.response && error.response.data.errors) {
-        const errors = error.response.data.errors;
-        let errorMessage = generateErrorMessage(errors, fields);
-        toast.error(`${errorMessage}`);
-      } else {
-        toast.error(`Error inesperado al eliminar ${entityNameSingular}`);
-      }
+      handleError(error, `Error inesperado al eliminar ${entityNameSingular}`);
     }
   };
 
@@ -161,13 +129,17 @@ const GenericManager = ({
       console.log(response);
       setEntity(response.data.result);
     } catch (error) {
-      if (error.response && error.response.data.errors) {
-        const errors = error.response.data.errors;
-        let errorMessage = generateErrorMessage(errors, fields);
-        toast.error(`${errorMessage}`);
-      } else {
-        toast.error(`Error inesperado al ver ${entityNameSingular}`);
-      }
+      handleError(error, `Error inesperado al ver ${entityNameSingular}`);
+    }
+  };
+
+  const handleError = (error, defaultMessage) => {
+    if (error.response && error.response.data.errors) {
+      const errors = error.response.data.errors;
+      const errorMessage = generateErrorMessage(errors, fields);
+      toast.error(errorMessage);
+    } else {
+      toast.error(defaultMessage);
     }
   };
 
@@ -195,7 +167,7 @@ const GenericManager = ({
   return (
     <div
       className="flexColumnCenter"
-      style={{ width: "80%", marginTop: "40px" }}
+      style={{ width: "90%", marginTop: "40px" }}
     >
       <Box className="flewColumnCenter">
         <Box
@@ -205,26 +177,10 @@ const GenericManager = ({
           <h2>{entityNamePlural}</h2>
 
           {/* Busqueda por search */}
-          <Paper
-            component="form"
-            sx={{
-              p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              margin: "0 15px",
-              width: 400,
-            }}
-          >
-            <InputBase
-              sx={{ ml: 1, flex: 1 }}
-              placeholder={"Buscar por " + searchBy}
-              inputProps={{ "aria-label": "Buscar ..." }}
-              onChange={(e) => fetchSearch(e.target.value)}
-            />
-            <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
-              <SearchIcon />
-            </IconButton>
-          </Paper>
+          <SearchBar
+            placeholder={`Buscar por ${searchBy}`}
+            onSearch={fetchSearch}
+          />
 
           {/* Boton para añadir */}
           <Button

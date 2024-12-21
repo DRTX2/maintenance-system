@@ -17,6 +17,11 @@ function DemoPageContent({ pathname }) {
         return <SuplierMaganer />;
       case "/ubicaciones":
         return <LocationManager />;
+      case "/ingresos":
+        return <div>Ingresos</div>;
+      case "/activos":
+        return <div>Activos</div>;
+
       default:
         return <div>Bienvenido al Dashboard</div>;
     }
