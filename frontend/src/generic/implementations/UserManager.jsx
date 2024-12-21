@@ -4,7 +4,7 @@ const UserManager = () => {
   const apiConfig = {
     fetchAll: "/users",
     fetchOne: "/users",
-    fetchSearch: "/locations/search?term=",
+    fetchSearch: "/users/search?term=",
     create: "/users",
     update: "/users",
     delete: "/users",

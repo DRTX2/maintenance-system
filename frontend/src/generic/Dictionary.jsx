@@ -34,8 +34,13 @@ const fieldRenderers = {
       ))}
     </TextField>
   ),
-  password: ({ field, value, onChange }) => (
-    <PasswordInput field={field} value={value} onChange={onChange} />
+  password: ({ field, value, onChange, readOnly }) => (
+    <PasswordInput
+      field={field}
+      value={value}
+      onChange={onChange}
+      readOnly={readOnly}
+    />
   ),
 };
 

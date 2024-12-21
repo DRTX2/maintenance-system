@@ -24,6 +24,7 @@ function CustomPasswordField({ value, onChange, errors }) {
       sx={{ my: 2 }}
       fullWidth
       variant="outlined"
+      autoComplete="off"
       error={hasError} // Aplica el estilo de error al FormControl
     >
       <InputLabel size="small" htmlFor="outlined-adornment-password">
@@ -36,6 +37,7 @@ function CustomPasswordField({ value, onChange, errors }) {
         size="small"
         value={value}
         onChange={onChange}
+        autoComplete="off"
         endAdornment={
           <InputAdornment position="end">
             <IconButton

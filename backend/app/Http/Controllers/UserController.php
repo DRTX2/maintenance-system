@@ -82,9 +82,9 @@ class UserController extends Controller
                 "email.unique" => "Correo electronico duplicado"
             ]);
             //si no esta quitarlo del arreglo
-            if(!empty($validatedData["password"])){
-                $validatedData["password"]=Hash::make($validatedData["password"]);
-            }else{ // eliminar clave
+            if (!empty($validatedData["password"])) {
+                $validatedData["password"] = Hash::make($validatedData["password"]);
+            } else { // eliminar clave
                 unset($validatedData["password"]);
             }
 

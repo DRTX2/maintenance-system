@@ -17,6 +17,7 @@ function CustomEmailField({ value, onChange, errors }) {
       onChange={onChange} // Actualiza el estado
       error={!!errors["ema_log"]}
       helperText={errors["ema_log"]}
+      autoComplete="off"
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
