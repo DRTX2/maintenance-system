@@ -31,12 +31,17 @@ Route::put('/suppliers/{id}', [SuppliersController::class, 'update']);
 Route::delete('/suppliers/{id}', [SuppliersController::class, 'destroy']);
 Route::post('/suppliers/search', [SuppliersController::class, 'search']);
 
-Route::get('category', [CategoryController::class, 'index']);
-Route::post('category/store', [CategoryController::class, 'store']);
-Route::get('category/show/{id}', [CategoryController::class, 'show']);
-Route::put('category/update/{id}', [CategoryController::class, 'update']);
-Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
-Route::post('/categories/search', [CategoryController::class, 'search']);
+
+
+//Obtener dispositivos
+Route::get('categories', [CategoryController::class, 'index']);
+Route::get('categories/show/{id}', [CategoryController::class, 'show']);
+
+//Las borrare luego
+// Route::put('category/update/{id}', [CategoryController::class, 'update']);
+// Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
+// Route::post('/categories/search', [CategoryController::class, 'search']);
+// Route::post('category/store', [CategoryController::class, 'store']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
     // Coloca aqui las rutas que estarán protegidas.

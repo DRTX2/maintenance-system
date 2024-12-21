@@ -64,9 +64,11 @@ class JWTAuthController extends Controller
                 'token' => $token
             ], 200);
         } catch (JWTException $e) {
-            return response()->json(['error' => 'Could not create token'], 500);
+            // Mostrar el mensaje de error completo
+            return response()->json(['error' => 'Could not create token', 'details' => $e->getMessage()], 500);
         }
     }
+
 
     // Get authenticated user
     public function getUser()

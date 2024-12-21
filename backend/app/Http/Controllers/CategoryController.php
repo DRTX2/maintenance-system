@@ -10,164 +10,199 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
+
     public function index()
     {
-        $categories = Category::all();
+
+        $devices = Category::all();
+
+        $devices = $devices->map(function ($device) {
+            return $device->only(['cod_dis', 'nom_dis']);
+        });
 
         return response()->json([
-            'results' => $categories,
-            'message' => 'Categoría obtenida con éxito.'
-        ], 200);
+
+            'results' => $devices
+        ]);
+
+
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+
+    public function show($id)
     {
-        try {
-            // Validación de los datos del request
-            $validated = $request->validate([
-                'cod_dis' => 'required|string|max:10|unique:categories,cod_dis',
-                'tip_dis' => 'required|string|max:10',
-                'nom_dis' => 'required|string|max:25'
-            ], [
-                'cod_dis.unique' => 'El código de la categoría ya existe. Por favor, elija otro.'
-            ]);
 
-            // Intentamos crear el registro
-            $category = Category::create($validated);
-
-            // Devolvemos la respuesta
-            return response()->json([
-                'category' => $category,
-                'message' => 'Categoría almacenada correctamente'
-            ], 201);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-
-            $errors = $e->errors();
-
-
-            return response()->json([
-                'message' => 'Errores de validación',
-                'errors' => $errors
-            ], 422);
-        } catch (\Exception $e) {
-            // Captura cualquier otro error
-            return response()->json([
-                "message" => 'Error inesperado',
-                'errors' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $category = Category::find($id);
-
-        if (!$category) {
-            return response()->json(['message' => 'Categoría no encontrada'], 404);
-        }
+        $device = Category::with('components')->findOrFail($id);
 
         return response()->json([
-            'result' => $category,
-            'message' => 'Categoría obtenida con éxito.'
-        ], 200);
+            'device' => $device
+        ]);
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $category = Category::find($id);
 
-        if (!$category) {
-            return response()->json(['message' => 'Categoría no encontrada'], 404);
-        }
+    // public function index()
+    // {
+    //     $categories = Category::all();
 
-        try {
-            // Validación de los campos
-            $validated = $request->validate([
-                'cod_dis' => 'required|unique:categories,cod_dis,' . $category->id,
-                'tip_dis' => 'required|string|max:20',
-                'nom_dis' => 'required|string|max:25',
-            ], [
-                'cod_dis.unique' => 'El código de la categoría ya existe. Por favor, elija otro.'
-            ]);
+    //     return response()->json([
+    //         'results' => $categories,
+    //         'message' => 'Categoría obtenida con éxito.'
+    //     ], 200);
+    // }
 
-            // Actualizar la categoría con los datos validados
-            $category->update($validated);
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         // Validación de los datos del request
+    //         $validated = $request->validate([
+    //             'cod_dis' => 'required|string|max:10|unique:categories,cod_dis',
+    //             'tip_dis' => 'required|string|max:10',
+    //             'nom_dis' => 'required|string|max:25'
+    //         ], [
+    //             'cod_dis.unique' => 'El código de la categoría ya existe. Por favor, elija otro.'
+    //         ]);
 
-            // Responder con la categoría actualizada
-            return response()->json(['message' => 'Categoría actualizada', 'data' => $category], 200);
+    //         // Intentamos crear el registro
+    //         $category = Category::create($validated);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            $errors = $e->errors();
+    //         // Devolvemos la respuesta
+    //         return response()->json([
+    //             'category' => $category,
+    //             'message' => 'Categoría almacenada correctamente'
+    //         ], 201);
+
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+
+    //         $errors = $e->errors();
+
+
+    //         return response()->json([
+    //             'message' => 'Errores de validación',
+    //             'errors' => $errors
+    //         ], 422);
+    //     } catch (\Exception $e) {
+    //         // Captura cualquier otro error
+    //         return response()->json([
+    //             "message" => 'Error inesperado',
+    //             'errors' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    // /**
+    //  * Display the specified resource.
+    //  */
+    // public function show(string $id)
+    // {
+    //     $category = Category::find($id);
+
+    //     if (!$category) {
+    //         return response()->json(['message' => 'Categoría no encontrada'], 404);
+    //     }
+
+    //     return response()->json([
+    //         'result' => $category,
+    //         'message' => 'Categoría obtenida con éxito.'
+    //     ], 200);
+    // }
+
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
+    // public function update(Request $request, string $id)
+    // {
+    //     $category = Category::find($id);
+
+    //     if (!$category) {
+    //         return response()->json(['message' => 'Categoría no encontrada'], 404);
+    //     }
+
+    //     try {
+    //         // Validación de los campos
+    //         $validated = $request->validate([
+    //             'cod_dis' => 'required|unique:categories,cod_dis,' . $category->id,
+    //             'tip_dis' => 'required|string|max:20',
+    //             'nom_dis' => 'required|string|max:25',
+    //         ], [
+    //             'cod_dis.unique' => 'El código de la categoría ya existe. Por favor, elija otro.'
+    //         ]);
+
+    //         // Actualizar la categoría con los datos validados
+    //         $category->update($validated);
+
+    //         // Responder con la categoría actualizada
+    //         return response()->json(['message' => 'Categoría actualizada', 'data' => $category], 200);
+
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         $errors = $e->errors();
 
 
 
-            return response()->json([
-                'message' => 'Errores de validación',
-                'errors' => $errors
-            ], 422);
+    //         return response()->json([
+    //             'message' => 'Errores de validación',
+    //             'errors' => $errors
+    //         ], 422);
 
-        } catch (\Exception $e) {
-            // Captura cualquier otro error
-            return response()->json(['message' => 'Error al actualizar la categoría'], 500);
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         // Captura cualquier otro error
+    //         return response()->json(['message' => 'Error al actualizar la categoría'], 500);
+    //     }
+    // }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $category = Category::find($id);
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
+    // public function destroy(string $id)
+    // {
+    //     $category = Category::find($id);
 
-        if (!$category) {
-            return response()->json(['message' => 'Categoría no encontrada'], 404);
-        }
+    //     if (!$category) {
+    //         return response()->json(['message' => 'Categoría no encontrada'], 404);
+    //     }
 
-        try {
-            $category->delete();
-            return response()->json(['message' => 'Categoría eliminada exitosamente'], 200);
+    //     try {
+    //         $category->delete();
+    //         return response()->json(['message' => 'Categoría eliminada exitosamente'], 200);
 
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error al eliminar la categoría'], 500);
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         return response()->json(['message' => 'Error al eliminar la categoría'], 500);
+    //     }
+    // }
 
-    /**
-     * Search categories based on term.
-     */
-    public function search(Request $request)
-    {
-        try {
-            $request->validate([
-                'term' => 'required|string|max:25',
-            ]);
+    // /**
+    //  * Search categories based on term.
+    //  */
+    // public function search(Request $request)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'term' => 'required|string|max:25',
+    //         ]);
 
-            $term = $request->input('term');
-            $categories = Category::where('cod_dis', 'LIKE', "%{$term}%")->get();
+    //         $term = $request->input('term');
+    //         $categories = Category::where('cod_dis', 'LIKE', "%{$term}%")->get();
 
-            return response()->json([
-                'results' => $categories,
-                'message' => 'Búsqueda realizada con éxito.',
-            ], 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Captura los errores de validación
-            return response()->json([
-                'message' => 'Errores de validación',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            // Captura cualquier otro error
-            return response()->json(['message' => 'Error al realizar la búsqueda'], 500);
-        }
-    }
+    //         return response()->json([
+    //             'results' => $categories,
+    //             'message' => 'Búsqueda realizada con éxito.',
+    //         ], 200);
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         // Captura los errores de validación
+    //         return response()->json([
+    //             'message' => 'Errores de validación',
+    //             'errors' => $e->errors()
+    //         ], 422);
+    //     } catch (\Exception $e) {
+    //         // Captura cualquier otro error
+    //         return response()->json(['message' => 'Error al realizar la búsqueda'], 500);
+    //     }
+    // }
 }
