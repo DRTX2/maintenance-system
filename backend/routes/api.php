@@ -56,9 +56,14 @@ Route::put('/locations/{id}', [LocationController::class, 'update']);
 Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
 Route::post('/locations/search', [LocationController::class, 'search']);
 
-Route::get('incomes', [IncomeController::class, 'index']);
-Route::get('incomes/{id}', [IncomeController::class, 'show']);
-Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
-Route::post('incomes/{supplierId}', [IncomeController::class, 'store']);
-Route::put('incomes/{id}', [IncomeController::class, 'update']);
-Route::delete('incomes/{id}', [IncomeController::class, 'destroy']);
+
+
+
+//Ingresos
+Route::get('/incomes', [IncomeController::class, 'index']);
+Route::post('/incomes', [IncomeController::class, 'store']);
+Route::get('/incomes/{id}', [IncomeController::class, 'show']);
+//Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
+Route::put('/incomes/{id}', [IncomeController::class, 'update']);
+Route::delete('/incomes/{id}', [IncomeController::class, 'destroy']);
+Route::post('/incomes/search', [IncomeController::class, 'search']);
