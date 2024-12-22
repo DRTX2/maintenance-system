@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string("pho_res",10);
             $table->string("is_ext_res",2);
             // $table->string("typ_res",2);
-            $table->string("ema_res")->unique();
+	    $table->string("ema_res")->unique();
+	    $table->string("extra");
             // debo completar los modelos, controladores para mantenimiento-responsable, de paso crear terminar la foreign key
         });
     }
