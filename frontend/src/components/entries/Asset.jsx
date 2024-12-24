@@ -1,18 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Grid2,
-  TextField,
-  Typography,
-  Select,
-  MenuItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Button,
-} from "@mui/material";
+import { Box, Grid2, Typography, Button } from "@mui/material";
 
 import CreateStyles from "../../generic/styles/CreateStyles";
 import DynamicField from "../../generic/DynamicField";
@@ -23,15 +10,16 @@ import { validateField, validateFields } from "../../utils/validations";
 
 const Entry = ({ fields, columns, defaultState }) => {
   const [entity, setEntity] = useState(defaultState);
+  const [relatedData, setRelatedData] = useState({});
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isCategorySelected, setIsCategorySelected] = useState(false);
-  const [relatedData, setRelatedData] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
 
   const resetFields = () => {
     setEntity(defaultState);
+    setRelatedData([]);
     setErrors({});
   };
 
@@ -50,6 +38,43 @@ const Entry = ({ fields, columns, defaultState }) => {
     setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
 
+  // Cambio basado en la fila y su valor.
+  const handleDescription = (id, description) => {
+    setEntity((prevEntity) => {
+      const componentExists = prevEntity.components.some(
+        (component) => component.id === id
+      );
+
+      let updatedComponents;
+
+      // Actualizar el compoentne si existe
+      if (componentExists) {
+        updatedComponents = prevEntity.components.map((component) =>
+          component.id === id
+            ? { ...component, pivot: { ...component.pivot, description } }
+            : component
+        );
+        // Crear el componente si no existe
+      } else {
+        updatedComponents = [
+          ...prevEntity.components,
+          { id, pivot: { description } },
+        ];
+      }
+
+      // Actualizar relatedData para mantener los datos que escribe el usuario en la tabla.
+      setRelatedData((prevData) =>
+        prevData.map((component) =>
+          component.id === id
+            ? { ...component, pivot: { ...component.pivot, description } }
+            : component
+        )
+      );
+
+      return { ...prevEntity, components: updatedComponents };
+    });
+  };
+
   // En este caso el key seria id_cat_ass y el value correspondería al id.
   const handleFetch = async (key, value) => {
     if (key === "id_cat_ass") {
@@ -58,7 +83,16 @@ const Entry = ({ fields, columns, defaultState }) => {
 
       try {
         const response = await axiosInstance.get(`/categories/show/${value}`);
-        setRelatedData(response.data.device.components);
+        const componentsWithDescription = response.data.device.components.map(
+          (component) => ({
+            ...component,
+            pivot: {
+              ...component.pivot,
+              description: component.pivot?.description || "",
+            },
+          })
+        );
+        setRelatedData(componentsWithDescription);
       } catch (error) {
         toast.error("No se ha podido obtener los componentes.");
         setRelatedData([]);
@@ -75,9 +109,15 @@ const Entry = ({ fields, columns, defaultState }) => {
     return Object.keys(validationErrors).length === 0;
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (validateAll()) {
-      //  Manejar el crear en este componente.
+      try {
+        await axiosInstance.post("/assets", { asset: entity });
+        resetFields();
+        toast.success("Activo creado con éxito.");
+      } catch (error) {
+        toast.error("No se ha podido crear el activo.");
+      }
     }
   };
 
@@ -123,13 +163,19 @@ const Entry = ({ fields, columns, defaultState }) => {
               rowsPerPage={rowsPerPage}
               handleChangePage={handleChangePage}
               handleChangeRowsPerPage={handleChangeRowsPerPage}
-            ></AssetTable>{" "}
+              handleDescription={handleDescription}
+            />
           </Box>
         ) : null}
       </Box>
 
       {/* Botones */}
-      <Box marginTop="20px">
+      <Box
+        width="90%"
+        marginTop="20px"
+        display="flex"
+        justifyContent="flex-end"
+      >
         <Button color="secondary" sx={CreateStyles.buttonStyle1}>
           Cancelar
         </Button>

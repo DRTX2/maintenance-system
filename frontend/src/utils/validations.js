@@ -90,6 +90,32 @@ const validationRules = {
     required: true,
     message: "Debe seleccionar una fecha",
   },
+  // Activos
+  cod_ass: {
+    required: true,
+    minLength: 3,
+    message: "Debe tener al menos 3 caracteres",
+  },
+  ser_num_ass: {
+    required: true,
+    minLength: 8,
+    message: "Debe tener al menos 8 caracteres",
+  },
+  id_loc_ass: {
+    required: true,
+    selected: true,
+    message: "Debe seleccionar una ubicaciónn",
+  },
+  id_inc_ass: {
+    required: true,
+    selected: true,
+    message: "Debe selecciona un ingreso",
+  },
+  id_cat_ass: {
+    required: true,
+    selected: true,
+    message: "Debe seleccionar algún tipo",
+  },
 };
 // Todos los campos
 export const validateFields = (data, fields) => {

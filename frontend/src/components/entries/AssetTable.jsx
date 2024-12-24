@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  TextField,
 } from "@mui/material";
 import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
 import tableStyles from "../../generic/styles/TableStyles";
@@ -21,6 +22,7 @@ const ContentTable = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  handleDescription,
 }) => {
   if (isLoading) {
     return (
@@ -46,6 +48,8 @@ const ContentTable = ({
     );
   }
 
+  const filteredColumn = columns.filter((column) => column.showInTable);
+
   return (
     <>
       <TableContainer
@@ -56,7 +60,7 @@ const ContentTable = ({
         <Table>
           <TableHead sx={tableStyles.tableHead}>
             <TableRow>
-              {columns.map((column) => (
+              {filteredColumn.map((column) => (
                 <TableCell key={column.key}>{column.label}</TableCell>
               ))}
             </TableRow>
@@ -67,11 +71,22 @@ const ContentTable = ({
                 currentPage * rowsPerPage,
                 currentPage * rowsPerPage + rowsPerPage
               )
+              // item -> es un componente
               .map((item) => (
                 <TableRow key={item.id}>
-                  {columns.map((column) => (
+                  {filteredColumn.map((column) => (
                     <TableCell key={column.key}>
-                      {(column.key, item[column.key])}
+                      {/* Campo que se genera para la descripción */}
+                      {column.key === "des_com" ? (
+                        <TextField
+                          value={item.pivot?.description || ""}
+                          onChange={(e) =>
+                            handleDescription(item.id, e.target.value)
+                          }
+                        ></TextField>
+                      ) : (
+                        item[column.key]
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>

@@ -55,7 +55,6 @@ const AssetManager = () => {
         }))
       : [{ value: "", label: "No se han encontrado ingresos..." }];
 
-  console.log(categories);
   const resultsCategories =
     categories.length > 0
       ? categories.map((category) => ({
@@ -97,9 +96,9 @@ const AssetManager = () => {
   ];
 
   const columns = [
-    { key: "cod_com", label: "Codigo" },
-    { key: "nam_com", label: "Nombre" },
-    { key: "des_com", label: "Descripción" },
+    { key: "id", label: "Codigo", showInTable: false },
+    { key: "nam_com", label: "Nombre", showInTable: true },
+    { key: "des_com", label: "Descripción", showInTable: true },
   ];
 
   return (
