@@ -14,6 +14,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CustomTablePaginationActions from "./CustomTablePaginationActions";
 import tableStyles from "./styles/TableStyles";
+import { getDecodedToken } from "../utils/authService";
 
 const ContentTable = ({
   data,
@@ -25,6 +26,9 @@ const ContentTable = ({
   handleChangePage,
   handleChangeRowsPerPage,
 }) => {
+  const decodedToken = getDecodedToken();
+  const currentUserEmail = decodedToken.email;
+
   return (
     <>
       <TableContainer
@@ -61,6 +65,7 @@ const ContentTable = ({
                     <IconButton
                       onClick={() => onDelete(item.id)}
                       color="secondary"
+                      disabled={currentUserEmail === item.email}
                     >
                       <DeleteForeverIcon />
                     </IconButton>

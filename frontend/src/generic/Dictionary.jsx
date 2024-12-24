@@ -1,5 +1,6 @@
 import { MenuItem, TextField } from "@mui/material";
 import PasswordInput from "./PasswordInput";
+import SelectDate from "./SelectDate";
 
 const fieldRenderers = {
   text: ({ field, value, onChange, error, helperText, readOnly }) => (
@@ -34,14 +35,17 @@ const fieldRenderers = {
       ))}
     </TextField>
   ),
-  password: ({ field, value, onChange, readOnly }) => (
+  password: ({ field, value, onChange, readOnly, error, helperText }) => (
     <PasswordInput
       field={field}
       value={value}
       onChange={onChange}
       readOnly={readOnly}
+      error={error}
+      helperText={helperText}
     />
   ),
+  date: () => {},
 };
 
 export default fieldRenderers;

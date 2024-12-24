@@ -1,6 +1,6 @@
 import GenericManager from "../GenericManager";
 
-const SuplierManager = () => {
+const SupplierManager = () => {
   const apiConfig = {
     fetchAll: "/suppliers",
     fetchOne: "/suppliers",
@@ -48,4 +48,4 @@ const SuplierManager = () => {
   );
 };
 
-export default SuplierManager;
+export default SupplierManager;

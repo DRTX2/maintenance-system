@@ -30,7 +30,6 @@ const UserManager = () => {
     },
     { key: "name", label: "Nombre", type: "text" },
     { key: "email", label: "Correo", type: "text" },
-    // Corregir.
     { key: "password", label: "Contraseña", type: "password" },
   ];
 

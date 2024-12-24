@@ -6,40 +6,32 @@ import { navigation } from "../components/NavigationConfig";
 import { demoTheme } from "../components/Theme";
 import DemoPageContent from "../components/DemoPageContent";
 import EngineeringIcon from "@mui/icons-material/Engineering";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/api";
+import { getDecodedToken, removeToken } from "../utils/authService";
 
 function Dashboard({ window }) {
   const navigate = useNavigate();
 
-  // Obteniendo el token
-  const token = localStorage.getItem("jwt_token");
   const [session, setSession] = useState(() => {
-    if (token) {
-      try {
-        // Decodificando el token
-        const data = jwtDecode(token);
-
-        // Devolviendo la información para la sesión
-        return {
-          user: {
-            name: data.name,
-            email: data.email,
-          },
-        };
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        return null;
-      }
+    const decodedToken = getDecodedToken();
+    if (!decodedToken) {
+      navigate("/");
+      return null;
     }
-    return null;
+
+    return {
+      user: {
+        name: decodedToken.name,
+        email: decodedToken.email,
+      },
+    };
   });
 
   const authentication = {
     signOut: async () => {
       await axiosInstance.post("/logout");
-      localStorage.removeItem("jwt_token");
+      removeToken();
       setSession(null);
       navigate("/");
     },
