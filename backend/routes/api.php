@@ -54,6 +54,6 @@ Route::post('/locations/search', [LocationController::class, 'search']);
 Route::get('incomes', [IncomeController::class, 'index']);
 Route::get('incomes/{id}', [IncomeController::class, 'show']);
 Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
-Route::post('incomes/{supplierId}', [IncomeController::class, 'store']);
+Route::post('incomes', [IncomeController::class, 'store']);
 Route::put('incomes/{id}', [IncomeController::class, 'update']);
 Route::delete('incomes/{id}', [IncomeController::class, 'destroy']);

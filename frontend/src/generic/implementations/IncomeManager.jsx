@@ -19,8 +19,6 @@ const IncomeManager = () => {
     fetchSuppliers();
   }, []);
 
-  console.log(suppliers);
-
   const apiConfig = {
     fetchAll: "/incomes",
     fetchOne: "/incomes",
@@ -33,8 +31,8 @@ const IncomeManager = () => {
   const defaultEntityState = {
     id_ing: "",
     fec_ing: "",
-    est_inc: "",
-    id_sup_inc: "",
+    state: "",
+    time: "",
   };
 
   const results =
@@ -47,13 +45,22 @@ const IncomeManager = () => {
 
   const fields = [
     { key: "id_ing", label: "Código", type: "text" },
-    { key: "est_inc", label: "Estado", type: "text" },
+    {
+      key: "est_inc",
+      label: "Estado",
+      type: "select",
+      options: [
+        { value: "abierto", label: "Abierto" },
+        { value: "cerrado", label: "Cerrado" },
+      ],
+    },
     {
       key: "id_sup_inc",
       label: "Proveedor",
       type: "select",
       options: results,
     },
+    { key: "fec_ing", label: "Fecha", type: "date" },
   ];
 
   const columns = [

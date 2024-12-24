@@ -70,7 +70,12 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
                 width: "100%",
               }}
             >
-              <Typography style={{ width: "100px", marginRight: "15px" }}>
+              <Typography
+                style={{
+                  width: "100px",
+                  marginRight: "15px",
+                }}
+              >
                 {field.label}
               </Typography>
 

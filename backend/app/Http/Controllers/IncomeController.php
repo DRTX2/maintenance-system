@@ -41,7 +41,7 @@ class IncomeController extends Controller
         return response()->json(["data" => $incomes, "message" => "Operation ends well"], 200);
     }
 
-    public function store(Request $request, $supplierId)
+    public function store(Request $request)
     {
         try {
             $validatedData = $request->validate([
@@ -49,8 +49,13 @@ class IncomeController extends Controller
                 "state" => "required|string|max:1"
             ]);
 
-            Supplier::findOrFail($supplierId);
+            $supplierId = Supplier::findOrFail($request->input("id_sup_inc"));
 
+            if (!$supplierId) {
+                // Lanzar error...
+            }
+
+            // Caso contrario...
             $income = new Income();
             $income->updated_at = $validatedData["time"] ?? now();
             $income->est_inc = $validatedData["state"];

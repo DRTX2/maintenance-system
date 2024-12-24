@@ -84,6 +84,7 @@ const GenericManager = ({
   };
 
   const handleCreate = async (item) => {
+    console.log(item);
     try {
       await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();

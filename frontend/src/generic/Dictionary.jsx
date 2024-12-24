@@ -45,7 +45,14 @@ const fieldRenderers = {
       helperText={helperText}
     />
   ),
-  date: () => {},
+  date: (field, error, helperText, onChange) => (
+    <SelectDate
+      field={field}
+      error={error}
+      helperText={helperText}
+      onChange={onChange}
+    />
+  ),
 };
 
 export default fieldRenderers;
