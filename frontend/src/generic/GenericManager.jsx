@@ -12,6 +12,8 @@ import SearchBar from "./SearchBar";
 import ContentGenericTable from "./ContentGenericTable";
 import axiosInstance from "../utils/api";
 import { generateErrorMessage } from "../utils/validations";
+import { useNavigate } from "react-router-dom";
+import { getDecodedToken } from "../utils/authService";
 
 const GenericManager = ({
   apiConfig,
@@ -34,9 +36,17 @@ const GenericManager = ({
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
 
+  const navigate = useNavigate();
+  const decodedToken = getDecodedToken();
+
   useEffect(() => {
     fetchEntities();
   }, []);
+
+  if (!decodedToken) {
+    navigate("/");
+    return null;
+  }
 
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
 
@@ -55,7 +65,7 @@ const GenericManager = ({
       const response = await axiosInstance.post(
         `${apiConfig.fetchSearch}${param}`
       );
-      setEntities(response.data.results);
+      setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
     }
@@ -64,7 +74,8 @@ const GenericManager = ({
   const fetchEntities = async () => {
     try {
       const response = await axiosInstance.get(apiConfig.fetchAll);
-      setEntities(response.data.results);
+      console.log(response);
+      setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
     } finally {
@@ -73,8 +84,8 @@ const GenericManager = ({
   };
 
   const handleCreate = async (item) => {
+    console.log(item);
     try {
-      console.log(item);
       await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();
       toast.success(`Registro creado correctamente.`);
@@ -100,8 +111,8 @@ const GenericManager = ({
 
   const handleDelete = async (id) => {
     try {
-      const response = await axiosInstance.delete(`${apiConfig.delete}/${id}`);
-      console.log(response);
+      console.log(id);
+      await axiosInstance.delete(`${apiConfig.delete}/${id}`);
       await fetchEntities();
 
       // Validar la página actual
@@ -126,8 +137,8 @@ const GenericManager = ({
   const handleView = async (id) => {
     try {
       const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
-      console.log(response);
-      setEntity(response.data.result);
+      console.log("View", response);
+      setEntity(response?.data?.result);
     } catch (error) {
       handleError(error, `Error inesperado al ver ${entityNameSingular}`);
     }

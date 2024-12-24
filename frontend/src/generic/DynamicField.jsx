@@ -12,7 +12,6 @@ const DynamicField = ({
   if (!Renderer) {
     return null;
   }
-
   return (
     <div style={{ width: "100%", marginTop: "20px" }}>
       {Renderer({

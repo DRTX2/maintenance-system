@@ -1,6 +1,6 @@
 import GenericManager from "../GenericManager";
 
-const SuplierManager = () => {
+const SupplierManager = () => {
   const apiConfig = {
     fetchAll: "/suppliers",
     fetchOne: "/suppliers",
@@ -18,10 +18,34 @@ const SuplierManager = () => {
   };
 
   const fields = [
-    { key: "id_num_sup", label: "Cédula", type: "text" },
-    { key: "nam_sup", label: "Nombre", type: "text" },
-    { key: "ema_sup", label: "Correo", type: "text" },
-    { key: "pho_sup", label: "Telefono", type: "text" },
+    {
+      key: "id_num_sup",
+      label: "Cédula",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
+    {
+      key: "nam_sup",
+      label: "Nombre",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
+    {
+      key: "ema_sup",
+      label: "Correo",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
+    {
+      key: "pho_sup",
+      label: "Telefono",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
   ];
 
   const columns = [
@@ -48,4 +72,4 @@ const SuplierManager = () => {
   );
 };
 
-export default SuplierManager;
+export default SupplierManager;

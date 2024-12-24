@@ -44,7 +44,7 @@ const ViewModal = ({
     setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
 
-  // CUando intente actualizar validar todos los campos.
+  // Cuando intente actualizar validar todos los campos.
   const validateAll = () => {
     const validationErrors = validateFields(entity, fields);
     setErrors(validationErrors);
@@ -57,6 +57,8 @@ const ViewModal = ({
       setIsEditing(false);
     }
   };
+
+  const visibleFields = fields.filter((field) => field.showUpdate);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -82,7 +84,7 @@ const ViewModal = ({
             alignItems: "flex-start",
           }}
         >
-          {fields.map((field) => (
+          {visibleFields.map((field) => (
             <Box
               key={field.key}
               sx={{

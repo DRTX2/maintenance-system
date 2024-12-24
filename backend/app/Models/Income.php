@@ -19,4 +19,8 @@ class Income extends Model
     {
         return $this->hasMany(Asset::class, 'id_inc_ass');
     }
+
+    protected $casts = [
+        'date_inc' => 'date',
+    ];
 }
