@@ -8,7 +8,7 @@ return new class extends Migration {
 
     public function up(): void
     {
-        Schema::create('assets', function (Blueprint $table) {
+        Schema::create('assets', function (Blueprint $table) {// assets=activos
             $table->id();
             $table->foreignId("id_inc_ass")
                 ->constrained("incomes")
