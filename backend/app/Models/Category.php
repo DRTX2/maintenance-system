@@ -10,19 +10,16 @@ class Category extends Model
     // protected $table = "categories";
     // protected $unique = ['cod_dis'];
     // protected $primaryKey = "id";
-    protected $fillable = [
-        'cod_dis',
-        'tip_dis',
-        'nom_dis'
-    ];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function components(): BelongsToMany
     {
         return $this->belongsToMany(Component::class);
     }
 
-    public function assets(){
-        return $this->hasMany(Asset::class,"id_inc_ass");
+    public function assets()
+    {
+        return $this->hasMany(Asset::class, "id_inc_ass");
     }
 
 }

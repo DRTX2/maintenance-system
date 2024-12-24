@@ -9,9 +9,13 @@ return new class extends Migration {
     {
         Schema::create('incomes', function (Blueprint $table) {
             $table->id();
+            $table->string('cod_inc', 10)->unique();
+
+            $table->date('date_inc');
+            //Open Closed
+            $table->enum('est_inc', ['O', 'C'])->default('O');
+            $table->foreignId('supplier_id')->constrained()->onUpdate("cascade")->onDelete("restrict");
             $table->timestamps();
-            $table->string("est_inc", 1);
-            $table->foreignId("id_sup_inc")->constrained("suppliers")->onDelete("cascade");
         });
     }
 
