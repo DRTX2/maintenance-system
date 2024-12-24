@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
+use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\JwtMiddleware;
@@ -69,6 +70,13 @@ Route::put('/incomes/{id}', [IncomeController::class, 'update']);
 Route::delete('/incomes/{id}', [IncomeController::class, 'destroy']);
 Route::post('/incomes/search', [IncomeController::class, 'search']);
 
+//Responsables
+Route::get('/responsibles', [ResponsibleController::class,'index']);
+Route::post('/responsibles', [ResponsibleController::class,'store']);
+Route::get('/responsibles/{dni_res}', [ResponsibleController::class,'show']);
+Route::put('/responsibles/{dni_res}', [ResponsibleController::class,'update']);
+Route::delete('/responsibles/{dni_res}', [ResponsibleController::class,'destroy']);
+Route::post('/responsibles/search', [ResponsibleController::class,'search']);
 //Activos
 Route::get('/assets', [AssetController::class, 'index']);
 Route::post('/assets', [AssetController::class, 'store']);
