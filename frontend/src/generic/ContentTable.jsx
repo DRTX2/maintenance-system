@@ -39,6 +39,10 @@ const ContentTable = ({
       return dayjs(value).utc().format("MM-DD-YYYY");
     }
 
+    if (key === "is_ext") {
+      return value === "Y" ? "Interno" : "Externo";
+    }
+
     return value || "-";
   };
 

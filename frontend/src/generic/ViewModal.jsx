@@ -14,6 +14,7 @@ import {
 import { validateField, validateFields } from "../utils/validations";
 import ViewStyles from "./styles/ViewStyles";
 import DynamicField from "./DynamicField";
+import { toast } from "react-toastify";
 
 const ViewModal = ({
   open,
@@ -28,8 +29,17 @@ const ViewModal = ({
   const [entity, setEntity] = useState(item);
   const [errors, setErrors] = useState({});
 
+  // Item no valido
   useEffect(() => {
-    if (open) {
+    if (open && !item) {
+      toast.error("El elemento no existe o no está definido.");
+      onClose();
+    }
+  }, [open, item, onClose]);
+
+  // Item valido
+  useEffect(() => {
+    if (open && item) {
       setEntity(item);
       setErrors({});
     }
@@ -57,6 +67,11 @@ const ViewModal = ({
       setIsEditing(false);
     }
   };
+
+  // Evitar renderizar el modal
+  if (!open || !item) {
+    return null;
+  }
 
   const visibleFields = fields.filter((field) => field.showUpdate);
 

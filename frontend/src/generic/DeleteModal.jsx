@@ -8,8 +8,24 @@ import {
   Button,
 } from "@mui/material";
 import DeleteStyles from "./styles/DeleteStyles";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const DeleteModal = ({ open, onClose, onDelete, item, message }) => {
+  // Item no valido
+  useEffect(() => {
+    if (open && !item) {
+      toast.error("El elemento no existe o no está definido.");
+      onClose();
+    }
+  }, [open, item, onClose]);
+
+  // Evitar renderizar el modal
+  if (!item) {
+    return null;
+  }
+
+  // Item valido
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle id="delete-confirmation-title">

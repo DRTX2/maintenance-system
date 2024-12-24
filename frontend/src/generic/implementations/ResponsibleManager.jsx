@@ -2,65 +2,66 @@ import GenericManager from "../GenericManager";
 
 const ResponsibleManager = () => {
   const apiConfig = {
-    fetchAll: "/",
-    fetchOne: "/",
-    fetchSearch: "//search?term=",
-    create: "/",
-    update: "/",
-    delete: "/",
+    fetchAll: "/responsibles",
+    fetchOne: "/responsibles",
+    fetchSearch: "/search?term=",
+    create: "/responsibles",
+    update: "/responsibles",
+    delete: "/responsibles",
   };
 
   const defaultEntityState = {
-    cedula: "",
-    nombre: "",
-    apellido: "",
-    correo: "",
-    telefono: "",
+    is_ext: "",
+    dni_res: "",
+    nam_res: "",
+    las_res: "",
+    ema_res: "",
+    pho_res: "",
   };
 
   //   En los modales
   const fields = [
     {
-      key: "tipo",
+      key: "is_ext",
       label: "Tipo",
       type: "select",
       options: [
-        { value: "interno", label: "Interno" },
-        { value: "externo", label: "Externo" },
+        { value: "Y", label: "Interno" },
+        { value: "N", label: "Externo" },
       ],
       showCreate: true,
       showUpdate: true,
     },
     {
-      key: "cedula",
+      key: "dni_res",
       label: "Cedula",
       type: "text",
       showCreate: true,
       showUpdate: true,
     },
     {
-      key: "name",
+      key: "nam_res",
       label: "Nombre",
       type: "text",
       showCreate: true,
       showUpdate: true,
     },
     {
-      key: "apellido",
+      key: "las_res",
       label: "Apellido",
       type: "text",
       showCreate: true,
       showUpdate: true,
     },
     {
-      key: "email",
+      key: "ema_res",
       label: "Correo",
       type: "text",
       showCreate: true,
       showUpdate: true,
     },
     {
-      key: "telefono",
+      key: "pho_res",
       label: "Telefono",
       type: "text",
       showCreate: true,
@@ -70,11 +71,12 @@ const ResponsibleManager = () => {
 
   //   En la tabla
   const columns = [
-    { key: "cedula", label: "Cedula" },
-    { key: "nombre", label: "Nombre" },
-    { key: "nombre", label: "Apellido" },
-    { key: "correo", label: "Correo" },
-    { key: "telefono", label: "Telefono" },
+    { key: "dni_res", label: "Cedula" },
+    { key: "nam_res", label: "Nombre" },
+    { key: "las_res", label: "Apellido" },
+    { key: "pho_res", label: "Telefono" },
+    { key: "ema_res", label: "Correo" },
+    { key: "is_ext", label: "Tipo" },
   ];
 
   const message = "nombre";
