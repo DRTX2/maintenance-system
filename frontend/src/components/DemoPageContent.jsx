@@ -6,6 +6,7 @@ import LocationManager from "../generic/implementations/LocationManager";
 import UserManager from "../generic/implementations/UserManager";
 import ResponsibleManager from "../generic/implementations/ResponsibleManager";
 import IncomeManager from "../generic/implementations/IncomeManager";
+import AssetManager from "../components/entries/AssetManager";
 import { useNavigate } from "react-router-dom";
 import { getDecodedToken } from "../utils/authService";
 
@@ -30,7 +31,7 @@ function DemoPageContent({ pathname }) {
       case "/ingresos":
         return <IncomeManager />;
       case "/activos":
-        return <div>Activos</div>;
+        return <AssetManager />;
 
       default:
         return <div>Bienvenido al Dashboard</div>;

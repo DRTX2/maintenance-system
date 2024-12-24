@@ -19,7 +19,7 @@ class CategoryController extends Controller
         $devices = Category::all();
 
         $devices = $devices->map(function ($device) {
-            return $device->only(['cod_dis', 'nom_dis']);
+            return $device->only(['id', 'cod_dis', 'nom_dis']);
         });
 
         return response()->json([
