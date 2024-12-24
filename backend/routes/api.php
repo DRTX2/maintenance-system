@@ -31,12 +31,17 @@ Route::put('/suppliers/{id}', [SuppliersController::class, 'update']);
 Route::delete('/suppliers/{id}', [SuppliersController::class, 'destroy']);
 Route::post('/suppliers/search', [SuppliersController::class, 'search']);
 
-Route::get('category', [CategoryController::class, 'index']);
-Route::post('category/store', [CategoryController::class, 'store']);
-Route::get('category/show/{id}', [CategoryController::class, 'show']);
-Route::put('category/update/{id}', [CategoryController::class, 'update']);
-Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
-Route::post('/categories/search', [CategoryController::class, 'search']);
+
+
+//Obtener dispositivos
+Route::get('categories', [CategoryController::class, 'index']);
+Route::get('categories/show/{id}', [CategoryController::class, 'show']);
+
+//Las borrare luego
+// Route::put('category/update/{id}', [CategoryController::class, 'update']);
+// Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
+// Route::post('/categories/search', [CategoryController::class, 'search']);
+// Route::post('category/store', [CategoryController::class, 'store']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
     // Coloca aqui las rutas que estarán protegidas.
@@ -51,9 +56,14 @@ Route::put('/locations/{id}', [LocationController::class, 'update']);
 Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
 Route::post('/locations/search', [LocationController::class, 'search']);
 
-Route::get('incomes', [IncomeController::class, 'index']);
-Route::get('incomes/{id}', [IncomeController::class, 'show']);
-Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
-Route::post('incomes/{supplierId}', [IncomeController::class, 'store']);
-Route::put('incomes/{id}', [IncomeController::class, 'update']);
-Route::delete('incomes/{id}', [IncomeController::class, 'destroy']);
+
+
+
+//Ingresos
+Route::get('/incomes', [IncomeController::class, 'index']);
+Route::post('/incomes', [IncomeController::class, 'store']);
+Route::get('/incomes/{id}', [IncomeController::class, 'show']);
+//Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
+Route::put('/incomes/{id}', [IncomeController::class, 'update']);
+Route::delete('/incomes/{id}', [IncomeController::class, 'destroy']);
+Route::post('/incomes/search', [IncomeController::class, 'search']);

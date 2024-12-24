@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string("cod_com", 10)->unique();
             $table->string("nam_com", 25);
-            $table->string("des_com", 50);
+            $table->string("des_com", 100);
             $table->timestamps();
         });
     }
