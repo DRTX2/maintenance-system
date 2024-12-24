@@ -21,7 +21,7 @@ class Component extends Model
     {
 
         return $this->belongsToMany(Asset::class, 'asset_component')
-            ->withPivot('description', 'observation')
+            ->withPivot('description')
             ->withTimestamps();
     }
 

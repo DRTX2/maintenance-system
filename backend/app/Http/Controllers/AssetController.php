@@ -75,8 +75,6 @@ class AssetController extends Controller
             'cod_ass' => $asset->cod_ass,
             'ser_num_ass' => $asset->ser_num_ass,
             'obs_add_ass' => $asset->obs_add_ass,
-            'created_at' => $asset->created_at,
-            'updated_at' => $asset->updated_at,
             'components' => $components,
         ];
 

@@ -33,7 +33,7 @@ class Asset extends Model
     public function components()
     {
         return $this->belongsToMany(Component::class, 'asset_component')
-            ->withPivot('description', 'observation')
+            ->withPivot('description')
             ->withTimestamps();
     }
 
