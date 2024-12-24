@@ -14,12 +14,12 @@ class LocationSeeder extends Seeder
     public function run(): void
     {
         Location::create([
-            'cod_loc' => 'ED_LAB08',
+            'cod_loc' => 'E01',
             'nam_loc' => 'DITIC',
         ]);
 
         Location::create([
-            'cod_loc' => 'ED_LAB09',
+            'cod_loc' => 'E02',
             'nam_loc' => 'Laboratorio de redes2',
         ]);
     }

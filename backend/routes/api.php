@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\IncomeController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CategoryController;
@@ -76,3 +77,11 @@ Route::get('/responsibles/{dni_res}', [ResponsibleController::class,'show']);
 Route::put('/responsibles/{dni_res}', [ResponsibleController::class,'update']);
 Route::delete('/responsibles/{dni_res}', [ResponsibleController::class,'destroy']);
 Route::post('/responsibles/search', [ResponsibleController::class,'search']);
+//Activos
+Route::get('/assets', [AssetController::class, 'index']);
+Route::post('/assets', [AssetController::class, 'store']);
+Route::get('/assets/{id}', [AssetController::class, 'show']);
+//Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
+Route::put('/assets/{id}', [AssetController::class, 'update']);
+Route::delete('/assets/{id}', [AssetController::class, 'destroy']);
+Route::post('/assets/search', [AssetController::class, 'search']);

@@ -10,21 +10,23 @@ return new class extends Migration {
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->foreignId("id_inc_ass")
                 ->constrained("incomes")
                 ->onUpdate("cascade")
-                ->onDelete("cascade");// si se elimina el ingreso tambien los activos
+                ->onDelete("restrict");
             $table->foreignId("id_cat_ass")
                 ->constrained("categories")
                 ->onUpdate("cascade")
-                ->onDelete("restrict");// evitar eliminar una categoria si tiene activo asociado
+                ->onDelete("restrict");
             $table->foreignId("id_loc_ass")
                 ->constrained("locations")
                 ->onUpdate("cascade")
                 ->onDelete("restrict");
-            $table->string("cod_ass", 10);
-            $table->string("ser_num_ass", 10);//serial number asset
+            $table->string("cod_ass", 10)->unique();
+            $table->string("ser_num_ass", 20)->unique();
+            $table->string("obs_add_ass", 50)->nullable();
+            $table->timestamps();
+
         });
     }
 

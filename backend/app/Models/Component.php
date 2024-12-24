@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Component extends Model
 {
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'pivot'];
     protected $fillable = ["cod_com", "nam_com", "des_com"];
 
 
@@ -15,6 +15,14 @@ class Component extends Model
     {
 
         return $this->belongsToMany(Category::class);
+    }
+
+    public function assets(): BelongsToMany
+    {
+
+        return $this->belongsToMany(Asset::class, 'asset_component')
+            ->withPivot('description')
+            ->withTimestamps();
     }
 
 }
