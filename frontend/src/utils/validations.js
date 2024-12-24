@@ -1,3 +1,5 @@
+// Basados ene los fields y en lo que tiene el objeto.
+
 const validationRules = {
   // Login
   ema_log: {
@@ -33,6 +35,7 @@ const validationRules = {
     message:
       "Contraseña invalida: debe tener mayusculas, minusculas, un dígito y al menos 8 caracteres",
   },
+  // Responsables
   // Ubicaciones
   cod_loc: {
     required: true,
@@ -66,6 +69,26 @@ const validationRules = {
     required: true,
     regex: /^[0-9]{10}$/,
     message: "Debe ingresar un número de teléfono válido",
+  },
+  // Ingresos
+  cod_inc: {
+    required: true,
+    minLength: 3,
+    message: "El código debe tener al menos 3 caracteres",
+  },
+  supplier_id: {
+    required: true,
+    select: true,
+    message: "Debe seleccionar un proveedor",
+  },
+  est_inc: {
+    required: true,
+    select: true,
+    message: "Debe seleccionar un estado",
+  },
+  date_inc: {
+    required: true,
+    message: "Debe seleccionar una fecha",
   },
 };
 // Todos los campos
@@ -112,6 +135,8 @@ export const validateField = (key, value) => {
   } else if (rule?.regex && !rule.regex.test(value)) {
     return rule.message;
   } else if (rule?.select && !value) {
+    return rule.message;
+  } else if (rule?.date && !value) {
     return rule.message;
   }
 

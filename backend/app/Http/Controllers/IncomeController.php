@@ -14,11 +14,22 @@ class IncomeController extends Controller
 {
     public function index()
     {
-        $incomes = Income::all();
-        return response()->json(["results" => $incomes], 200);
+        $incomes = Income::with('supplier:id,nam_sup')->get();
+
+        $formattedIncomes = $incomes->map(function ($income) {
+            return [
+                'id' => $income->id,
+                'cod_inc' => $income->cod_inc,
+                'date_inc' => $income->date_inc,
+                'est_inc' => $income->est_inc,
+                'supplier_name' => $income->supplier->nam_sup ?? null,
+            ];
+        });
+
+        return response()->json([
+            'results' => $formattedIncomes
+        ], 200);
     }
-
-
 
     public function store(IncomeRequest $request)
     {

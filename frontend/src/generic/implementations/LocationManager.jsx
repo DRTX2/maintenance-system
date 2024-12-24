@@ -18,8 +18,20 @@ const UbicationsManager = () => {
 
   // Utilizados para validar y otras cosas
   const fields = [
-    { key: "cod_loc", label: "Código", type: "text" },
-    { key: "nam_loc", label: "Nombre", type: "text" },
+    {
+      key: "cod_loc",
+      label: "Código",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
+    {
+      key: "nam_loc",
+      label: "Nombre",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
   ];
 
   // Las columnas para la tabla

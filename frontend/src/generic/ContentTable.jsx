@@ -14,6 +14,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CustomTablePaginationActions from "./CustomTablePaginationActions";
 import tableStyles from "./styles/TableStyles";
+import dayjs from "dayjs";
 import { getDecodedToken } from "../utils/authService";
 
 const ContentTable = ({
@@ -28,6 +29,18 @@ const ContentTable = ({
 }) => {
   const decodedToken = getDecodedToken();
   const currentUserEmail = decodedToken.email;
+
+  const transformedValue = (key, value) => {
+    if (key === "est_inc") {
+      return value === "O" ? "Abierto" : "Cerrado";
+    }
+
+    if (key === "date_inc") {
+      return dayjs(value).utc().format("MM-DD-YYYY");
+    }
+
+    return value || "-";
+  };
 
   return (
     <>
@@ -55,7 +68,7 @@ const ContentTable = ({
                 <TableRow key={item.id}>
                   {columns.map((column) => (
                     <TableCell key={column.key}>
-                      {item[column.key] || "-"}
+                      {transformedValue(column.key, item[column.key])}
                     </TableCell>
                   ))}
                   <TableCell align="center">

@@ -29,10 +29,11 @@ const IncomeManager = () => {
   };
 
   const defaultEntityState = {
-    id_ing: "",
-    fec_ing: "",
-    state: "",
-    time: "",
+    cod_inc: "",
+    date_inc: null,
+    est_inc: "",
+    supplier_id: "",
+    supplier_nam: "",
   };
 
   const results =
@@ -43,34 +44,53 @@ const IncomeManager = () => {
         }))
       : [{ value: "", label: "Cargando proveedores..." }];
 
+  // Modales
   const fields = [
-    { key: "id_ing", label: "Código", type: "text" },
+    {
+      key: "cod_inc",
+      label: "Código",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
+    {
+      key: "supplier_id",
+      label: "Proveedor",
+      type: "select",
+      options: results,
+      showCreate: true,
+      showUpdate: true,
+    },
     {
       key: "est_inc",
       label: "Estado",
       type: "select",
       options: [
-        { value: "abierto", label: "Abierto" },
-        { value: "cerrado", label: "Cerrado" },
+        { value: "O", label: "Abierto" },
+        { value: "C", label: "Cerrado" },
       ],
+      showCreate: false,
+      showUpdate: true,
     },
     {
-      key: "id_sup_inc",
-      label: "Proveedor",
-      type: "select",
-      options: results,
+      key: "date_inc",
+      label: "Fecha",
+      type: "date",
+      showCreate: true,
+      showUpdate: true,
     },
-    { key: "fec_ing", label: "Fecha", type: "date" },
   ];
 
+  // Tabla
   const columns = [
-    { key: "id_ing", label: "Código" },
-    { key: "fec_ing", label: "Fecha" },
+    { key: "cod_inc", label: "Código" },
+    { key: "supplier_name", label: "Proveedor" },
+    { key: "date_inc", label: "Fecha" },
     { key: "est_inc", label: "Estado" },
-    { key: "id_sup_inc", label: "Proveedor" },
   ];
 
-  const message = "id_ing";
+  // Para el elimiminar
+  const message = "cod_inc";
 
   const searchBy = "código";
 

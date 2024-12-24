@@ -111,6 +111,7 @@ const GenericManager = ({
 
   const handleDelete = async (id) => {
     try {
+      console.log(id);
       await axiosInstance.delete(`${apiConfig.delete}/${id}`);
       await fetchEntities();
 
@@ -136,6 +137,7 @@ const GenericManager = ({
   const handleView = async (id) => {
     try {
       const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
+      console.log("View", response);
       setEntity(response?.data?.result);
     } catch (error) {
       handleError(error, `Error inesperado al ver ${entityNameSingular}`);
