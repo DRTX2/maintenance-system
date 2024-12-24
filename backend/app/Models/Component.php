@@ -17,4 +17,12 @@ class Component extends Model
         return $this->belongsToMany(Category::class);
     }
 
+    public function assets(): BelongsToMany
+    {
+
+        return $this->belongsToMany(Asset::class, 'asset_component')
+            ->withPivot('description', 'observation')
+            ->withTimestamps();
+    }
+
 }
