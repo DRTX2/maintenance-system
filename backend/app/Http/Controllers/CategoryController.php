@@ -35,14 +35,17 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-
-        $device = Category::with('components')->findOrFail($id);
+        $device = Category::with([
+            'components' => function ($query) {
+                $query->select('components.id', 'components.nam_com');
+            }
+        ])->findOrFail($id);
 
         return response()->json([
             'device' => $device
         ]);
-
     }
+
 
 
     // public function index()
