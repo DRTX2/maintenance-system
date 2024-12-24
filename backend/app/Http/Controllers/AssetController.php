@@ -37,8 +37,6 @@ class AssetController extends Controller
                 'cod_ass' => $asset->cod_ass,
                 'ser_num_ass' => $asset->ser_num_ass,
                 'obs_add_ass' => $asset->obs_add_ass ?? null,
-                'created_at' => $asset->created_at,
-                'updated_at' => $asset->updated_at,
             ];
         });
 
@@ -62,7 +60,6 @@ class AssetController extends Controller
                 'des_com' => $component->des_com,
                 'pivot' => [
                     'description' => $component->pivot->description,
-                    'observation' => $component->pivot->observation,
                 ],
             ];
         });
@@ -115,7 +112,6 @@ class AssetController extends Controller
             return [
                 $component['id'] => [
                     'description' => $component['pivot']['description'],
-                    'observation' => $component['pivot']['observation'] ?? null,
                 ],
             ];
         });
@@ -123,7 +119,7 @@ class AssetController extends Controller
         $asset->components()->attach($components);
 
         return response()->json([
-            'message' => 'Componente creado exitosamente.',
+            'message' => 'Activo creado exitosamente.',
             'asset' => $asset,
         ]);
     }

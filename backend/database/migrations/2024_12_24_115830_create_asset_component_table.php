@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->foreignId('asset_id')->constrained()->onUpdate("cascade")->onDelete("restrict");
             $table->foreignId('component_id')->constrained()->onUpdate("cascade")->onDelete("restrict");
             $table->string("description", 50);
-            $table->string("observation", 50)->nullable();
             $table->timestamps();
 
         });

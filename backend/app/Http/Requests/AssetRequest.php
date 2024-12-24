@@ -32,7 +32,6 @@ class AssetRequest extends FormRequest
             // Si tienes reglas para 'components', también debes ajustarlas
             'asset.components.*.id' => 'required|exists:components,id',
             'asset.components.*.pivot.description' => 'required|string',
-            'asset.components.*.pivot.observation' => 'nullable|string',
         ];
     }
 
@@ -57,7 +56,6 @@ class AssetRequest extends FormRequest
             'asset.components.*.id.exists' => 'El componente seleccionado no existe.',
             'asset.components.*.pivot.description.required' => 'La descripción del componente es obligatoria.',
             'asset.components.*.pivot.description.string' => 'La descripción del componente debe ser una cadena de texto.',
-            'asset.components.*.pivot.observation.string' => 'La observación del componente debe ser una cadena de texto.',
         ];
     }
 
