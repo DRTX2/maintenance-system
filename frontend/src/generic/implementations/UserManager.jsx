@@ -27,11 +27,30 @@ const UserManager = () => {
         { value: "admin", label: "Administrador" },
         { value: "user", label: "Usuario" },
       ],
+      showCreate: true,
+      showUpdate: true,
     },
-    { key: "name", label: "Nombre", type: "text" },
-    { key: "email", label: "Correo", type: "text" },
-    // Corregir.
-    { key: "password", label: "Contraseña", type: "password" },
+    {
+      key: "name",
+      label: "Nombre",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
+    {
+      key: "email",
+      label: "Correo",
+      type: "text",
+      showCreate: true,
+      showUpdate: true,
+    },
+    {
+      key: "password",
+      label: "Contraseña",
+      type: "password",
+      showCreate: true,
+      showUpdate: true,
+    },
   ];
 
   //   En la tabla

@@ -28,14 +28,15 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
     setErrors({});
   };
 
-  const handleFieldChange = (field, value) => {
-    setEntity((prev) => ({ ...prev, [field]: value }));
+  // Basicamente valida un solo campo
+  const handleFieldChange = (key, value) => {
+    setEntity((prev) => ({ ...prev, [key]: value }));
 
-    // Validar el campo actual
-    const errorMessage = validateField(field, value);
-    setErrors((prevErrors) => ({ ...prevErrors, [field]: errorMessage }));
+    const errorMessage = validateField(key, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
 
+  // Cuando intente crear todos los campos
   const validateAll = () => {
     const validationErrors = validateFields(entity, fields);
     setErrors(validationErrors);
@@ -49,6 +50,8 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
     }
   };
 
+  const visibleFields = fields.filter((field) => field.showCreate);
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Crear</DialogTitle>
@@ -60,7 +63,7 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
             alignItems: "flex-start",
           }}
         >
-          {fields.map((field) => (
+          {visibleFields.map((field) => (
             <Box
               key={field.key}
               sx={{
@@ -70,7 +73,12 @@ const CreateModal = ({ open, onClose, onCreate, fields, defaultState }) => {
                 width: "100%",
               }}
             >
-              <Typography style={{ width: "100px", marginRight: "15px" }}>
+              <Typography
+                style={{
+                  width: "100px",
+                  marginRight: "15px",
+                }}
+              >
                 {field.label}
               </Typography>
 

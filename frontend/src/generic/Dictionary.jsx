@@ -1,5 +1,7 @@
 import { MenuItem, TextField } from "@mui/material";
 import PasswordInput from "./PasswordInput";
+import SelectDate from "./SelectDate";
+import dayjs from "dayjs";
 
 const fieldRenderers = {
   text: ({ field, value, onChange, error, helperText, readOnly }) => (
@@ -34,14 +36,29 @@ const fieldRenderers = {
       ))}
     </TextField>
   ),
-  password: ({ field, value, onChange, readOnly }) => (
+  password: ({ field, value, onChange, readOnly, error, helperText }) => (
     <PasswordInput
       field={field}
       value={value}
       onChange={onChange}
       readOnly={readOnly}
+      error={error}
+      helperText={helperText}
     />
   ),
+  date: ({ field, value, readOnly, error, helperText, onChange }) => {
+    const parsedValue = value ? dayjs(value) : null;
+    return (
+      <SelectDate
+        field={field}
+        value={parsedValue}
+        error={error}
+        helperText={helperText}
+        readOnly={readOnly}
+        onChange={onChange}
+      />
+    );
+  },
 };
 
 export default fieldRenderers;

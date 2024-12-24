@@ -1,3 +1,5 @@
+// Basados ene los fields y en lo que tiene el objeto.
+
 const validationRules = {
   // Login
   ema_log: {
@@ -7,27 +9,33 @@ const validationRules = {
   },
   pas_log: {
     required: true,
-    // minLength: 8,
-    // regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/,
+    minLength: 3,
+    message: "Contraseña invalida: minimo 3 caracteres",
+  },
+  // Usuarios
+  role: {
+    required: true,
+    select: true,
+    message: "Debe seleccionar un rol",
+  },
+  name: {
+    required: true,
+    minLength: 3,
+    message: "El nombre dene tener al menos 3 caracteres",
+  },
+  email: {
+    required: true,
+    regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    message: "Debe ingresar un correo electrónico válido",
+  },
+  password: {
+    required: true,
+    minLength: 8,
+    regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
     message:
-      "Contraseña invalida: debe tener mayusculas, minusculas y al menos 6 caracteres",
+      "Contraseña invalida: debe tener mayusculas, minusculas, un dígito y al menos 8 caracteres",
   },
-  // Categorias
-  cod_dis: {
-    required: true,
-    minLength: 3,
-    message: "El código debe tener al menos 3 caracteres",
-  },
-  tip_dis: {
-    required: true,
-    minLength: 3,
-    message: "El tipo debe tener al menos 3 caracteres",
-  },
-  nom_dis: {
-    required: true,
-    minLength: 3,
-    message: "El nombre debe tener al menos 3 caracteres",
-  },
+  // Responsables
   // Ubicaciones
   cod_loc: {
     required: true,
@@ -40,7 +48,6 @@ const validationRules = {
     message: "El nombre debe tener al menos 3 caracteres",
   },
   // Proveedores
-
   id_num_sup: {
     required: true,
     minLength: 10,
@@ -48,7 +55,6 @@ const validationRules = {
     message: "La cédula debe tener 10 caracteres numéricos",
     regex: /^[0-9]+$/,
   },
-
   nam_sup: {
     required: true,
     minLength: 3,
@@ -63,6 +69,26 @@ const validationRules = {
     required: true,
     regex: /^[0-9]{10}$/,
     message: "Debe ingresar un número de teléfono válido",
+  },
+  // Ingresos
+  cod_inc: {
+    required: true,
+    minLength: 3,
+    message: "El código debe tener al menos 3 caracteres",
+  },
+  supplier_id: {
+    required: true,
+    select: true,
+    message: "Debe seleccionar un proveedor",
+  },
+  est_inc: {
+    required: true,
+    select: true,
+    message: "Debe seleccionar un estado",
+  },
+  date_inc: {
+    required: true,
+    message: "Debe seleccionar una fecha",
   },
 };
 // Todos los campos
@@ -84,6 +110,8 @@ export const validateFields = (data, fields) => {
       errors[key] = `No debe exceder de ${rule.maxLength} caracteres`;
     } else if (rule?.regex && !rule.regex.test(value)) {
       errors[key] = rule.message;
+    } else if (rule?.select && !value) {
+      errors[key] = rule.message;
     }
   });
 
@@ -100,8 +128,15 @@ export const validateField = (key, value) => {
     // Valida la olngitud minima
   } else if (rule?.minLength && value?.length < rule.minLength) {
     return rule.message;
+    // Valida la longitud maxima
+  } else if (rule?.maxLength && value?.length > rule.maxLength) {
+    return rule.message;
     // Validar expresiones regulares
   } else if (rule?.regex && !rule.regex.test(value)) {
+    return rule.message;
+  } else if (rule?.select && !value) {
+    return rule.message;
+  } else if (rule?.date && !value) {
     return rule.message;
   }
 

@@ -4,7 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LogIn from "./components/login/LogIn";
-import PrivateRoute from "./components/protected/PrivateRoute";
+import ProtectedRoute from "./middleware/ProtectedRoute";
 
 function App() {
   return (
@@ -21,9 +21,9 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute>
+              <ProtectedRoute>
                 <Dashboard />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
         </Routes>
