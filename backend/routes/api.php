@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\UserController;
@@ -71,11 +72,12 @@ Route::delete('/incomes/{id}', [IncomeController::class, 'destroy']);
 Route::post('/incomes/search', [IncomeController::class, 'search']);
 
 //Responsables
+
 Route::get('/responsibles', [ResponsibleController::class,'index']);
 Route::post('/responsibles', [ResponsibleController::class,'store']);
-Route::get('/responsibles/{dni_res}', [ResponsibleController::class,'show']);
-Route::put('/responsibles/{dni_res}', [ResponsibleController::class,'update']);
-Route::delete('/responsibles/{dni_res}', [ResponsibleController::class,'destroy']);
+Route::get('/responsibles/{id}', [ResponsibleController::class,'show']);
+Route::put('/responsibles/{id}', [ResponsibleController::class,'update']);
+Route::delete('/responsibles/{id}', [ResponsibleController::class,'destroy']);
 Route::post('/responsibles/search', [ResponsibleController::class,'search']);
 //Activos
 Route::get('/assets', [AssetController::class, 'index']);
@@ -85,3 +87,14 @@ Route::get('/assets/{id}', [AssetController::class, 'show']);
 Route::put('/assets/{id}', [AssetController::class, 'update']);
 Route::delete('/assets/{id}', [AssetController::class, 'destroy']);
 Route::post('/assets/search', [AssetController::class, 'search']);
+
+//Mantenimientos - aun no gestiono su relacion con activos/responsables
+
+Route::get('/maintenances', [MaintenanceController::class,'index']);
+Route::post('/maintenances', [MaintenanceController::class,'store']);
+Route::post('/maintenances/search', [MaintenanceController::class,'search']); // Antes
+Route::get('/maintenances/{id}', [MaintenanceController::class,'show']);
+Route::put('/maintenances/{id}', [MaintenanceController::class,'update']);
+Route::post('/maintenances/{id}', [MaintenanceController::class,'hide'])->where('id', '[0-9]+');
+
+// aun no probe los cambios hechos al usar id, ni testeado estas rutas de mantenimientos

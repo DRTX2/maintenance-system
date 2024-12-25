@@ -9,7 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('responsibles', function (Blueprint $table) {
-            $table->string('dni_res')->primary();// no se como ponerlo para q sea un varchar como primary keey
+            $table->id();
+            $table->string('dni_res')->unique();// no se como ponerlo para q sea un varchar como primary keey
             $table->timestamps();
             $table->string("nam_res");
             $table->string("las_res");//lastname
