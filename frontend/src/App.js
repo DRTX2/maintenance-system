@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LogIn from "./components/login/LogIn";
 import ProtectedRoute from "./middleware/ProtectedRoute";
+import AssetManager from "./components/asset/AssetCreate";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       />
       <Router>
         <Routes>
+          {/* Begin routes */}
           <Route path="/" element={<LogIn />}></Route>
           <Route
             path="/dashboard"
@@ -26,6 +28,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/asset"
+            element={
+              <ProtectedRoute>
+                <AssetManager />
+              </ProtectedRoute>
+            }
+          />{" "}
+          {/* End routes */}
         </Routes>
       </Router>
     </>

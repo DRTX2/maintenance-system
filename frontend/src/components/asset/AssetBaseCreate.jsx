@@ -3,10 +3,11 @@ import { Box, Grid2, Typography, Button } from "@mui/material";
 
 import CreateStyles from "../../generic/styles/CreateStyles";
 import DynamicField from "../../generic/DynamicField";
-import AssetTable from "./AssetTable";
+import AssetTableCreate from "./AssetTableCreate";
 import axiosInstance from "../../utils/api";
 import { toast } from "react-toastify";
 import { validateField, validateFields } from "../../utils/validations";
+import { useNavigate } from "react-router-dom";
 
 const Entry = ({ fields, columns, defaultState }) => {
   const [entity, setEntity] = useState(defaultState);
@@ -16,6 +17,7 @@ const Entry = ({ fields, columns, defaultState }) => {
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
+  const navigate = useNavigate();
 
   const resetFields = () => {
     setEntity(defaultState);
@@ -155,7 +157,7 @@ const Entry = ({ fields, columns, defaultState }) => {
         {/* Generar tabla */}
         {isCategorySelected && relatedData.length > 0 ? (
           <Box marginTop="30px">
-            <AssetTable
+            <AssetTableCreate
               data={relatedData}
               isLoading={isLoading}
               columns={columns}
@@ -176,7 +178,11 @@ const Entry = ({ fields, columns, defaultState }) => {
         display="flex"
         justifyContent="flex-end"
       >
-        <Button color="secondary" sx={CreateStyles.buttonStyle1}>
+        <Button
+          color="secondary"
+          sx={CreateStyles.buttonStyle1}
+          onClick={() => navigate("/dashboard")}
+        >
           Cancelar
         </Button>
         <Button

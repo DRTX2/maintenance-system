@@ -1,9 +1,9 @@
-import Asset from "./Asset";
+import AssetBaseCreate from "./AssetBaseCreate";
 import axiosInstance from "../../utils/api";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const AssetManager = () => {
+const AssetCreate = () => {
   const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -102,8 +102,12 @@ const AssetManager = () => {
   ];
 
   return (
-    <Asset fields={fields} columns={columns} defaultState={defaultState} />
+    <AssetBaseCreate
+      fields={fields}
+      columns={columns}
+      defaultState={defaultState}
+    />
   );
 };
 
-export default AssetManager;
+export default AssetCreate;
