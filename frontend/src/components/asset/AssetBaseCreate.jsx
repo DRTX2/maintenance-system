@@ -17,7 +17,6 @@ const Entry = ({ fields, columns, defaultState }) => {
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
-  const navigate = useNavigate();
 
   const resetFields = () => {
     setEntity(defaultState);
@@ -178,13 +177,6 @@ const Entry = ({ fields, columns, defaultState }) => {
         display="flex"
         justifyContent="flex-end"
       >
-        <Button
-          color="secondary"
-          sx={CreateStyles.buttonStyle1}
-          onClick={() => navigate("/dashboard")}
-        >
-          Cancelar
-        </Button>
         <Button
           color="primary"
           sx={CreateStyles.buttonStyle2}

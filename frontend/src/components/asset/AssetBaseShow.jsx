@@ -8,10 +8,13 @@ import AssetTableShow from "./AssetTableShow";
 import axiosInstance from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import AssetCreate from "./AssetCreate";
+import CreateStyles from "../../generic/styles/CreateStyles";
 
 const AssetShow = ({ columns }) => {
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const navigate = useNavigate();
@@ -38,21 +41,54 @@ const AssetShow = ({ columns }) => {
     }
   };
 
-  const onFetch = (param) => {
-    console.log("Buscando...");
+  const onFetch = async (param) => {
+    if (param === "") {
+      await fetchAssets();
+      return;
+    }
+
+    try {
+      const response = axiosInstance.get(`/assets?search=${param}`);
+      console.log(response);
+    } catch (error) {
+      toast.error("Ha ocurrido un error con la busqueda");
+    }
   };
 
-  const toCreate = () => {
-    navigate("/asset");
+  const toggleCreate = async () => {
+    setIsCreating((prev) => !prev);
+    await fetchAssets();
   };
 
   const onView = (id) => {
-    console.log("Viendo...");
+    console.log(id);
   };
 
   const onDelete = (id) => {
     console.log("Eliminando...");
   };
+
+  if (isCreating) {
+    return (
+      <>
+        <AssetCreate />
+        <Box
+          width="90%"
+          marginTop="20px"
+          display="flex"
+          justifyContent="flex-end"
+        >
+          <Button
+            color="secondary"
+            sx={CreateStyles.buttonStyle1}
+            onClick={toggleCreate}
+          >
+            Cancelar
+          </Button>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <div
@@ -71,7 +107,7 @@ const AssetShow = ({ columns }) => {
 
           {/* Boton para añadir */}
           <Button
-            onClick={toCreate}
+            onClick={toggleCreate}
             variant="contained"
             sx={GenericStyles.buttonStyle}
             startIcon={<AddIcon />}
