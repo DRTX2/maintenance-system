@@ -66,7 +66,7 @@ class ResponsibleController extends Controller
             $responsible = Responsible::findOrFail($id);
 
             return response()->json([
-                "results" => $responsible,
+                "result" => $responsible,
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
