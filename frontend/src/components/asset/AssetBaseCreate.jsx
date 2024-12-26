@@ -17,6 +17,7 @@ const Entry = ({ fields, columns, defaultState }) => {
   const [isCategorySelected, setIsCategorySelected] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
+  const navigate = useNavigate();
 
   const resetFields = () => {
     setEntity(defaultState);
@@ -110,6 +111,10 @@ const Entry = ({ fields, columns, defaultState }) => {
     return Object.keys(validationErrors).length === 0;
   };
 
+  const handleReturn = () => {
+    navigate("/dashboard/assets");
+  };
+
   const handleCreate = async () => {
     if (validateAll()) {
       try {
@@ -124,17 +129,34 @@ const Entry = ({ fields, columns, defaultState }) => {
 
   return (
     <>
-      <Typography variant="h6" marginBottom="10px">
+      <Typography
+        variant="h6"
+        color="#6068A5"
+        marginBottom="10px"
+        fontWeight="bold"
+      >
         Crear activo
       </Typography>
       <Box p={3} border="1px solid #ddd" width="90%" borderRadius={2}>
         {/* Contenedor de la cuadrícula */}
         <Grid2 container spacing={3}>
           {fields.map((field) => (
-            <Grid2 item xs={12} sm={6} key={field.key} width="48%">
-              <Box width="100%">
+            <Grid2 item size={{ xs: 12, md: 6 }} key={field.key}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
                 {/* Título del campo */}
-                <Typography variant="subtitle1" width="100%">
+                <Typography
+                  variant="subtitle1"
+                  width="100%"
+                  color="#6068A5"
+                  fontWeight="bold"
+                >
                   {field.label}
                 </Typography>
                 {/* Campo dinámico */}
@@ -177,6 +199,13 @@ const Entry = ({ fields, columns, defaultState }) => {
         display="flex"
         justifyContent="flex-end"
       >
+        <Button
+          color="primary"
+          sx={CreateStyles.buttonStyle2}
+          onClick={handleReturn}
+        >
+          Cancelar
+        </Button>
         <Button
           color="primary"
           sx={CreateStyles.buttonStyle2}

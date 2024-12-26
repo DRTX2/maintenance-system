@@ -8,13 +8,10 @@ import AssetTableShow from "./AssetTableShow";
 import axiosInstance from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import AssetCreate from "./AssetCreate";
-import CreateStyles from "../../generic/styles/CreateStyles";
 
 const AssetShow = ({ columns }) => {
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCreating, setIsCreating] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const navigate = useNavigate();
@@ -55,40 +52,17 @@ const AssetShow = ({ columns }) => {
     }
   };
 
-  const toggleCreate = async () => {
-    setIsCreating((prev) => !prev);
-    await fetchAssets();
+  const onCreate = () => {
+    navigate("/dashboard/assets/create");
   };
 
-  const onView = (id) => {
-    console.log(id);
+  const onView = async (id) => {
+    navigate(`/dashboard/assets/view/${id}`);
   };
 
   const onDelete = (id) => {
     console.log("Eliminando...");
   };
-
-  if (isCreating) {
-    return (
-      <>
-        <AssetCreate />
-        <Box
-          width="90%"
-          marginTop="20px"
-          display="flex"
-          justifyContent="flex-end"
-        >
-          <Button
-            color="secondary"
-            sx={CreateStyles.buttonStyle1}
-            onClick={toggleCreate}
-          >
-            Cancelar
-          </Button>
-        </Box>
-      </>
-    );
-  }
 
   return (
     <div
@@ -107,7 +81,7 @@ const AssetShow = ({ columns }) => {
 
           {/* Boton para añadir */}
           <Button
-            onClick={toggleCreate}
+            onClick={onCreate}
             variant="contained"
             sx={GenericStyles.buttonStyle}
             startIcon={<AddIcon />}

@@ -136,8 +136,6 @@ const GenericManager = ({
   const handleView = async (id) => {
     try {
       const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
-      console.log("El identificador es", id);
-      console.log("View", response);
       setEntity(response?.data?.result);
     } catch (error) {
       handleError(error, `Error inesperado al ver ${entityNameSingular}`);
