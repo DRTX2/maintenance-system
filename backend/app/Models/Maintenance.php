@@ -23,4 +23,12 @@ class Maintenance extends Model
     public function responsible(){
         return$this->belongsTo(Responsible::class, "dni_res_main","dni_res");
     }
+
+    public function activities(){
+        return $this->belongsToMany(MaintenanceActivity::class,"activity_maintenance");
+    }
+
+    public function observations(){
+        return $this->hasMany(Observation::class);
+    }
 }
