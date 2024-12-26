@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ComponentSeeder::class,
             CategoryComponentSeeder::class,
-            IncomeSeeder::class
+            IncomeSeeder::class,
+            TypeMaintenanceSeeder::class,
         ]);
 
 

@@ -5,15 +5,16 @@ import { Button, Typography } from "@mui/material";
 import CreateStyles from "../../generic/styles/CreateStyles";
 import axiosInstance from "../../utils/api";
 import { toast } from "react-toastify";
-import { FormControlLabel, Switch, Grid2, TextField } from "@mui/material";
+import { FormControlLabel, Switch, CircularProgress } from "@mui/material";
 import DynamicField from "../../generic/DynamicField";
 
-const AssetView = () => {
+const AssetView = (fields) => {
   const { id } = useParams();
   const [asset, setAsset] = useState({});
   const [field, setField] = useState({});
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +27,8 @@ const AssetView = () => {
       setAsset(response.data);
     } catch (error) {
       toast.error("No se ha podido obtener el activo.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -39,6 +42,14 @@ const AssetView = () => {
 
   if (!asset) {
     return <Typography variant="h5">Cargando...</Typography>;
+  }
+
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (
@@ -61,62 +72,16 @@ const AssetView = () => {
         </Box>
       </Box>
       {/* Cuerpo */}
-      <Box
-        p={3}
-        border="1px solid #ddd"
-        width="90%"
-        borderRadius={2}
-        marginTop="15px"
-      >
-        <Grid2 container spacing={3}>
-          {/* Código */}
-          <Grid2 item size={{ xs: 12, md: 6 }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "10px",
-              }}
-            >
-              <Typography
-                variant="subtitle1"
-                width="100%"
-                color="#6068A5"
-                fontWeight="bold"
-              >
-                Código
-              </Typography>
-              <TextField value={asset.cod_ass} fullWidth></TextField>
-            </Box>
-          </Grid2>
-
-          {/* Numero de serie */}
-          <Grid2 item size={{ xs: 12, md: 6 }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "10px",
-              }}
-            >
-              <Typography
-                variant="subtitle1"
-                width="100%"
-                color="#6068A5"
-                fontWeight="bold"
-              >
-                Número de serie
-              </Typography>
-              <TextField value={asset.ser_num_ass} fullWidth></TextField>
-            </Box>
-          </Grid2>
-
-          {/* Ubicación */}
-          <TextField select></TextField>
-        </Grid2>
-      </Box>
+      <DynamicField
+        key={field.key}
+        field={field}
+        value={asset[field.key]}
+        onChange={handleFieldChange}
+        onFetch={handleFetch}
+        error={errors[field.key]}
+        helperText={errors[field.key]}
+        readOnly={false}
+      />
 
       {/* Footer */}
       <Box

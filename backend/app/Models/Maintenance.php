@@ -10,10 +10,25 @@ class Maintenance extends Model
         "dni_res_main",
         "created_at",
         "ended_at",
-        "cod_man",
-        "typ_man"
+        "cod_main",
+        "vis_main",
+        "typ_main"
     ];
+
+    protected $casts = [
+        "ended_at"=>"datetime",
+        "created_at"=>"datetime",
+    ];
+
     public function responsible(){
         return$this->belongsTo(Responsible::class, "dni_res_main","dni_res");
+    }
+
+    public function activities(){
+        return $this->belongsToMany(MaintenanceActivity::class,"activity_maintenance");
+    }
+
+    public function observations(){
+        return $this->hasMany(Observation::class);
     }
 }

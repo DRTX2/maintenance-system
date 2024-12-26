@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ResponsibleRequest;
 use App\Models\Responsible;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,7 @@ class ResponsibleController extends Controller
                 "message" => "Éxito al guardar al responsable",
                 "results" => $responsible
             ], 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 "message" => "Ocurrió un error al guardar al responsable",
                 "error" => $e->getMessage(),
@@ -33,11 +34,11 @@ class ResponsibleController extends Controller
         }
     }
 
-    public function update(ResponsibleRequest $request, $dni_res)
+    public function update(ResponsibleRequest $request, $id)
     {
 
         try {
-            $responsible = Responsible::findOrFail($dni_res);
+            $responsible = Responsible::findOrFail($id);
             $validatedData = $request->validated();
 
             $responsible->update([
@@ -50,34 +51,34 @@ class ResponsibleController extends Controller
 
             return response()->json([
                 "message" => "Responsable actualizado"
-            ]);
+            ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Resposable no encontrado",
                 // "error"=>;
-            ]);
+            ], 404);
         }
     }
 
-    public function show($dni_res)
+    public function show($id)
     {
         try {
-            $responsible = Responsible::findOrFail($dni_res);
+            $responsible = Responsible::findOrFail($id);
 
             return response()->json([
-                "result" => $responsible,
-            ]);
+                "results" => $responsible,
+            ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Responsable no encontrado",
-            ]);
+            ], 404);
         }
     }
 
-    public function destroy($dni_res)
+    public function destroy($id)
     {// seria mas q nada logico, o no sep
         try {
-            $responsible = Responsible::findOrFail($dni_res);
+            $responsible = Responsible::findOrFail($id);
 
             if (!$responsible) {
                 return response()->json([
