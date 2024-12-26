@@ -21,6 +21,7 @@ const ContentGenericTable = ({
       </div>
     );
   }
+
   console.log(data);
   if (!Array.isArray(data)) {
     return (

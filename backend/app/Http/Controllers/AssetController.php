@@ -122,30 +122,5 @@ class AssetController extends Controller
         ]);
     }
 
-    /**
- * 
- *     public function index()
-    {
-        $incomes = Income::all();
-
-        if ($incomes->isEmpty()) {
-            return response()->json([
-                'message' => 'No se encontraron registros de ingresos.',
-            ], 404);
-        }
-        return response()->json($incomes, 200);
-    }
-
-    public function show($id)
-    {
-
-        $device = Category::with('components')->findOrFail($id);
-
-        return response()->json([
-            'device' => $device
-        ]);
-
-    }
- */
 
 }

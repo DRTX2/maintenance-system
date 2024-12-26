@@ -7,44 +7,48 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
   TablePagination,
+  TextField,
 } from "@mui/material";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import CustomTablePaginationActions from "./CustomTablePaginationActions";
-import tableStyles from "./styles/TableStyles";
-import dayjs from "dayjs";
-import { getDecodedToken } from "../utils/authService";
+import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
+import tableStyles from "../../generic/styles/TableStyles";
+import { CircularProgress } from "@mui/material";
 
 const ContentTable = ({
   data,
+  isLoading,
   columns,
-  onView,
-  onDelete,
   currentPage,
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  handleDescription,
 }) => {
-  const decodedToken = getDecodedToken();
-  const currentUserEmail = decodedToken.email;
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <CircularProgress />
+      </div>
+    );
+  }
 
-  const transformedValue = (key, value) => {
-    if (key === "est_inc") {
-      return value === "O" ? "Abierto" : "Cerrado";
-    }
+  if (!Array.isArray(data)) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        Error: los datos no son validos.
+      </div>
+    );
+  }
 
-    if (key === "date_inc") {
-      return dayjs(value).utc().format("MM-DD-YYYY");
-    }
+  if (data.length === 0) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        No se han encontrado componentes.
+      </div>
+    );
+  }
 
-    if (key === "is_ext") {
-      return value === "Y" ? "Interno" : "Externo";
-    }
-
-    return value || "-";
-  };
+  const filteredColumn = columns.filter((column) => column.showInTable);
 
   return (
     <>
@@ -56,10 +60,9 @@ const ContentTable = ({
         <Table>
           <TableHead sx={tableStyles.tableHead}>
             <TableRow>
-              {columns.map((column) => (
+              {filteredColumn.map((column) => (
                 <TableCell key={column.key}>{column.label}</TableCell>
               ))}
-              <TableCell align="center">Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -68,25 +71,24 @@ const ContentTable = ({
                 currentPage * rowsPerPage,
                 currentPage * rowsPerPage + rowsPerPage
               )
+              // item -> es un componente
               .map((item) => (
                 <TableRow key={item.id}>
-                  {columns.map((column) => (
+                  {filteredColumn.map((column) => (
                     <TableCell key={column.key}>
-                      {transformedValue(column.key, item[column.key])}
+                      {/* Campo que se genera para la descripción */}
+                      {column.key === "des_com" ? (
+                        <TextField
+                          value={item.pivot?.description || ""}
+                          onChange={(e) =>
+                            handleDescription(item.id, e.target.value)
+                          }
+                        ></TextField>
+                      ) : (
+                        item[column.key]
+                      )}
                     </TableCell>
                   ))}
-                  <TableCell align="center">
-                    <IconButton onClick={() => onView(item.id)} color="primary">
-                      <VisibilityIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => onDelete(item.id)}
-                      color="secondary"
-                      disabled={currentUserEmail === item.email}
-                    >
-                      <DeleteForeverIcon />
-                    </IconButton>
-                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

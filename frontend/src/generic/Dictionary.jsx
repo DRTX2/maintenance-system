@@ -17,25 +17,43 @@ const fieldRenderers = {
       sx={{ marginTop: "15px" }}
     />
   ),
-  select: ({ field, value, onChange, error, helperText, readOnly }) => (
-    <TextField
-      select
-      label={field.label}
-      value={value || ""}
-      onChange={(e) => onChange(field.key, e.target.value)}
-      error={!!error}
-      helperText={helperText}
-      fullWidth
-      InputLabelProps={{ shrink: true }}
-      InputProps={{ readOnly }}
-    >
-      {field.options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          {option.label}
-        </MenuItem>
-      ))}
-    </TextField>
-  ),
+  select: ({
+    field,
+    value,
+    onChange,
+    onFetch,
+    error,
+    helperText,
+    readOnly,
+  }) => {
+    const handleSelectChange = (e) => {
+      onChange(field.key, e.target.value);
+
+      if (onFetch) {
+        onFetch(field.key, e.target.value);
+      }
+    };
+
+    return (
+      <TextField
+        select
+        label={field.label}
+        value={value || ""}
+        onChange={handleSelectChange}
+        error={!!error}
+        helperText={helperText}
+        fullWidth
+        InputLabelProps={{ shrink: true }}
+        InputProps={{ readOnly }}
+      >
+        {field.options.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+    );
+  },
   password: ({ field, value, onChange, readOnly, error, helperText }) => (
     <PasswordInput
       field={field}
