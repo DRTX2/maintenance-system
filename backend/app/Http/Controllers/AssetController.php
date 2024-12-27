@@ -27,7 +27,20 @@ class AssetController extends Controller
 
         return response()->json($combinedIncomes, 200);
     }
+    public function showOpenIncomesCreate()
+    {
 
+
+        $incomes = Income::where('est_inc', 'O')->get();
+
+        if ($incomes->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron ingresos'
+            ]);
+        }
+
+        return response()->json($incomes, 200);
+    }
 
     public function hideAsset($id)
     {

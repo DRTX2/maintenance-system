@@ -67,6 +67,7 @@ Route::get('/incomes/{id}', [IncomeController::class, 'show']);
 //Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
 Route::put('/incomes/{id}', [IncomeController::class, 'update']);
 Route::delete('/incomes/{id}', [IncomeController::class, 'destroy']);
+Route::delete('/incomes/open', [IncomeController::class, 'showOpenIncomes']);
 Route::post('/incomes/search', [IncomeController::class, 'search']);
 
 //Responsables
@@ -84,7 +85,14 @@ Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
 Route::get('/assets/{rol}', [AssetController::class, 'index']);
 Route::get('/assets/show/{id}', [AssetController::class, 'show']);
 //Mostrar ingresoso solo abiertos
+
+Route::get('/assets/incomes/create', [AssetController::class, 'showOpenIncomesCreate']);
+
 Route::get('/assets/incomes/{id}', [AssetController::class, 'showOpenIncomes']);
+
+
+
+
 Route::put('/assets/{id}', [AssetController::class, 'update']);
 //Ocultar, Mostrar
 Route::put('/assets/hide/{id}', [AssetController::class, 'hideAsset']);
