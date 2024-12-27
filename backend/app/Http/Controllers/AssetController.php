@@ -12,21 +12,23 @@ class AssetController extends Controller
     //Crear, Actualizar,Eliminar,Ver, Filtrar   
 
 
-    //cargar la tabla
-    public function showOpenIncomes()
+    public function showOpenIncomes($id)
     {
 
+        $asset = Asset::with('income')->find($id);
 
-        $incomes = Income::where('est_inc', 'O')->get();
 
-        if ($incomes->isEmpty()) {
-            return response()->json([
-                'message' => 'No se encontraron ingresos'
-            ]);
-        }
+        $associatedIncome = $asset->income;
 
-        return response()->json($incomes, 200);
+        $otherIncomes = Income::where('est_inc', 'O')
+            ->where('id', '!=', $associatedIncome->id)
+            ->get();
+        $combinedIncomes = $otherIncomes->prepend($associatedIncome);
+
+        return response()->json($combinedIncomes, 200);
     }
+
+
     public function hideAsset($id)
     {
         $asset = Asset::findOrFail($id);
