@@ -84,7 +84,7 @@ Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
 Route::get('/assets/{rol}', [AssetController::class, 'index']);
 Route::get('/assets/show/{id}', [AssetController::class, 'show']);
 //Mostrar ingresoso solo abiertos
-Route::get('/assets/incomes', [AssetController::class, 'showOpenIncomes']);
+Route::get('/assets/incomes/{id}', [AssetController::class, 'showOpenIncomes']);
 Route::put('/assets/{id}', [AssetController::class, 'update']);
 //Ocultar, Mostrar
 Route::put('/assets/hide/{id}', [AssetController::class, 'hideAsset']);
