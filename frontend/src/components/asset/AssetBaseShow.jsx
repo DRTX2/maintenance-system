@@ -63,8 +63,29 @@ const AssetShow = ({ columns, role }) => {
     navigate(`/dashboard/assets/view/${id}`);
   };
 
-  const onDelete = (id) => {
-    console.log("Eliminando...");
+  const toggleVisibility = async (id, currentState) => {
+    try {
+      const route =
+        currentState === "V" ? `/assets/hide/${id}` : `/assets/visible/${id}`;
+
+      await axiosInstance.put(route);
+
+      setAssets((prevAssets) =>
+        prevAssets.map((asset) =>
+          asset.id === id
+            ? { ...asset, est_ass: currentState === "V" ? "H" : "V" }
+            : asset
+        )
+      );
+
+      toast.success(
+        currentState === "V"
+          ? "Activo ocultado con éxito."
+          : "Activo mostrado con éxito."
+      );
+    } catch (error) {
+      toast.error("Ha ocurrido un error al cambiar la visibilidad");
+    }
   };
 
   return (
@@ -103,7 +124,7 @@ const AssetShow = ({ columns, role }) => {
           data={assets}
           columns={columns}
           onView={onView}
-          onDelete={onDelete}
+          onDelete={toggleVisibility}
           currentPage={currentPage}
           rowsPerPage={rowsPerPage}
           handleChangePage={handleChangePage}
