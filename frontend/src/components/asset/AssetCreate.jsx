@@ -89,7 +89,7 @@ const AssetCreate = () => {
     },
     {
       key: "id_cat_ass",
-      label: "Tipo",
+      label: "Dispositivo",
       type: "select",
       options: resultsCategories,
     },

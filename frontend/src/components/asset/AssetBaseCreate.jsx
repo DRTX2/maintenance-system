@@ -132,7 +132,8 @@ const Entry = ({ fields, columns, defaultState }) => {
       <Typography
         variant="h6"
         color="#6068A5"
-        marginBottom="10px"
+        marginBottom="20px"
+        marginTop="20px"
         fontWeight="bold"
       >
         Crear activo
