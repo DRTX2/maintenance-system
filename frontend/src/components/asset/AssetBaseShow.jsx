@@ -46,8 +46,10 @@ const AssetShow = ({ columns, role }) => {
     }
 
     try {
-      const response = axiosInstance.get(`/assets?search=${param}`);
-      console.log(response);
+      const response = await axiosInstance.post(`/assets/search/${role}`, {
+        term: param,
+      });
+      setAssets(response.data);
     } catch (error) {
       toast.error("Ha ocurrido un error con la busqueda");
     }
