@@ -12,7 +12,8 @@ class Asset extends Model
         "id_loc_ass",
         "cod_ass",
         "ser_num_ass",
-        "obs_add_ass"
+        "obs_add_ass",
+        'est_ass'
     ];
 
     public function income()

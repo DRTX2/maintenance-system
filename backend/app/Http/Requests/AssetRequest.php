@@ -29,8 +29,8 @@ class AssetRequest extends FormRequest
             'asset.id_loc_ass' => 'required|exists:locations,id',
             'asset.cod_ass' => 'required|unique:assets,cod_ass,' . $id,
             'asset.ser_num_ass' => 'required|unique:assets,ser_num_ass,' . $id,
-            // Si tienes reglas para 'components', también debes ajustarlas
             'asset.components.*.id' => 'required|exists:components,id',
+            'asset.obs_add_ass' => 'nullable|string|max:500',
             'asset.components.*.pivot.description' => 'required|string',
         ];
     }
