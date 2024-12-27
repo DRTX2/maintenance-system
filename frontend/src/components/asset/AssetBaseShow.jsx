@@ -9,7 +9,7 @@ import axiosInstance from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const AssetShow = ({ columns }) => {
+const AssetShow = ({ columns, role }) => {
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
@@ -29,7 +29,8 @@ const AssetShow = ({ columns }) => {
 
   const fetchAssets = async () => {
     try {
-      const response = await axiosInstance.get("/assets");
+      const response = await axiosInstance.get(`/assets/${role}`);
+      console.log("Activos", response.data);
       setAssets(response.data);
     } catch (error) {
       toast.error("No se ha podido obtener los activos.");
@@ -45,8 +46,10 @@ const AssetShow = ({ columns }) => {
     }
 
     try {
-      const response = axiosInstance.get(`/assets?search=${param}`);
-      console.log(response);
+      const response = await axiosInstance.post(`/assets/search/${role}`, {
+        term: param,
+      });
+      setAssets(response.data);
     } catch (error) {
       toast.error("Ha ocurrido un error con la busqueda");
     }
@@ -77,7 +80,10 @@ const AssetShow = ({ columns }) => {
           <h2>Activos</h2>
 
           {/* Busqueda por search */}
-          <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} />
+          <SearchBar
+            placeholder={`Buscar por número de serie`}
+            onSearch={onFetch}
+          />
 
           {/* Boton para añadir */}
           <Button

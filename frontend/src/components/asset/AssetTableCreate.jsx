@@ -17,6 +17,7 @@ import { CircularProgress } from "@mui/material";
 const ContentTable = ({
   data,
   isLoading,
+  readOnly,
   columns,
   currentPage,
   rowsPerPage,
@@ -83,6 +84,13 @@ const ContentTable = ({
                           onChange={(e) =>
                             handleDescription(item.id, e.target.value)
                           }
+                          error={item.error || false}
+                          helperText={
+                            item.error ? "Este campo es obligatorio" : ""
+                          }
+                          InputProps={{
+                            readOnly: readOnly,
+                          }}
                         ></TextField>
                       ) : (
                         item[column.key]
