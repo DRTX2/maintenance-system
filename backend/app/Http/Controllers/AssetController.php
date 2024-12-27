@@ -77,11 +77,11 @@ class AssetController extends Controller
 
             $assets = Asset::with(['income', 'category', 'location'])->get();
         }
-        if ($assets->isEmpty()) {
-            return response()->json([
-                'message' => 'No se encontraron activos'
-            ]);
-        }
+        // if ($assets->isEmpty()) {
+        //     return response()->json([
+        //         'message' => 'No se encontraron activos'
+        //     ]);
+        // }
 
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
