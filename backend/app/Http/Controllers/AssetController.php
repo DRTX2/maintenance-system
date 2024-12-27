@@ -86,13 +86,19 @@ class AssetController extends Controller
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
                 'id' => $asset->id,
-                'income_code' => $asset->income,
-                'category_code' => $asset->category,
-                'location_code' => $asset->location,
+                'id_inc_ass' => $asset->income->id,
+                'id_cat_ass' => $asset->category->id,
+                'id_loc_ass' => $asset->location->id,
+                'income_code' => $asset->income->cod_inc,
+                'category_code' => $asset->category->cod_dis,
+                'category_name' => $asset->category->nom_dis,
+                'location_code' => $asset->location->cod_loc,
+                'location_name' => $asset->location->nam_loc,
                 'cod_ass' => $asset->cod_ass,
-                'est_ass' => $rol === 'admin' ? $asset->est_ass : null,
                 'ser_num_ass' => $asset->ser_num_ass,
                 'obs_add_ass' => $asset->obs_add_ass ?? null,
+                'est_ass' => $rol === 'admin' ? $asset->est_ass : null,
+
             ];
         });
         return response()->json($transformedAssets, 200);
