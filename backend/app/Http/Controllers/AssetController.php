@@ -9,7 +9,10 @@ use Illuminate\Http\Request;
 
 class AssetController extends Controller
 {
+    //Crear, Actualizar,Eliminar,Ver, Filtrar   
 
+
+    //cargar la tabla
     public function showOpenIncomes()
     {
 
