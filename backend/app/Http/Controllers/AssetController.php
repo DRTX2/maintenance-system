@@ -240,6 +240,130 @@ class AssetController extends Controller
         }
 
     }
+    public function search(Request $request, $rol)
+    {
+        $request->validate([
+            'term' => 'required|string|max:25',
+        ]);
+
+        $term = $request->input('term');
+
+        $query = Asset::with(['income', 'category', 'location'])
+            ->where('ser_num_ass', 'LIKE', "%{$term}%");
+
+
+        if ($rol == 'user') {
+            $query->where('est_ass', 'V');
+        }
+
+
+        $assets = $query->get();
+
+
+        $transformedAssets = $assets->map(function ($asset) use ($rol) {
+            return [
+                'id' => $asset->id,
+                'id_inc_ass' => $asset->income->id,
+                'id_cat_ass' => $asset->category->id,
+                'id_loc_ass' => $asset->location->id,
+                'income_code' => $asset->income->cod_inc,
+                'category_code' => $asset->category->cod_dis,
+                'category_name' => $asset->category->nom_dis,
+                'location_code' => $asset->location->cod_loc,
+                'location_name' => $asset->location->nam_loc,
+                'cod_ass' => $asset->cod_ass,
+                'ser_num_ass' => $asset->ser_num_ass,
+                'obs_add_ass' => $asset->obs_add_ass ?? null,
+                'est_ass' => $rol === 'admin' ? $asset->est_ass : null,
+            ];
+        });
+
+        return response()->json($transformedAssets, 200);
+    }
+
+    public function indexWithFilters(Request $request)
+    {
+
+
+        $assets = Asset::query();
+
+
+        if ($request->has('location')) {
+            $locations = $request->input('location'); // Forzar array
+            $assets->whereIn('id_loc_ass', $locations);
+        }
+
+        if ($request->has('income')) {
+            $assets->whereIn('id_inc_ass', $request->input('income'));
+        }
+
+
+        if ($request->has('type')) {
+            $assets->whereHas('category', function ($query) use ($request) {
+                $query->where('tip_dis', $request->type);
+            });
+        }
+
+        if ($request->has('device')) {
+            $assets->whereHas('category', function ($query) use ($request) {
+                $query->where('nom_dis', $request->device);
+            });
+        }
+
+
+        if ($request->has('status')) {
+            $assets->whereIn('est_ass', $request->input('status'));
+        }
+
+        $rol = $request->input('rol');
+
+
+        if ($rol === 'user') {
+
+            $assets->where('est_ass', 'V');
+        }
+
+
+
+        $assets = $assets->with(['income', 'category', 'location'])->get();
+
+
+        $transformedAssets = $assets->map(function ($asset) use ($rol) {
+            return [
+                'id' => $asset->id,
+                'id_inc_ass' => $asset->income->id,
+                'id_cat_ass' => $asset->category->id,
+                'id_loc_ass' => $asset->location->id,
+                'income_code' => $asset->income->cod_inc,
+                'category_code' => $asset->category->cod_dis,
+                'category_name' => $asset->category->nom_dis,
+                'location_code' => $asset->location->cod_loc,
+                'location_name' => $asset->location->nam_loc,
+                'cod_ass' => $asset->cod_ass,
+                'ser_num_ass' => $asset->ser_num_ass,
+                'obs_add_ass' => $asset->obs_add_ass ?? null,
+                'est_ass' => $rol === 'admin' ? $asset->est_ass : null,
+            ];
+        });
+
+        return response()->json($transformedAssets, 200);
+    }
+
+    public function getStatus()
+    {
+
+        $statuses = Asset::distinct()->pluck('est_ass');
+
+        $mappedStatuses = $statuses->map(function ($status) {
+            return [
+                'code' => $status,
+                'description' => $status === 'V' ? 'Visible' : 'Oculto'
+            ];
+        });
+
+        return response()->json($mappedStatuses, 200);
+    }
+
 
 
 }
