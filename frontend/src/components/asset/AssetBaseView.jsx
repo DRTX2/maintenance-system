@@ -10,8 +10,16 @@ import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
 import { Grid2 } from "@mui/material";
 
-const AssetBaseView = ({ asset, fields, columns }) => {
-  const [errors, setErrors] = useState({});
+const AssetBaseView = ({
+  asset,
+  fields,
+  columns,
+  errors,
+  validateAll,
+  validateTableFields,
+  handleDescription,
+  handleFieldChange,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
@@ -24,17 +32,27 @@ const AssetBaseView = ({ asset, fields, columns }) => {
     setCurrentPage(0);
   };
 
-  const handleFieldChange = (key, value) => {};
-
   const handleFetch = async (param) => {};
-
-  const handleDescription = async (id, value) => {
-    console.log("Id", id);
-    console.log("Value", value);
-  };
 
   const handleReturn = () => {
     navigate("/dashboard/assets");
+  };
+
+  const handleUpdate = async () => {
+    const isEntityValid = validateAll();
+    const isTableValid = validateTableFields();
+    if (isEntityValid && isTableValid) {
+      try {
+        console.log("Anterior", asset);
+        const response = await axiosInstance.put(`/assets/${asset.id}`, {
+          asset: asset,
+        });
+        console.log("Nuevo", response.data);
+        toast.success("Activo creado con éxito.");
+      } catch (error) {
+        toast.error("No se ha podido crear el activo.");
+      }
+    }
   };
 
   return (
@@ -50,7 +68,7 @@ const AssetBaseView = ({ asset, fields, columns }) => {
             marginBottom: "20px",
           }}
         >
-          Ver activo - {asset.cod_ass}
+          Ver activo
         </Typography>
         <Box marginLeft="50px">
           <FormControlLabel
@@ -95,7 +113,7 @@ const AssetBaseView = ({ asset, fields, columns }) => {
                   onFetch={handleFetch}
                   error={errors[field.key]}
                   helperText={errors[field.key]}
-                  readOnly={false}
+                  readOnly={!isEditing || !field.editable}
                 />
               </Box>
             </Grid2>
@@ -113,6 +131,7 @@ const AssetBaseView = ({ asset, fields, columns }) => {
           handleChangePage={handleChangePage}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
           handleDescription={handleDescription}
+          readOnly={!isEditing}
         />
       </Box>
 
@@ -131,7 +150,11 @@ const AssetBaseView = ({ asset, fields, columns }) => {
           Cancelar
         </Button>
 
-        <Button color="primary" sx={CreateStyles.buttonStyle2}>
+        <Button
+          color="primary"
+          sx={CreateStyles.buttonStyle2}
+          onClick={handleUpdate}
+        >
           Guardar
         </Button>
       </Box>

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const Entry = ({ fields, columns, defaultState }) => {
   const [entity, setEntity] = useState(defaultState);
-  const [relatedData, setRelatedData] = useState({});
+  const [relatedData, setRelatedData] = useState([]);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isCategorySelected, setIsCategorySelected] = useState(false);
@@ -48,12 +48,16 @@ const Entry = ({ fields, columns, defaultState }) => {
       );
 
       let updatedComponents;
+      const hasError = !description.trim();
 
       // Actualizar el compoentne si existe
       if (componentExists) {
         updatedComponents = prevEntity.components.map((component) =>
           component.id === id
-            ? { ...component, pivot: { ...component.pivot, description } }
+            ? {
+                ...component,
+                pivot: { ...component.pivot, description },
+              }
             : component
         );
         // Crear el componente si no existe
@@ -68,7 +72,11 @@ const Entry = ({ fields, columns, defaultState }) => {
       setRelatedData((prevData) =>
         prevData.map((component) =>
           component.id === id
-            ? { ...component, pivot: { ...component.pivot, description } }
+            ? {
+                ...component,
+                pivot: { ...component.pivot, description },
+                error: hasError,
+              }
             : component
         )
       );
@@ -82,6 +90,7 @@ const Entry = ({ fields, columns, defaultState }) => {
     if (key === "id_cat_ass") {
       setIsCategorySelected(true);
       setIsLoading(true);
+      resetComponents();
 
       try {
         const response = await axiosInstance.get(`/categories/show/${value}`);
@@ -94,6 +103,7 @@ const Entry = ({ fields, columns, defaultState }) => {
             },
           })
         );
+
         setRelatedData(componentsWithDescription);
       } catch (error) {
         toast.error("No se ha podido obtener los componentes.");
@@ -102,6 +112,36 @@ const Entry = ({ fields, columns, defaultState }) => {
         setIsLoading(false);
       }
     }
+  };
+
+  const resetComponents = () => {
+    setEntity((prevEntity) => ({
+      ...prevEntity,
+      components: [],
+    }));
+    setRelatedData([]);
+  };
+
+  const validateTableFields = () => {
+    let hasErrors = false;
+
+    const updatedRelatedData = relatedData.map((component) => {
+      const hasDescription = component.pivot?.description?.trim();
+
+      // Error, no ha escrito en la tabla
+      if (!hasDescription) {
+        hasErrors = true;
+        return { ...component, error: true };
+      }
+
+      // Si la descripción está bien, eliminar el error
+      return { ...component, error: false };
+    });
+
+    // Actualizar el estado con los errores encontrados
+    setRelatedData(updatedRelatedData);
+
+    return !hasErrors;
   };
 
   // Cuando intente crear todos los campos
@@ -116,7 +156,11 @@ const Entry = ({ fields, columns, defaultState }) => {
   };
 
   const handleCreate = async () => {
-    if (validateAll()) {
+    const isEntityValid = validateAll();
+    const isTableValid = validateTableFields();
+
+    console.log(entity);
+    if (isEntityValid && isTableValid) {
       try {
         await axiosInstance.post("/assets", { asset: entity });
         resetFields();
@@ -188,6 +232,7 @@ const Entry = ({ fields, columns, defaultState }) => {
               handleChangePage={handleChangePage}
               handleChangeRowsPerPage={handleChangeRowsPerPage}
               handleDescription={handleDescription}
+              readOnly={false}
             />
           </Box>
         ) : null}
