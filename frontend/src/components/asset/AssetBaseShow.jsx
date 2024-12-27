@@ -80,7 +80,10 @@ const AssetShow = ({ columns, role }) => {
           <h2>Activos</h2>
 
           {/* Busqueda por search */}
-          <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} />
+          <SearchBar
+            placeholder={`Buscar por número de serie`}
+            onSearch={onFetch}
+          />
 
           {/* Boton para añadir */}
           <Button
