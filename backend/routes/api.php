@@ -40,11 +40,9 @@ Route::post('/suppliers/search', [SuppliersController::class, 'search']);
 Route::get('categories', [CategoryController::class, 'index']);
 Route::get('categories/show/{id}', [CategoryController::class, 'show']);
 
-//Las borrare luego
-// Route::put('category/update/{id}', [CategoryController::class, 'update']);
-// Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
-// Route::post('/categories/search', [CategoryController::class, 'search']);
-// Route::post('category/store', [CategoryController::class, 'store']);
+Route::get('/categories/types', [CategoryController::class, 'getTypes']);
+
+Route::get('/categories/names', [CategoryController::class, 'getNames']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
     // Coloca aqui las rutas que estarán protegidas.
@@ -95,8 +93,9 @@ Route::post(
     '/assets',
     [AssetController::class, 'store']
 );
-Route::post('/assets/search', [AssetController::class, 'search']);
-
+Route::post('/assets/search/{rol}', [AssetController::class, 'search']);
+Route::post('/assets/filters', [AssetController::class, 'indexWithFilters']);
+Route::post('/assets/status', [AssetController::class, 'getStatus']);
 
 
 

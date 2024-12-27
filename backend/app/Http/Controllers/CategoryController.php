@@ -30,8 +30,21 @@ class CategoryController extends Controller
 
 
     }
+    public function getTypes()
+    {
 
+        $types = Category::distinct()->pluck('tip_dis');
 
+        return response()->json($types, 200);
+    }
+
+    public function getNames()
+    {
+
+        $names = Category::distinct()->pluck('nom_dis');
+
+        return response()->json($names, 200);
+    }
 
     public function show($id)
     {
