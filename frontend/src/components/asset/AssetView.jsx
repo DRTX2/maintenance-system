@@ -21,11 +21,12 @@ const AssetView = () => {
         const [asset, locationsData, incomesData] = await Promise.all([
           axiosInstance.get(`/assets/show/${id}`),
           axiosInstance.get("/locations"),
-          axiosInstance.get("/incomes"),
+          axiosInstance.get(`/assets/incomes/${id}`),
         ]);
 
+        console.log(incomesData.data);
         setLocations(locationsData.data.results);
-        setIncomes(incomesData.data.results);
+        setIncomes(incomesData.data);
         setAsset(asset.data);
         console.log("Viendo", asset.data);
 
