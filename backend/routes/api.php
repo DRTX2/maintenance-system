@@ -8,6 +8,7 @@ use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\UserController;
@@ -116,4 +117,11 @@ Route::get('/maintenances/{id}', [MaintenanceController::class, 'show']);
 Route::put('/maintenances/{id}', [MaintenanceController::class, 'update']);
 Route::post('/maintenances/{id}', [MaintenanceController::class, 'hide'])->where('id', '[0-9]+');
 
-// aun no probe los cambios hechos al usar id, ni testeado estas rutas de mantenimientos
+// Observations
+
+Route::get('/observations', [ObservationController::class, 'index']);
+Route::post('/observations', [ObservationController::class, 'store']);
+Route::get('/observations/{id}', [ObservationController::class, 'show']);
+Route::put('/observations/{id}', [ObservationController::class, 'update']);
+Route::delete('/observations/{id}', [ObservationController::class, 'destroy']);
+Route::post('/observations/search', [ObservationController::class, 'search']);
