@@ -17,7 +17,6 @@ class SuppliersController extends Controller
 
         return response()->json([
             'results' => $supliers,
-            'message' => 'Proveedor obtenido con exito.'
         ], 200);
     }
 
@@ -27,7 +26,6 @@ class SuppliersController extends Controller
             $supplier = Supplier::findOrFail($id);
             return response()->json([
                 'result' => $supplier,
-                'message' => 'Operación exitosa',
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
@@ -49,7 +47,6 @@ class SuppliersController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Proveedor creado con éxito',
                 'data' => $supplier,
             ], 201);
         } catch (ValidationException $e) {
@@ -86,7 +83,6 @@ class SuppliersController extends Controller
 
             // Respuesta exitosa
             return response()->json([
-                'message' => 'Proveedor actualizado con éxito',
                 'data' => $supplier,
             ], 200);
 
@@ -141,7 +137,6 @@ class SuppliersController extends Controller
 
         return response()->json([
             'results' => $suppliers,
-            'message' => 'Búsqueda realizada con éxito.',
         ], 200);
     }
 
