@@ -4,7 +4,7 @@ const ResponsibleManager = () => {
   const apiConfig = {
     fetchAll: "/responsibles",
     fetchOne: "/responsibles",
-    fetchSearch: "/search?term=",
+    fetchSearch: "/responsibles/search?term=",
     create: "/responsibles",
     update: "/responsibles",
     delete: "/responsibles",
