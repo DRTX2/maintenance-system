@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\IncomeController;
 use Illuminate\Http\Request;
@@ -108,11 +109,11 @@ Route::post('/assets/status', [AssetController::class, 'getStatus']);
 
 
 
-//Mantenimientos - aun no gestiono su relacion con activos/responsables
+//Mantenimientos - aun no gestiono su relacion con responsables
 
 Route::get('/maintenances', [MaintenanceController::class, 'index']);
 Route::post('/maintenances', [MaintenanceController::class, 'store']);
-Route::post('/maintenances/search', [MaintenanceController::class, 'search']); // Antes
+Route::post('/maintenances/search', [MaintenanceController::class, 'search']);
 Route::get('/maintenances/{id}', [MaintenanceController::class, 'show']);
 Route::put('/maintenances/{id}', [MaintenanceController::class, 'update']);
 Route::post('/maintenances/{id}', [MaintenanceController::class, 'hide'])->where('id', '[0-9]+');
@@ -125,3 +126,12 @@ Route::get('/observations/{id}', [ObservationController::class, 'show']);
 Route::put('/observations/{id}', [ObservationController::class, 'update']);
 Route::delete('/observations/{id}', [ObservationController::class, 'destroy']);
 Route::post('/observations/search', [ObservationController::class, 'search']);
+
+// Maintenance activities
+
+Route::get('/activities', [ActivityController::class, 'index']);
+Route::post('/activities', [ActivityController::class, 'store']);
+Route::get('/activities/{id}', [ActivityController::class, 'show']);
+Route::put('/activities/{id}', [ActivityController::class, 'update']);
+Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
+Route::post('/activities/search', [ActivityController::class, 'search']);
