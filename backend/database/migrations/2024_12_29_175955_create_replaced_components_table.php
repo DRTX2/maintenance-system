@@ -8,12 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('replaced_assets', function (Blueprint $table) {
+        Schema::create('replaced_components', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->text('des_rep_ass');
-            $table->foreignId('id_ass_bel')
-                    ->constrained("assets")
+            $table->text('des_rep_com');
+            $table->foreignId('id_com_bel')
+                    ->constrained("components")
                     ->onDelete("cascade");
             $table->foreignId('id_det_main_bel')
                     ->constrained("maintenance_details")
@@ -23,6 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('replaced_assets');
+        Schema::dropIfExists('replaced_components');
     }
 };
