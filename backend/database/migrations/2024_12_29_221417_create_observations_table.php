@@ -11,7 +11,9 @@ return new class extends Migration
         Schema::create('observations', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('id_main_obs')->constrained('maintenances')->onDelete('cascade');
+            $table->foreignId('id_det_main_obs')
+            ->constrained('maintenance_details')
+            ->onDelete('cascade');
             $table->text('des_obs');
         });
     }
