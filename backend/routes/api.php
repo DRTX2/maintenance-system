@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ObservationController;
+use App\Http\Controllers\ReplacedComponentController;
 use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\UserController;
@@ -135,3 +136,12 @@ Route::get('/activities/{id}', [ActivityController::class, 'show']);
 Route::put('/activities/{id}', [ActivityController::class, 'update']);
 Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
 Route::post('/activities/search', [ActivityController::class, 'search']);
+
+// Replaced Components
+
+Route::get('/replaced-components', [ReplacedComponentController::class, 'index']);
+Route::post('/replaced-components', [ReplacedComponentController::class, 'store']);
+Route::get('/replaced-components/{id}', [ReplacedComponentController::class, 'show']);
+Route::put('/replaced-components/{id}', [ReplacedComponentController::class, 'update']);
+Route::delete('/replaced-components/{id}', [ReplacedComponentController::class, 'destroy']);
+Route::post('/replaced-components/search', [ReplacedComponentController::class, 'search']);
