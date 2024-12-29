@@ -17,14 +17,11 @@ return new class extends Migration
             ->index();
             $table->string("cod_main",10)->unique();
             $table->enum("typ_main",['Preventivo','Correctivo','Predictivo','Adaptativo','Perfectivo']);
-            $table->enum("vis_main",['V','H'])->default('V');//visibility_maintenance={visible, hidden}
-            $table->string('dni_res_main');
-            $table->foreign('dni_res_main')
-                ->references('dni_res')
-                ->on('responsibles')
+            //visibility_maintenance={visible, hidden}
+            $table->enum("vis_main",['V','H'])->default('V');
+            $table->foreignId('dni_res_main')
+                ->constrained('responsibles')
                 ->onDelete('restrict');
-            // añadir tabla activos-mantenimientos, lo ignorare de momento
-
         });
     }
 
