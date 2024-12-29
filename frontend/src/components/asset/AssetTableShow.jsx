@@ -15,6 +15,7 @@ import tableStyles from "../../generic/styles/TableStyles";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const AssetTableShow = ({
   isLoading,
@@ -83,10 +84,14 @@ const AssetTableShow = ({
                       <VisibilityIcon />
                     </IconButton>
                     <IconButton
-                      onClick={() => onDelete(item.id)}
-                      color="secondary"
+                      onClick={() => onDelete(item.id, item.est_ass)}
+                      color={item.est_ass === "V" ? "secondary" : "sucess"}
                     >
-                      <DeleteForeverIcon />
+                      {item.est_ass === "V" ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
                     </IconButton>
                   </TableCell>
                 </TableRow>
