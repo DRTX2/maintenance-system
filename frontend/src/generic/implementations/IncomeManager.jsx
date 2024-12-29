@@ -31,7 +31,8 @@ const IncomeManager = () => {
   const defaultEntityState = {
     cod_inc: "",
     date_inc: null,
-    est_inc: "",
+    // Por defecto dejemosle abierto, sino este no se crea
+    est_inc: "O",
     supplier_id: "",
     supplier_nam: "",
   };

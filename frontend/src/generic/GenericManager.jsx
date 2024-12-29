@@ -84,7 +84,7 @@ const GenericManager = ({
   };
 
   const handleCreate = async (item) => {
-    console.log(item);
+    console.log("Creando...", item);
     try {
       await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();
@@ -111,7 +111,7 @@ const GenericManager = ({
 
   const handleDelete = async (id) => {
     try {
-      console.log(id);
+      console.log("Delete", `${apiConfig.delete}/${id}`);
       await axiosInstance.delete(`${apiConfig.delete}/${id}`);
       await fetchEntities();
 
@@ -135,9 +135,9 @@ const GenericManager = ({
   };
 
   const handleView = async (id) => {
+    console.log("Viendo", id);
     try {
       const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
-      console.log("View", response);
       setEntity(response?.data?.result);
     } catch (error) {
       handleError(error, `Error inesperado al ver ${entityNameSingular}`);
@@ -165,7 +165,10 @@ const GenericManager = ({
     setIsEditing(false);
   };
 
-  const openCreateModal = () => setModalCreateOpen(true);
+  const openCreateModal = () => {
+    console.log("Creando");
+    setModalCreateOpen(true);
+  };
   const closeCreateModal = () => setModalCreateOpen(false);
 
   const openDeleteModal = async (id) => {

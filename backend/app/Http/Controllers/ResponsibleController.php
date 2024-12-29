@@ -25,7 +25,7 @@ class ResponsibleController extends Controller
             return response()->json([
                 "message" => "Éxito al guardar al responsable",
                 "results" => $responsible
-            ], 201); 
+            ], 201);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "Ocurrió un error al guardar al responsable",
@@ -39,7 +39,7 @@ class ResponsibleController extends Controller
 
         try {
             $responsible = Responsible::findOrFail($id);
-            $validatedData=$request->validated();
+            $validatedData = $request->validated();
 
             $responsible->update([
                 "nam_res" => $validatedData['nam_res'],
@@ -51,12 +51,12 @@ class ResponsibleController extends Controller
 
             return response()->json([
                 "message" => "Responsable actualizado"
-            ],200);
+            ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Resposable no encontrado",
                 // "error"=>;
-            ],404);
+            ], 404);
         }
     }
 
@@ -66,26 +66,27 @@ class ResponsibleController extends Controller
             $responsible = Responsible::findOrFail($id);
 
             return response()->json([
-                "results" => $responsible,
-            ],200);
+                "result" => $responsible,
+            ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Responsable no encontrado",
-            ],404);
+            ], 404);
         }
     }
 
-    public function destroy($id) {// seria mas q nada logico, o no sep
+    public function destroy($id)
+    {// seria mas q nada logico, o no sep
         try {
             $responsible = Responsible::findOrFail($id);
 
-            if(!$responsible){
+            if (!$responsible) {
                 return response()->json([
                     'message' => 'No se puede eliminar responsables asociados a mantenimientos',
                 ], 404);
             }
 
-            if($responsible->maintenances()->exists()){
+            if ($responsible->maintenances()->exists()) {
                 return response()->json([
                     'message' => 'No se puede eliminar responsables asociados a mantenimientos',
                 ], 400);
@@ -93,21 +94,22 @@ class ResponsibleController extends Controller
 
             $responsible->delete();
             return response()->json([
-                "message"=>"Eliminación exitosa"
+                "message" => "Eliminación exitosa"
             ]);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Responsable no encontrado",
-            ],404);
+            ], 404);
         }
     }
 
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $request->validate([
-            "term"=>'required|max:10'
+            "term" => 'required|max:10'
         ]);
-        $term= $request->input('term');
-        $responsibles=Responsible::where('dni_res','LIKE', "%{$term}%")->get();
+        $term = $request->input('term');
+        $responsibles = Responsible::where('dni_res', 'LIKE', "%{$term}%")->get();
 
         return response()->json([
             'results' => $responsibles,

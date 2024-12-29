@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { useDemoRouter } from "@toolpad/core/internal";
 import { navigation } from "../components/NavigationConfig";
 import { demoTheme } from "../components/Theme";
-import DemoPageContent from "../components/DemoPageContent";
 import EngineeringIcon from "@mui/icons-material/Engineering";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/api";
 import { getDecodedToken, removeToken } from "../utils/authService";
+import Box from "@mui/material/Box";
 
 function Dashboard({ window }) {
   const navigate = useNavigate();
@@ -37,16 +36,14 @@ function Dashboard({ window }) {
     },
   };
 
-  const router = useDemoRouter("/dashboard");
-
   return (
     <AppProvider
       session={session}
       authentication={authentication}
       navigation={navigation}
-      router={router}
       theme={demoTheme}
       branding={{
+        homeUrl: "dashboard",
         logo: <EngineeringIcon style={{ color: "white", fontSize: 35 }} />,
         title: (
           <span style={{ color: "white" }}>Sistema De Mantenimientos</span>
@@ -54,7 +51,17 @@ function Dashboard({ window }) {
       }}
     >
       <DashboardLayout>
-        <DemoPageContent pathname={router.pathname} />
+        <Box
+          sx={{
+            py: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          <Outlet />
+        </Box>
       </DashboardLayout>
     </AppProvider>
   );

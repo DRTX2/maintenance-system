@@ -31,6 +31,8 @@ class IncomeController extends Controller
         ], 200);
     }
 
+
+
     public function store(IncomeRequest $request)
     {
 

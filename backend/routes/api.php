@@ -40,11 +40,9 @@ Route::post('/suppliers/search', [SuppliersController::class, 'search']);
 Route::get('categories', [CategoryController::class, 'index']);
 Route::get('categories/show/{id}', [CategoryController::class, 'show']);
 
-//Las borrare luego
-// Route::put('category/update/{id}', [CategoryController::class, 'update']);
-// Route::delete('category/destroy/{id}', [CategoryController::class, 'destroy']);
-// Route::post('/categories/search', [CategoryController::class, 'search']);
-// Route::post('category/store', [CategoryController::class, 'store']);
+Route::get('/categories/types', [CategoryController::class, 'getTypes']);
+
+Route::get('/categories/names', [CategoryController::class, 'getNames']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
     // Coloca aqui las rutas que estarán protegidas.
@@ -69,32 +67,53 @@ Route::get('/incomes/{id}', [IncomeController::class, 'show']);
 //Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
 Route::put('/incomes/{id}', [IncomeController::class, 'update']);
 Route::delete('/incomes/{id}', [IncomeController::class, 'destroy']);
+Route::delete('/incomes/open', [IncomeController::class, 'showOpenIncomes']);
 Route::post('/incomes/search', [IncomeController::class, 'search']);
 
 //Responsables
 
-Route::get('/responsibles', [ResponsibleController::class,'index']);
-Route::post('/responsibles', [ResponsibleController::class,'store']);
-Route::get('/responsibles/{id}', [ResponsibleController::class,'show']);
-Route::put('/responsibles/{id}', [ResponsibleController::class,'update']);
-Route::delete('/responsibles/{id}', [ResponsibleController::class,'destroy']);
-Route::post('/responsibles/search', [ResponsibleController::class,'search']);
+Route::get('/responsibles', [ResponsibleController::class, 'index']);
+Route::post('/responsibles', [ResponsibleController::class, 'store']);
+Route::get('/responsibles/{id}', [ResponsibleController::class, 'show']);
+Route::put('/responsibles/{id}', [ResponsibleController::class, 'update']);
+Route::delete('/responsibles/{id}', [ResponsibleController::class, 'destroy']);
+Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
+
+
+
 //Activos
-Route::get('/assets', [AssetController::class, 'index']);
-Route::post('/assets', [AssetController::class, 'store']);
-Route::get('/assets/{id}', [AssetController::class, 'show']);
-//Route::get('incomes/by-supplier/{id}', [IncomeController::class, 'showBySupplier']);
+Route::get('/assets/{rol}', [AssetController::class, 'index']);
+Route::get('/assets/show/{id}', [AssetController::class, 'show']);
+//Mostrar ingresoso solo abiertos
+
+Route::get('/assets/incomes/create', [AssetController::class, 'showOpenIncomesCreate']);
+
+Route::get('/assets/incomes/{id}', [AssetController::class, 'showOpenIncomes']);
+
+
+
+
 Route::put('/assets/{id}', [AssetController::class, 'update']);
-Route::delete('/assets/{id}', [AssetController::class, 'destroy']);
-Route::post('/assets/search', [AssetController::class, 'search']);
+//Ocultar, Mostrar
+Route::put('/assets/hide/{id}', [AssetController::class, 'hideAsset']);
+Route::put('/assets/visible/{id}', [AssetController::class, 'visibleAsset']);
+Route::post(
+    '/assets',
+    [AssetController::class, 'store']
+);
+Route::post('/assets/search/{rol}', [AssetController::class, 'search']);
+Route::post('/assets/filters', [AssetController::class, 'indexWithFilters']);
+Route::post('/assets/status', [AssetController::class, 'getStatus']);
+
+
 
 //Mantenimientos - aun no gestiono su relacion con activos/responsables
 
-Route::get('/maintenances', [MaintenanceController::class,'index']);
-Route::post('/maintenances', [MaintenanceController::class,'store']);
-Route::post('/maintenances/search', [MaintenanceController::class,'search']); // Antes
-Route::get('/maintenances/{id}', [MaintenanceController::class,'show']);
-Route::put('/maintenances/{id}', [MaintenanceController::class,'update']);
-Route::post('/maintenances/{id}', [MaintenanceController::class,'hide'])->where('id', '[0-9]+');
+Route::get('/maintenances', [MaintenanceController::class, 'index']);
+Route::post('/maintenances', [MaintenanceController::class, 'store']);
+Route::post('/maintenances/search', [MaintenanceController::class, 'search']); // Antes
+Route::get('/maintenances/{id}', [MaintenanceController::class, 'show']);
+Route::put('/maintenances/{id}', [MaintenanceController::class, 'update']);
+Route::post('/maintenances/{id}', [MaintenanceController::class, 'hide'])->where('id', '[0-9]+');
 
 // aun no probe los cambios hechos al usar id, ni testeado estas rutas de mantenimientos

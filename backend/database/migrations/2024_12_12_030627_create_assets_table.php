@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string("cod_ass", 10)->unique();
             $table->string("ser_num_ass", 20)->unique();
             $table->string("obs_add_ass", 50)->nullable();
+            $table->enum('est_ass', ['V', 'H'])->default('V');
             $table->timestamps();
 
         });

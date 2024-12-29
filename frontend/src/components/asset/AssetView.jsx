@@ -1,0 +1,198 @@
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import axiosInstance from "../../utils/api";
+import AssetBaseView from "./AssetBaseView";
+import { CircularProgress, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { validateField, validateFields } from "../../utils/validations";
+
+const AssetView = () => {
+  const { id } = useParams();
+  const [locations, setLocations] = useState([]);
+  const [incomes, setIncomes] = useState([]);
+  const [relatedData, setRelatedData] = useState([]);
+  const [asset, setAsset] = useState({});
+  const [errors, setErrors] = useState({});
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        const [asset, locationsData, incomesData] = await Promise.all([
+          axiosInstance.get(`/assets/show/${id}`),
+          axiosInstance.get("/locations"),
+          axiosInstance.get(`/assets/incomes/${id}`),
+        ]);
+
+        console.log(incomesData.data);
+        setLocations(locationsData.data.results);
+        setIncomes(incomesData.data);
+        setAsset(asset.data);
+        console.log("Viendo", asset.data);
+
+        setIsReady(true);
+      } catch (error) {
+        toast.error("No se han podido obtener los datos.");
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
+  const resultsLocations =
+    locations.length > 0
+      ? locations.map((location) => ({
+          value: location.id,
+          label: location.nam_loc,
+        }))
+      : [{ value: "", label: "No se han encontrado ubicaciones..." }];
+
+  const resultsIncomes =
+    incomes.length > 0
+      ? incomes.map((income) => ({
+          value: income.id,
+          label: income.cod_inc,
+        }))
+      : [{ value: "", label: "No se han encontrado ingresos..." }];
+
+  const fields = [
+    { key: "cod_ass", label: "Código", type: "text", editable: true },
+    {
+      key: "ser_num_ass",
+      label: "Número de serie",
+      type: "text",
+      editable: true,
+    },
+    {
+      key: "id_loc_ass",
+      label: "Ubicación",
+      type: "select",
+      options: resultsLocations,
+      editable: true,
+    },
+    {
+      key: "id_inc_ass",
+      label: "Ingreso",
+      type: "select",
+      options: resultsIncomes,
+      editable: true,
+    },
+    {
+      key: "category_name",
+      label: "Dispositivo",
+      type: "text",
+      editable: false,
+    },
+  ];
+
+  const handleFieldChange = (key, value) => {
+    setAsset((prev) => ({ ...prev, [key]: value }));
+
+    const errorMessage = validateField(key, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
+  };
+
+  const validateAll = () => {
+    const validationErrors = validateFields(asset, fields);
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const handleDescription = async (id, description) => {
+    setAsset((prevEntity) => {
+      const componentExists = prevEntity.components.some(
+        (component) => component.id === id
+      );
+
+      let updatedComponents;
+      const hasError = !description.trim();
+
+      // Actualizar el compoentne si existe
+      if (componentExists) {
+        updatedComponents = prevEntity.components.map((component) =>
+          component.id === id
+            ? {
+                ...component,
+                pivot: { ...component.pivot, description },
+              }
+            : component
+        );
+        // Crear el componente si no existe
+      } else {
+        updatedComponents = [
+          ...prevEntity.components,
+          { id, pivot: { description } },
+        ];
+      }
+
+      // Actualizar relatedData para mantener los datos que escribe el usuario en la tabla.
+      setRelatedData((prevData) =>
+        prevData.map((component) =>
+          component.id === id
+            ? {
+                ...component,
+                pivot: { ...component.pivot, description },
+                error: hasError,
+              }
+            : component
+        )
+      );
+
+      return { ...prevEntity, components: updatedComponents };
+    });
+  };
+
+  const validateTableFields = () => {
+    let hasErrors = false;
+
+    const updatedRelatedData = relatedData.map((component) => {
+      const hasDescription = component.pivot?.description?.trim();
+
+      // Error, no ha escrito en la tabla
+      if (!hasDescription) {
+        hasErrors = true;
+        return { ...component, error: true };
+      }
+
+      // Si la descripción está bien, eliminar el error
+      return { ...component, error: false };
+    });
+
+    // Actualizar el estado con los errores encontrados
+    setRelatedData(updatedRelatedData);
+
+    return !hasErrors;
+  };
+
+  const columns = [
+    { key: "id", label: "Codigo", showInTable: false },
+    { key: "nam_com", label: "Nombre", showInTable: true },
+    { key: "des_com", label: "Descripción", showInTable: true },
+  ];
+
+  if (!isReady) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <CircularProgress />
+        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
+          Cargando datos, por favor espera...
+        </Typography>
+      </div>
+    );
+  }
+  return (
+    <AssetBaseView
+      asset={asset}
+      fields={fields}
+      columns={columns}
+      validateAll={validateAll}
+      validateTableFields={validateTableFields}
+      handleDescription={handleDescription}
+      handleFieldChange={handleFieldChange}
+      setAsset={setAsset}
+      errors={errors}
+    />
+  );
+};
+
+export default AssetView;

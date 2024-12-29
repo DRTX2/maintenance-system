@@ -36,6 +36,38 @@ const validationRules = {
       "Contraseña invalida: debe tener mayusculas, minusculas, un dígito y al menos 8 caracteres",
   },
   // Responsables
+  dni_res: {
+    required: true,
+    minLength: 10,
+    maxLength: 10,
+    message: "La cédula debe tener 10 caracteres numéricos",
+    regex: /^[0-9]+$/,
+  },
+  nam_res: {
+    required: true,
+    minLength: 3,
+    message: "El nombre debe tener al menos 3 caracteres",
+  },
+  las_res: {
+    required: true,
+    minLength: 3,
+    message: "El apellido debe tener al menos 3 caracteres",
+  },
+  ema_res: {
+    required: true,
+    regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    message: "Debe ingresar un correo electrónico válido",
+  },
+  pho_res: {
+    required: true,
+    regex: /^[0-9]{10}$/,
+    message: "Debe ingresar un número de teléfono válido",
+  },
+  is_ext: {
+    required: true,
+    select: true,
+    message: "Debe seleccionar un tipo",
+  },
   // Ubicaciones
   cod_loc: {
     required: true,
@@ -89,6 +121,32 @@ const validationRules = {
   date_inc: {
     required: true,
     message: "Debe seleccionar una fecha",
+  },
+  // Activos
+  cod_ass: {
+    required: true,
+    minLength: 3,
+    message: "Debe tener al menos 3 caracteres",
+  },
+  ser_num_ass: {
+    required: true,
+    minLength: 8,
+    message: "Debe tener al menos 8 caracteres",
+  },
+  id_loc_ass: {
+    required: true,
+    selected: true,
+    message: "Debe seleccionar una ubicaciónn",
+  },
+  id_inc_ass: {
+    required: true,
+    selected: true,
+    message: "Debe selecciona un ingreso",
+  },
+  id_cat_ass: {
+    required: true,
+    selected: true,
+    message: "Debe seleccionar algún tipo",
   },
 };
 // Todos los campos
