@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MaintenanceActivity extends Model
 {
     use HasFactory;
-    protected $table="activity_maintenances";
+    protected $table="activities";
     
     protected $fillable = [
         'typ_main_id',

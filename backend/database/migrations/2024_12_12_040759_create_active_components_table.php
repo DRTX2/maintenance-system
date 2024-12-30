@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('active_components_talbe', function (Blueprint $table) {
+        Schema::create('active_components', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string("des_act_com",50);

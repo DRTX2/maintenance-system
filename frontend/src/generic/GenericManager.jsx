@@ -84,6 +84,7 @@ const GenericManager = ({
   };
 
   const handleCreate = async (item) => {
+    console.log("Creando...", item);
     try {
       await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();
@@ -134,6 +135,7 @@ const GenericManager = ({
   };
 
   const handleView = async (id) => {
+    console.log("Viendo", id);
     try {
       const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
       setEntity(response?.data?.result);
@@ -163,7 +165,10 @@ const GenericManager = ({
     setIsEditing(false);
   };
 
-  const openCreateModal = () => setModalCreateOpen(true);
+  const openCreateModal = () => {
+    console.log("Creando");
+    setModalCreateOpen(true);
+  };
   const closeCreateModal = () => setModalCreateOpen(false);
 
   const openDeleteModal = async (id) => {

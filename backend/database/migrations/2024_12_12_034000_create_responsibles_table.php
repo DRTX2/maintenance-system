@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('responsibles', function (Blueprint $table) {
             $table->id();
-            $table->string('dni_res')->unique();// no se como ponerlo para q sea un varchar como primary keey
+            $table->string('dni_res')->unique();
             $table->timestamps();
             $table->string("nam_res");
             $table->string("las_res");//lastname

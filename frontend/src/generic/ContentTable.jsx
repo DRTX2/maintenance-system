@@ -82,6 +82,7 @@ const ContentTable = ({
                     <IconButton
                       onClick={() => onDelete(item.id)}
                       color="secondary"
+                      // Esto cambiar
                       disabled={currentUserEmail === item.email}
                     >
                       <DeleteForeverIcon />

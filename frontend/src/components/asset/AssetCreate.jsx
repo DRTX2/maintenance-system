@@ -2,41 +2,33 @@ import AssetBaseCreate from "./AssetBaseCreate";
 import axiosInstance from "../../utils/api";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { CircularProgress, Typography } from "@mui/material";
 
 const AssetCreate = () => {
   const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [categories, setCategories] = useState([]);
-
-  const fetchLocation = async () => {
-    try {
-      const response = await axiosInstance.get("/locations");
-      setLocations(response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido obtener las ubicaciones.");
-    }
-  };
-  const fetchIncomes = async () => {
-    try {
-      const response = await axiosInstance.get("/incomes");
-      setIncomes(response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido obtener los ingresos.");
-    }
-  };
-  const fecthCategories = async () => {
-    try {
-      const response = await axiosInstance.get("/categories");
-      setCategories(response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido obtener las categorias.");
-    }
-  };
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    fetchLocation();
-    fetchIncomes();
-    fecthCategories();
+    const fetchAllData = async () => {
+      try {
+        const [locationsData, incomesData, categoriesData] = await Promise.all([
+          axiosInstance.get("/locations"),
+          axiosInstance.get("/assets/incomes/create"),
+          axiosInstance.get("/categories"),
+        ]);
+
+        setLocations(locationsData.data.results);
+        setIncomes(incomesData.data);
+        setCategories(categoriesData.data.results);
+
+        setIsReady(true);
+      } catch (error) {
+        toast.error("No se han podido obtener los datos.");
+      }
+    };
+    fetchAllData();
   }, []);
 
   const resultsLocations =
@@ -89,7 +81,7 @@ const AssetCreate = () => {
     },
     {
       key: "id_cat_ass",
-      label: "Tipo",
+      label: "Dispositivo",
       type: "select",
       options: resultsCategories,
     },
@@ -100,6 +92,17 @@ const AssetCreate = () => {
     { key: "nam_com", label: "Nombre", showInTable: true },
     { key: "des_com", label: "Descripción", showInTable: true },
   ];
+
+  if (!isReady) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <CircularProgress />
+        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
+          Cargando datos, por favor espera...
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <AssetBaseCreate

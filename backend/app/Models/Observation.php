@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Observation extends Model
 {
-    protected $fillable = [ "id_main_obs", "des_obs"];
+    protected $fillable = [ "id_det_main_obs", "des_obs"];
 
     public function maintenance(){
-        return $this->belongsTo(Maintenance::class);
+        return $this->belongsTo(MaintenanceDetail::class);
     }
 }
