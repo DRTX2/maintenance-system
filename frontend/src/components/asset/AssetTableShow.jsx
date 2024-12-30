@@ -57,7 +57,6 @@ const AssetTableShow = ({
   // Verificando el rol del usuario.
   const decodedToken = getDecodedToken();
   const role = decodedToken?.role;
-  console.log("The role is", role);
 
   return (
     <>

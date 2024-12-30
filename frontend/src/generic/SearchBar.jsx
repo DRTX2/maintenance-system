@@ -17,8 +17,8 @@ const SearchBar = ({ placeholder, onSearch }) => {
         p: "2px 4px",
         display: "flex",
         alignItems: "center",
+        flexGrow: 1,
         widht: "100%",
-        maxWidth: "600px",
       }}
     >
       <InputBase

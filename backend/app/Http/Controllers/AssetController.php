@@ -303,28 +303,25 @@ class AssetController extends Controller
         $assets = Asset::query();
 
 
-        if ($request->has('location')) {
-            $locations = $request->input('location'); // Forzar array
-            $assets->whereIn('id_loc_ass', $locations);
+        if ($request->has('location') && count($request->input('location')) > 0) {
+            $assets->whereIn('id_loc_ass', $request->input('location'));
         }
 
-        if ($request->has('income')) {
+        if ($request->has('income') && count($request->input('income')) > 0) {
             $assets->whereIn('id_inc_ass', $request->input('income'));
         }
 
-
-        if ($request->has('type')) {
+        if ($request->has('type') && count($request->input('type')) > 0) {
             $assets->whereHas('category', function ($query) use ($request) {
-                $query->where('tip_dis', $request->type);
+                $query->whereIn('tip_dis', $request->input('type'));
             });
         }
 
-        if ($request->has('device')) {
+        if ($request->has('device') && count($request->input('device')) > 0) {
             $assets->whereHas('category', function ($query) use ($request) {
-                $query->where('nom_dis', $request->device);
+                $query->whereIn('nom_dis', $request->input('device'));
             });
         }
-
 
         if ($request->has('status')) {
             $assets->whereIn('est_ass', $request->input('status'));
