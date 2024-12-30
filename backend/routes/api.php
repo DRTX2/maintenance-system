@@ -90,9 +90,6 @@ Route::get('/assets/incomes/create', [AssetController::class, 'showOpenIncomesCr
 
 Route::get('/assets/incomes/{id}', [AssetController::class, 'showOpenIncomes']);
 
-
-
-
 Route::put('/assets/{id}', [AssetController::class, 'update']);
 //Ocultar, Mostrar
 Route::put('/assets/hide/{id}', [AssetController::class, 'hideAsset']);
