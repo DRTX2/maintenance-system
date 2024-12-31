@@ -28,4 +28,9 @@ class Maintenance extends Model
     {
         return $this->belongsTo(MaintenanceType::class, 'id_typ_main');
     }
+
+    public function maintenanceDetails()
+    {
+        return $this->hasMany(MaintenanceDetail::class, 'id_main_bel');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MaintenanceRequest;
 use App\Models\Maintenance;
+use App\Models\MaintenanceDetail;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -43,8 +44,14 @@ class MaintenanceController extends Controller
     {
         try {
             $maintenance = Maintenance::create($request->validated());
+            $maintenanceDetail = new MaintenanceDetail();
+            $maintenanceDetail->id_main_bel = $maintenance->id;
+            $maintenanceDetail->id_ass_bel = null;
+            $maintenanceDetail->save();
+
             return response()->json([
-                "results" => $maintenance // luego quitarlo 
+                "results" => $maintenance,
+                "detaiul"=>$maintenanceDetail
             ], 201);
         } catch (Exception $e) {
             return response()->json([
