@@ -15,7 +15,7 @@ class TypeMaintenanceController extends Controller
 
     public function show($id)
     {
-        $tipo = MaintenanceType::find($id);
+        $tipo = MaintenanceType::with("activities")->find($id);
 
         if (!$tipo) {
             return response()->json(["results" => null, "message" => "Tipo de mantenimiento no encontrado"], 404);

@@ -13,6 +13,7 @@ use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\ReplacedComponentController;
 use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\SuppliersController;
+use App\Http\Controllers\TypeMaintenanceController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\JwtMiddleware;
 
@@ -128,6 +129,16 @@ Route::put('/observations/{id}', [ObservationController::class, 'update']);
 Route::delete('/observations/{id}', [ObservationController::class, 'destroy']);
 Route::post('/observations/search', [ObservationController::class, 'search']);
 
+// Type Maintenances
+// comente algunas porq creo q no vamos a usar, pero por si acaso tenerlas
+Route::get('/type-maintenance', [TypeMaintenanceController::class, 'index']);
+// Route::post('/type-maintenance', [ActivityController::class, 'store']);
+Route::get('/type-maintenance/{id}', [TypeMaintenanceController::class, 'show']);
+// Route::put('/type-maintenance/{id}', [ActivityController::class, 'update']);
+// Route::delete('/type-maintenance/{id}', [ActivityController::class, 'destroy']);
+// Route::post('/type-maintenance/search', [ActivityController::class, 'search']);
+
+
 // Maintenance activities
 
 Route::get('/activities', [ActivityController::class, 'index']);
@@ -145,3 +156,5 @@ Route::get('/replaced-components/{id}', [ReplacedComponentController::class, 'sh
 Route::put('/replaced-components/{id}', [ReplacedComponentController::class, 'update']);
 Route::delete('/replaced-components/{id}', [ReplacedComponentController::class, 'destroy']);
 Route::post('/replaced-components/search', [ReplacedComponentController::class, 'search']);
+
+

@@ -12,7 +12,17 @@ class MaintenanceController extends Controller
 {
     public function index()
     {
-        $maintenances = Maintenance::all();
+        $maintenances = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res'])
+        ->get()
+        ->map(function ($maintenance) {
+            return [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'vis_main' => $maintenance->vis_main,
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res, // Concatenar el nombre y apellido
+                'type' => $maintenance->maintenanceType->typ_main, // Nombre del tipo de mantenimiento
+            ];
+        });
         return response()->json([
             "results" => $maintenances
         ], 200);
@@ -20,7 +30,7 @@ class MaintenanceController extends Controller
 
     public function show($id)
     {
-        $maintenance = Maintenance::fin($id);
+        $maintenance = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res'])->find($id);
         if (!$maintenance)
             return response()->json(["message" => "No existe el mantenimiento solicitado"], 404);
 
@@ -34,7 +44,6 @@ class MaintenanceController extends Controller
         try {
             $maintenance = Maintenance::create($request->validated());
             return response()->json([
-                "message" => "Éxito al guardar el mantenimiento",
                 "results" => $maintenance // luego quitarlo 
             ], 201);
         } catch (Exception $e) {
