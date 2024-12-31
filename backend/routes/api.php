@@ -9,6 +9,7 @@ use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\MaintenanceDetailController;
 use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\ReplacedComponentController;
 use App\Http\Controllers\ResponsibleController;
@@ -154,4 +155,6 @@ Route::put('/replaced-components/{id}', [ReplacedComponentController::class, 'up
 Route::delete('/replaced-components/{id}', [ReplacedComponentController::class, 'destroy']);
 Route::post('/replaced-components/search', [ReplacedComponentController::class, 'search']);
 
+// Maintenance Details
 
+Route::get('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'index']);
