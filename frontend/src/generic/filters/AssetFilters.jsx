@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Filters from "./Filters";
 import axiosInstance from "../../utils/api";
+import { getDecodedToken } from "../../utils/authService";
 
 const AssetFilters = ({ onFilterChange, onClear }) => {
   const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [devices, setDevices] = useState([]);
+  const role = getDecodedToken()?.role;
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -54,14 +56,20 @@ const AssetFilters = ({ onFilterChange, onClear }) => {
       ? devices.map((element) => ({ key: element, label: element }))
       : [{ key: "", label: "No se han encontrado dispositivos." }];
 
+  const optionsStatus = [
+    { key: "V", label: "Activos" },
+    { key: "H", label: "Ocultos" },
+  ];
+
   const data = [
     { key: "locations", label: "Ubicaciones", options: resultsLocations },
     { key: "incomes", label: "Ingresos", options: resultsIncomes },
     { key: "categories", label: "Categorias", options: resultsCategories },
     { key: "devices", label: "Dispositivos", options: resultsDevices },
+    ...(role === "admin"
+      ? [{ key: "status", label: "Estado", options: optionsStatus }]
+      : []),
   ];
-
-  console.log(data);
 
   return (
     <Filters data={data} onFilterChange={onFilterChange} onClear={onClear} />

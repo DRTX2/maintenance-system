@@ -100,7 +100,20 @@ const AssetShow = ({ columns, role }) => {
       return;
     }
 
+    const isFilterEmpty = Object.values(updatedFilters).every(
+      (filter) => !filter || Object.values(filter).every((value) => !value)
+    );
+
+    if (isFilterEmpty) {
+      toast.info(
+        "No se han encontrado filtros aplicados, recargando activos..."
+      );
+      await fetchAssets();
+      return;
+    }
+
     const cleanedData = buildFilterPayload(updatedFilters);
+    console.log("Limpio", cleanedData);
     await fetchAssetsFilter(cleanedData);
   };
 
@@ -118,6 +131,7 @@ const AssetShow = ({ columns, role }) => {
       income: processFilter(selectedValues.incomes),
       type: processFilter(selectedValues.categories),
       device: processFilter(selectedValues.devices),
+      status: processFilter(selectedValues.status),
       rol: role,
     };
     return payload;
