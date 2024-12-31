@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Box, Grid2, Typography, Button } from "@mui/material";
-
 import CreateStyles from "../../generic/styles/CreateStyles";
 import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";

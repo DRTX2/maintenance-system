@@ -123,8 +123,21 @@ export const navigationAdmin = [
     icon: <InventoryIcon style={{ color: "white" }} />, // Ícono blanco
   },
   {
-    segment: "mantenimientos",
-    title: "Mantenimientos",
+    segment: "dashboard/maintance",
+    title: (
+      <Link
+        to={"/dashboard/maintance"}
+        style={{
+          display: "block",
+          width: "100%",
+          height: "100%",
+          textDecoration: "none",
+          color: "inherit",
+        }}
+      >
+        Mantenimientos
+      </Link>
+    ),
     icon: <HandymanIcon style={{ color: "white" }} />, // Ícono blanco
   },
   {
