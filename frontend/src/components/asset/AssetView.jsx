@@ -28,7 +28,6 @@ const AssetView = () => {
         setLocations(locationsData.data.results);
         setIncomes(incomesData.data);
         setAsset(asset.data);
-        console.log("Viendo", asset.data);
 
         setIsReady(true);
       } catch (error) {

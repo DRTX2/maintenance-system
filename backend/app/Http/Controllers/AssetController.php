@@ -351,17 +351,15 @@ class AssetController extends Controller
             });
         }
 
-
-        if ($request->has('status')) {
-            $assets->whereIn('est_ass', $request->input('status'));
-        }
-
         $rol = $request->input('rol');
 
-
+        // Lógica para usuarios (rol "user")
         if ($rol === 'user') {
-
+            // Ignorar cualquier filtro de estado y mostrar solo los activos visibles
             $assets->where('est_ass', 'V');
+        } else if ($rol === 'admin' && $request->has('status') && count($request->input('status')) > 0) {
+            // Lógica para administradores: permitir filtro por estado
+            $assets->whereIn('est_ass', $request->input('status'));
         }
 
 
