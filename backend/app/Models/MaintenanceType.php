@@ -14,7 +14,7 @@ class MaintenanceType extends Model
         'typ_main',
     ];
 
-    public function actividades()
+    public function activities()
     {
         return $this->hasMany(MaintenanceActivity::class, 'typ_main_id');
     }

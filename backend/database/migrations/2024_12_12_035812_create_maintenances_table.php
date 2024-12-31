@@ -16,12 +16,16 @@ return new class extends Migration
             ->nullable()
             ->index();
             $table->string("cod_main",10)->unique();
-            $table->enum("typ_main",['Preventivo','Correctivo','Predictivo','Adaptativo','Perfectivo']);
+            $table->foreignId('id_typ_main')
+                ->constrained('type_maintenances')
+                ->onDelete('restrict');
             //visibility_maintenance={visible, hidden}
             $table->enum("vis_main",['V','H'])->default('V');
-            $table->foreignId('dni_res_main')
-                ->constrained('responsibles')
-                ->onDelete('restrict');
+            $table->string('dni_res_main');
+            $table->foreign('dni_res_main')
+                  ->references('dni_res')
+                  ->on('responsibles')
+                  ->onDelete('restrict');
         });
     }
 

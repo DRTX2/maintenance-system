@@ -23,7 +23,6 @@ class ResponsibleController extends Controller
         try {
             $responsible = Responsible::create($request->validated());
             return response()->json([
-                "message" => "Éxito al guardar al responsable",
                 "results" => $responsible
             ], 201);
         } catch (Exception $e) {
@@ -113,7 +112,6 @@ class ResponsibleController extends Controller
 
         return response()->json([
             'results' => $responsibles,
-            'message' => 'Búsqueda realizada con éxito.',
         ], 200);
     }
 }

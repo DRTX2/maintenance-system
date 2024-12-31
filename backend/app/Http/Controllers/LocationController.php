@@ -12,13 +12,9 @@ class LocationController extends Controller
 
         return response()->json([
             'results' => $locations,
-            'message' => 'Ubicaciones obtenidas con éxito.'
         ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         try {
