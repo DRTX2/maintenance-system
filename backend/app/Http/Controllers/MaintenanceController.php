@@ -10,42 +10,55 @@ use Illuminate\Http\Request;
 
 class MaintenanceController extends Controller
 {
-    public function index(){
-        $maintenances=Maintenance::all();
+    public function index()
+    {
+        $maintenances = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res'])
+        ->get()
+        ->map(function ($maintenance) {
+            return [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'vis_main' => $maintenance->vis_main,
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res, // Concatenar el nombre y apellido
+                'type' => $maintenance->maintenanceType->typ_main, // Nombre del tipo de mantenimiento
+            ];
+        });
         return response()->json([
-            "results"=>$maintenances
-        ],200);
+            "results" => $maintenances
+        ], 200);
     }
 
-    public function show($id){
-        $maintenance=Maintenance::fin($id);
-        if(!$maintenance)
-            return response()->json(["message"=>"No existe el mantenimiento solicitado"]);
+    public function show($id)
+    {
+        $maintenance = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res'])->find($id);
+        if (!$maintenance)
+            return response()->json(["message" => "No existe el mantenimiento solicitado"], 404);
 
         return response()->json([
-            "results"=>$maintenance
-        ]);
+            "results" => $maintenance
+        ], 200);
     }
 
-    public function store(MaintenanceRequest $request){
-        try{
+    public function store(MaintenanceRequest $request)
+    {
+        try {
             $maintenance = Maintenance::create($request->validated());
             return response()->json([
-                "message" => "Éxito al guardar el mantenimiento",
                 "results" => $maintenance // luego quitarlo 
-            ], 201); 
-        }catch(Exception $e){
+            ], 201);
+        } catch (Exception $e) {
             return response()->json([
                 "message" => "Ocurrió un error al guardar el mantenimiento",
                 "error" => $e->getMessage(),
             ], 500);
-        }     
+        }
     }
 
-    public function update(MaintenanceRequest $request, $id){
+    public function update(MaintenanceRequest $request, $id)
+    {
         try {
             $maintenance = Maintenance::findOrFail($id);
-            $validatedData=$request->validated();
+            $validatedData = $request->validated();
 
             // $maintenance->update([
             //     "dni_res_main" => $validatedData['dni_res_main'],
@@ -58,53 +71,54 @@ class MaintenanceController extends Controller
 
             return response()->json([
                 "message" => "Mantenimiento actualizado"
-            ],200);
+            ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Mantenimiento no encontrado",
                 // "error"=>;
-            ],404);
-        }catch (Exception $e){
+            ], 404);
+        } catch (Exception $e) {
             return response()->json([
                 "message" => "Ocurrió un error al actualizar el mantenimiento",
                 "error" => $e->getMessage(),
-            ], 500); 
+            ], 500);
         }
     }
 
-    public function hide($id){// archivar 
-        try{
+    public function hide($id)
+    { // archivar 
+        try {
             $maintenance = Maintenance::findOrFail($id);
-            
+
             $maintenance->vis_main = "H";
             $maintenance->save();
 
             return response()->json([
                 "message" => "Mantenimiento archivado"
-            ],200);
+            ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Mantenimiento no encontrado",
                 // "error"=>;
-            ],404);
-        }catch (Exception $e){
+            ], 404);
+        } catch (Exception $e) {
             return response()->json([
                 "message" => "Ocurrió un error al actualizar el mantenimiento",
                 "error" => $e->getMessage(),
-            ], 500); 
+            ], 500);
         }
     }
-    
-    public function search(Request $request){
+
+    public function search(Request $request)
+    {
         $request->validate([
-            "term"=>'required|max:10'
+            "term" => 'required|max:10'
         ]);
-        $term= $request->input('term');
-        $maintenances=Maintenance::where('cod_main','LIKE', "%{$term}%")->get();
+        $term = $request->input('term');
+        $maintenances = Maintenance::where('cod_main', 'LIKE', "%{$term}%")->get();
 
         return response()->json([
             'results' => $maintenances,
-            'message' => 'Búsqueda realizada con éxito.',
         ], 200);
     }
 }
