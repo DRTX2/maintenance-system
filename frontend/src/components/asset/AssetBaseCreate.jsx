@@ -185,55 +185,52 @@ const Entry = ({ fields, columns, defaultState }) => {
         {/* Contenedor de la cuadrícula */}
         <Grid2 container spacing={3}>
           {fields.map((field) => (
-            <Grid2 item size={{ xs: 12, md: 6 }} key={field.key}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: "10px",
-                }}
+            <Grid2 item size={{ xs: 12, sm: 6, md: 6 }} key={field.key}>
+              {/* Título del campo */}
+              <Typography
+                variant="subtitle1"
+                width="100%"
+                color="#6068A5"
+                fontWeight="bold"
               >
-                {/* Título del campo */}
-                <Typography
-                  variant="subtitle1"
-                  width="100%"
-                  color="#6068A5"
-                  fontWeight="bold"
-                >
-                  {field.label}
-                </Typography>
-                {/* Campo dinámico */}
-                <DynamicField
-                  key={field.key}
-                  field={field}
-                  value={entity[field.key]}
-                  onChange={handleFieldChange}
-                  onFetch={handleFetch}
-                  error={errors[field.key]}
-                  helperText={errors[field.key]}
-                  readOnly={false}
-                />
-              </Box>
+                {field.label}
+              </Typography>
+              {/* Campo dinámico */}
+              <DynamicField
+                key={field.key}
+                field={field}
+                value={entity[field.key]}
+                onChange={handleFieldChange}
+                onFetch={handleFetch}
+                error={errors[field.key]}
+                helperText={errors[field.key]}
+                readOnly={false}
+              />
             </Grid2>
           ))}
         </Grid2>
 
         {/* Generar tabla */}
-        {isCategorySelected && relatedData.length > 0 ? (
-          <Box marginTop="30px">
-            <AssetTableCreate
-              data={relatedData}
-              isLoading={isLoading}
-              columns={columns}
-              currentPage={currentPage}
-              rowsPerPage={rowsPerPage}
-              handleChangePage={handleChangePage}
-              handleChangeRowsPerPage={handleChangeRowsPerPage}
-              handleDescription={handleDescription}
-              readOnly={false}
-            />
-          </Box>
+        {isCategorySelected ? (
+          relatedData.length > 0 ? (
+            <Box marginTop="30px">
+              <AssetTableCreate
+                data={relatedData}
+                isLoading={isLoading}
+                columns={columns}
+                currentPage={currentPage}
+                rowsPerPage={rowsPerPage}
+                handleChangePage={handleChangePage}
+                handleChangeRowsPerPage={handleChangeRowsPerPage}
+                handleDescription={handleDescription}
+                readOnly={false}
+              />
+            </Box>
+          ) : (
+            <Typography marginTop="30px" color="#6068A5">
+              No se han encontrado componentes para el dispositivo.
+            </Typography>
+          )
         ) : null}
       </Box>
 

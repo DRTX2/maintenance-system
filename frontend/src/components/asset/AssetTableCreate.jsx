@@ -43,7 +43,7 @@ const ContentTable = ({
 
   if (data.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <div style={{ textAlign: "center", marginTop: "30px", color: "#6068A5" }}>
         No se han encontrado componentes.
       </div>
     );
