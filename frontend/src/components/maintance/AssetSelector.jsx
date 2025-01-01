@@ -16,12 +16,24 @@ const AssetSelector = ({ options, onAdd }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+        flexWrap: "wrap",
+        width: "100%",
+        marginLeft: "60px",
+      }}
+    >
       <Typography
         variant="subtitle1"
-        width="100%"
-        color="#6068A5"
-        fontWeight="bold"
+        sx={{
+          flexShrink: 0,
+          fontWeight: "bold",
+          color: "#6068A5",
+          marginRight: "80px",
+        }}
       >
         Activos
       </Typography>
@@ -32,7 +44,12 @@ const AssetSelector = ({ options, onAdd }) => {
         fullWidth
         value={selectedValue}
         onChange={handleChange}
-        sx={{ width: "300px" }}
+        sx={{
+          flexGrow: 1,
+          minWidth: "200px",
+          maxWidth: "215px",
+          width: "100%",
+        }}
       >
         {options.map((option) => (
           <MenuItem key={option.id} value={option}>
@@ -46,6 +63,10 @@ const AssetSelector = ({ options, onAdd }) => {
         color="primary"
         onClick={handleAdd}
         disabled={!selectedValue}
+        sx={{
+          flexShrink: 0,
+          whiteSpace: "nowrap",
+        }}
       >
         +
       </Button>

@@ -14,13 +14,15 @@ const MaintanceCreate = () => {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [responsiblesData, assetsData] = await Promise.all([
+        const [types, responsibles, assets] = await Promise.all([
+          axiosInstance.get("/type-maintenance"),
           axiosInstance.get("/responsibles"),
           axiosInstance.get(`/assets/${rol}`),
         ]);
 
-        setResponsibles(responsiblesData.data.results);
-        setAssets(assetsData.data);
+        setTypes(types.data.results);
+        setResponsibles(responsibles.data.results);
+        setAssets(assets.data);
       } catch (error) {
         toast.error("No se ha podido obtener los datos.");
       }
@@ -29,7 +31,14 @@ const MaintanceCreate = () => {
     fetchAllData();
   }, [rol]);
 
-  const resultsTypes = [];
+  const resultsTypes =
+    types.length > 0
+      ? types.map((type) => ({
+          value: type.id,
+          label: type.typ_main,
+        }))
+      : [{ key: "", label: "No se han encontrado tipos de mantenimiento..." }];
+
   const resultsResponsibles =
     responsibles.length > 0
       ? responsibles.map((responsible) => ({
@@ -38,7 +47,6 @@ const MaintanceCreate = () => {
         }))
       : [{ key: "", label: "No se han encontrado responsables..." }];
 
-  // Al momento crear, los campos
   const fields = [
     { key: "cod_main", label: "Código", type: "text" },
     {
@@ -65,22 +73,20 @@ const MaintanceCreate = () => {
     },
   ];
 
-  // El objeto para enviar al backend
   const defaultState = {
     cod_main: "",
     typ_main: "",
-    fec_ini_main: "",
-    fec_fin_main: "",
+    created_at: "",
+    ended_at: "",
     dni_res_main: "",
+    activities: [],
+    observations: [],
+    components: [],
   };
-
-  // La tabla que se muestra.
-  const columns = [];
 
   return (
     <MaintanceBaseCreate
       fields={fields}
-      columns={columns}
       defaultState={defaultState}
       assets={assets}
     />

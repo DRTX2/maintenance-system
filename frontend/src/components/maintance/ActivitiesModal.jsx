@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { act, useState } from "react";
 import {
   Modal,
   Box,
@@ -13,31 +13,42 @@ import {
   TableCell,
   TableBody,
   MenuItem,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Dialog,
 } from "@mui/material";
+import { toast } from "react-toastify";
+import categoryCreateStyles from "../../generic/styles/CreateStyles";
 
-const ActivitiesModal = ({ open, onClose, rowData, onSave, catalog }) => {
+const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
   const [selectedActivity, setSelectedActivity] = useState("");
-  const [activitiesList, setActivitiesList] = useState(
-    rowData?.activities || []
-  );
+  const [activitiesList, setActivitiesList] = useState([]);
 
   const handleAddActivity = () => {
-    if (selectedActivity === "") {
-      alert("Selecciona una actividad antes de añadir.");
+    if (!selectedActivity) {
+      toast.warning("Seleccione una actividad para añadir.");
       return;
     }
-    if (activitiesList.some((activity) => activity === selectedActivity)) {
-      alert("Esta actividad ya fue añadida.");
+
+    if (activitiesList.some((activity) => activity.id === selectedActivity)) {
+      toast.info("La actividad ya ha sido añadida.");
       return;
     }
-    setActivitiesList((prev) => [...prev, selectedActivity]);
-    setSelectedActivity("");
+
+    const activity = {
+      id: selectedActivity,
+      act_main: catalog.find((activity) => activity.id === selectedActivity)
+        .act_main,
+    };
+
+    setActivitiesList((prev) => [...prev, activity]);
+    toast.success("Actividad añadida correctamente.");
   };
 
-  const handleRemoveActivity = (activityToRemove) => {
-    setActivitiesList((prev) =>
-      prev.filter((activity) => activity !== activityToRemove)
-    );
+  const handleRemoveActivity = (id) => {
+    setActivitiesList((prev) => prev.filter((activity) => activity.id !== id));
+    toast.success("Actividad eliminada correctamente.");
   };
 
   const handleSave = () => {
@@ -46,84 +57,130 @@ const ActivitiesModal = ({ open, onClose, rowData, onSave, catalog }) => {
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          bgcolor: "background.paper",
-          p: 4,
-          borderRadius: 2,
-          boxShadow: 24,
-          width: "50%",
-        }}
-      >
-        <Typography variant="h6" marginBottom={2}>
-          Añadir Tarea
-        </Typography>
-
-        {/* Selector de actividades */}
-        <Box display="flex" gap={2} alignItems="center" marginBottom={2}>
-          <TextField
-            select
-            label="Selecciona una actividad"
-            value={selectedActivity}
-            onChange={(e) => setSelectedActivity(e.target.value)}
-            fullWidth
+    <>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <DialogTitle
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 2,
+              width: "100%",
+              "@media (max-width: 600px)": {
+                flexDirection: "column",
+                alignItems: "flex-start",
+              },
+            }}
           >
-            {catalog.map((activity) => (
-              <MenuItem key={activity} value={activity}>
-                {activity}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Button variant="contained" onClick={handleAddActivity}>
-            Añadir
-          </Button>
-        </Box>
-
-        {/* Tabla de actividades */}
-        {activitiesList.length > 0 && (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Actividad</TableCell>
-                  <TableCell>Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {activitiesList.map((activity, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{activity}</TableCell>
-                    <TableCell>
-                      <Button
-                        color="secondary"
-                        onClick={() => handleRemoveActivity(activity)}
-                      >
-                        Quitar
-                      </Button>
-                    </TableCell>
+            <Typography
+              variant="h6"
+              sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
+            >
+              Añadir tarea
+            </Typography>
+            <TextField
+              select
+              label="Seleccione una actividad"
+              value={selectedActivity}
+              onChange={(e) => setSelectedActivity(e.target.value)}
+              sx={{
+                marginTop: "15px",
+                flexGrow: 1,
+                minWidth: "150px",
+                maxWidth: "310px",
+                width: "100%",
+                "@media (max-width: 600px)": {
+                  maxWidth: "100%",
+                },
+              }}
+            >
+              {catalog.map((activity) => (
+                <MenuItem key={activity.id} value={activity.id}>
+                  {activity.act_main}
+                </MenuItem>
+              ))}
+            </TextField>
+            <Button
+              variant="contained"
+              onClick={handleAddActivity}
+              sx={{
+                flexShrink: 0,
+                whiteSpace: "nowrap",
+                minWidth: "90px",
+              }}
+            >
+              Añadir
+            </Button>
+          </Box>
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          {/* Tabla */}
+          {activitiesList.length > 0 ? (
+            <TableContainer component={Paper} sx={{ marginTop: "5px" }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Actividad</TableCell>
+                    <TableCell>{""}</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-
-        {/* Botones de acción */}
-        <Box marginTop={2} display="flex" justifyContent="flex-end" gap={2}>
-          <Button onClick={onClose} color="secondary" variant="outlined">
+                </TableHead>
+                <TableBody>
+                  {activitiesList.map((activity) => (
+                    <TableRow key={activity.id}>
+                      <TableCell
+                        sx={{
+                          maxWidth: "2000px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                        title={activity.act_main}
+                      >
+                        {activity.act_main}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          color="error"
+                          onClick={() => handleRemoveActivity(activity.id)}
+                        >
+                          Quitar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="text" marginTop="10px">
+              No se han encontrado actividades agregadas.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} sx={categoryCreateStyles.buttonStyle1}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} color="primary" variant="contained">
+          <Button onClick={handleSave} sx={categoryCreateStyles.buttonStyle2}>
             Guardar
           </Button>
-        </Box>
-      </Box>
-    </Modal>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

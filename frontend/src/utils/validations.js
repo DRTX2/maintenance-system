@@ -148,6 +148,17 @@ const validationRules = {
     selected: true,
     message: "Debe seleccionar algún tipo",
   },
+  // Mantenimiento
+  cod_main: {
+    required: true,
+    minLength: 3,
+    message: "El código debe tener al menos 3 caracteres",
+  },
+  typ_main: {
+    quired: true,
+    selected: true,
+    message: "Debe seleccionar algun mantenmiento",
+  },
 };
 // Todos los campos
 export const validateFields = (data, fields) => {

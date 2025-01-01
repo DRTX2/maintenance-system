@@ -14,21 +14,28 @@ import {
   TextField,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 
 import { validateField } from "../../utils/validations";
 import { toast } from "react-toastify";
+
+import axiosInstance from "../../utils/api";
+
 import tableStyles from "../../generic/styles/TableStyles";
 import DynamicField from "../../generic/DynamicField";
 import AssetSelector from "./AssetSelector";
 import ActivitiesModal from "./ActivitiesModal";
+import ObservationsModal from "./ObservationsModal";
 
-const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
+const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
   const [entity, setEntity] = useState(defaultState);
+  const [activitiesCatalog, setActivitiesCatalog] = useState([]);
   const [assetsTable, setAssetsTable] = useState([]);
   const [errors, setErrors] = useState({});
   const [openActivities, setOpenActivities] = useState(false);
+  const [openObservations, setOpenObservations] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
 
@@ -41,13 +48,19 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
 
   const handleFieldChange = (key, value) => {
     setEntity((prev) => ({ ...prev, [key]: value }));
-
     const errorMessage = validateField(key, value);
     setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
 
-  // Tiene que haber seleccionado un tipo de mantenimiento antes de añadir algun activo.
   const handleAddAsset = (asset) => {
+    // Tiene que haber seleccionado un tipo de mantenimiento antes de añadir algun activo.
+    if (!entity.typ_main) {
+      toast.info(
+        "Debe seleccionar un tipo de mantenimiento antes de añadir un activo."
+      );
+      return;
+    }
+
     if (assetsTable.some((row) => row.id === asset.id)) {
       toast.info("El activo ya ha sido agregado a la tabla.");
       return;
@@ -58,10 +71,40 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       { ...asset, activities: "", observations: "", components: "" },
     ]);
   };
-  const onOpenActivities = () => {
-    setOpenActivities(true);
+  const onOpenActivities = async () => {
+    if (entity.typ_main === "") {
+      toast.info("No ha seleccionado un tipo de mantenimiento, aun");
+      return;
+    }
+    // Si ya añadio un tipo de mantenimiento, cargar las actividades de ese mantenimiento.
+    try {
+      const id = entity.typ_main;
+      const response = await axiosInstance.get(`/type-maintenance/${id}`);
+      console.log(response.data.results.activities);
+      setActivitiesCatalog(response.data.results.activities);
+      setOpenActivities(true);
+    } catch (error) {
+      toast.error("No se ha podido obtener las actividades.");
+    }
   };
+
+  const onSaveActivities = (activityList) => {
+    // Darle a la entidad los valores de las actividades.
+    setEntity((prev) => ({
+      ...prev,
+      activities: activityList,
+    }));
+
+    console.log("Entidad actualizada...", entity);
+  };
+
+  const onSaveObservations = (observationsList) => {
+    console.log("Observaciones guardadas...");
+  };
+
+  const onOpenObservations = () => setOpenObservations(true);
   const onCloseActivities = () => setOpenActivities(false);
+  const onCloseObservations = () => setOpenObservations(false);
 
   const handleFetch = (key, value) => {
     console.log("Testing...");
@@ -136,14 +179,23 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                       <TableCell>{row.cod_ass}</TableCell>
                       <TableCell>{row.ser_num_ass}</TableCell>
                       <TableCell>
+                        Actividades
                         <IconButton
                           onClick={onOpenActivities}
                           arial-label="abrir"
                         >
-                          <OpenInNewIcon />
+                          <PlaylistAddIcon />
                         </IconButton>
                       </TableCell>
-                      <TableCell>Modal observaciones</TableCell>
+                      <TableCell>
+                        Observaciones
+                        <IconButton
+                          onClick={onOpenObservations}
+                          arial-label="abrir"
+                        >
+                          <PlaylistAddIcon />
+                        </IconButton>
+                      </TableCell>
                       <TableCell>Modal componentes</TableCell>
                     </TableRow>
                   ))}
@@ -157,7 +209,14 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       <ActivitiesModal
         open={openActivities}
         onClose={onCloseActivities}
-        catalog={[]}
+        onSave={onSaveActivities}
+        catalog={activitiesCatalog}
+      />
+
+      <ObservationsModal
+        open={openObservations}
+        onSave={onSaveObservations}
+        onClose={onCloseObservations}
       />
     </>
   );
