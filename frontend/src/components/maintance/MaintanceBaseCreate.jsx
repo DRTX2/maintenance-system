@@ -33,10 +33,11 @@ import { useNavigate } from "react-router-dom";
 
 const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const [entity, setEntity] = useState(defaultState);
-  const [activitiesCatalog, setActivitiesCatalog] = useState([]);
-  const [componentsCatalog, setComponentsCatalog] = useState([]);
+  const [currentAsset, setCurrentAsset] = useState(null);
   const [assetsTable, setAssetsTable] = useState([]);
   const [errors, setErrors] = useState({});
+  const [activitiesCatalog, setActivitiesCatalog] = useState([]);
+  const [componentsCatalog, setComponentsCatalog] = useState([]);
   const [openActivities, setOpenActivities] = useState(false);
   const [openObservations, setOpenObservations] = useState(false);
   const [openComponents, setOpenComponents] = useState(false);
@@ -76,17 +77,16 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       { ...asset, activities: [], observations: [], components: [] },
     ]);
   };
-  const onOpenActivities = async () => {
-    if (entity.typ_main === "") {
-      toast.info("No ha seleccionado un tipo de mantenimiento, aun");
-      return;
-    }
+
+  // Actividades
+  const onOpenActivities = async (assetId) => {
     // Si ya añadio un tipo de mantenimiento, cargar las actividades de ese mantenimiento.
     try {
       const id = entity.typ_main;
       const response = await axiosInstance.get(`/type-maintenance/${id}`);
-      console.log(response.data.results.activities);
       setActivitiesCatalog(response.data.results.activities);
+      const asset = assetsTable.find((item) => item.id === assetId);
+      setCurrentAsset(asset);
       setOpenActivities(true);
     } catch (error) {
       toast.error("No se ha podido obtener las actividades.");
@@ -94,51 +94,65 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   };
 
   const onSaveActivities = (activityList) => {
-    // Darle a la entidad los valores de las actividades.
-    setEntity((prev) => ({
-      ...prev,
-      activities: activityList,
-    }));
+    setAssetsTable((prev) =>
+      prev.map((asset) =>
+        asset.id === currentAsset.id
+          ? { ...asset, activities: activityList }
+          : asset
+      )
+    );
+    setOpenActivities(false);
+  };
 
-    console.log("Entidad actividades...", entity);
+  // Observaciones
+  const onOpenObservations = (assetId) => {
+    const asset = assetsTable.find((item) => item.id === assetId);
+    setCurrentAsset(asset);
+    setOpenObservations(true);
   };
 
   const onSaveObservations = (observationsList) => {
-    // Darle a la entidad los valores de las observaciones.
-    setEntity((prev) => ({
-      ...prev,
-      observations: observationsList,
-    }));
-
-    console.log("Entidad observaciones...", entity);
+    setAssetsTable((prev) =>
+      prev.map((asset) =>
+        asset.id === currentAsset.id
+          ? { ...asset, observations: observationsList }
+          : asset
+      )
+    );
+    setOpenObservations(false);
   };
 
-  const onSaveComponents = (componentsList) => {
-    // Añadir los componentes al objeto
-    setEntity((prev) => ({
-      ...prev,
-      components: componentsList,
-    }));
-
-    console.log("Entidad componentes", entity);
-  };
-
+  // Componentes
   const onOpenComponents = async (id) => {
     // Cargar los datos del catalogo de activo seleccionado.
     try {
       const response = await axiosInstance.get(`/assets/show/${id}`);
       setComponentsCatalog(response.data.components);
+      const asset = assetsTable.find((item) => item.id === id);
+      setCurrentAsset(asset);
       setOpenComponents(true);
     } catch (error) {
       toast.error("No se ha podido obtener los componentes.");
     }
   };
-  const onOpenObservations = () => setOpenObservations(true);
 
+  const onSaveComponents = (componentsList) => {
+    setAssetsTable((prev) =>
+      prev.map((asset) =>
+        asset.id === currentAsset.id
+          ? { ...asset, components: componentsList }
+          : asset
+      )
+    );
+    setOpenComponents(false);
+  };
+
+  // Botones de cerrar
   const onCloseActivities = () => setOpenActivities(false);
   const onCloseObservations = () => setOpenObservations(false);
   const onCloseComponents = () => setOpenComponents(false);
 
+  // Acciones para la api
   const handleFetch = (key, value) => {
     console.log("Testing...");
   };
@@ -222,25 +236,25 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                         <TableCell>{row.cod_ass}</TableCell>
                         <TableCell>{row.ser_num_ass}</TableCell>
                         <TableCell>
-                          Actividades
+                          {row.activities.length} {" Actividades"}
                           <IconButton
-                            onClick={onOpenActivities}
+                            onClick={() => onOpenActivities(row.id)}
                             arial-label="abrir"
                           >
                             <PlaylistAddIcon />
                           </IconButton>
                         </TableCell>
                         <TableCell>
-                          Observaciones
+                          {row.observations.length} {" Observaciones"}
                           <IconButton
-                            onClick={onOpenObservations}
+                            onClick={() => onOpenObservations(row.id)}
                             arial-label="abrir"
                           >
                             <PlaylistAddIcon />
                           </IconButton>
                         </TableCell>
                         <TableCell>
-                          Componentes
+                          {row.components.length} {" Componentes"}
                           <IconButton
                             onClick={() => onOpenComponents(row.id)}
                             arial-label="abrir"
@@ -304,12 +318,14 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
         onSave={onSaveActivities}
         onClose={onCloseActivities}
         catalog={activitiesCatalog}
+        currentActivities={currentAsset?.activities || []}
       />
 
       <ObservationsModal
         open={openObservations}
         onSave={onSaveObservations}
         onClose={onCloseObservations}
+        currentObservations={currentAsset?.observations || []}
       />
 
       <ComponentsModal

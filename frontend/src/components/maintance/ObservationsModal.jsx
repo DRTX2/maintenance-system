@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -21,9 +21,15 @@ import {
 import { toast } from "react-toastify";
 import categoryCreateStyles from "../../generic/styles/CreateStyles";
 
-const ObservationsModal = ({ open, onClose, onSave }) => {
+const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
   const [selectedObservation, setSelectedObservation] = useState("");
   const [observationsList, setObservationsList] = useState([]);
+
+  useEffect(() => {
+    if (open) {
+      setObservationsList(currentObservations);
+    }
+  }, [open, currentObservations]);
 
   const handleObservation = () => {
     if (selectedObservation === "") {
@@ -57,9 +63,15 @@ const ObservationsModal = ({ open, onClose, onSave }) => {
     onClose();
   };
 
+  const handleClose = () => {
+    onClose();
+    setObservationsList([]);
+    setSelectedObservation("");
+  };
+
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle
           sx={{
             display: "flex",
@@ -85,10 +97,10 @@ const ObservationsModal = ({ open, onClose, onSave }) => {
               variant="h6"
               sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
             >
-              Añadir tarea
+              Observación
             </Typography>
             <TextField
-              label="Seleccione una actividad"
+              label="Añada una observación"
               value={selectedObservation}
               onChange={(e) => setSelectedObservation(e.target.value)}
               sx={{
@@ -137,7 +149,7 @@ const ObservationsModal = ({ open, onClose, onSave }) => {
                     <TableRow key={index}>
                       <TableCell
                         sx={{
-                          maxWidth: "300px",
+                          maxWidth: "280px",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -166,7 +178,7 @@ const ObservationsModal = ({ open, onClose, onSave }) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} sx={categoryCreateStyles.buttonStyle1}>
+          <Button onClick={handleClose} sx={categoryCreateStyles.buttonStyle1}>
             Cancelar
           </Button>
           <Button onClick={handleSave} sx={categoryCreateStyles.buttonStyle2}>

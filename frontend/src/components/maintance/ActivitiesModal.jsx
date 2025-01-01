@@ -1,4 +1,4 @@
-import React, { act, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -21,9 +21,21 @@ import {
 import { toast } from "react-toastify";
 import categoryCreateStyles from "../../generic/styles/CreateStyles";
 
-const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
+const ActivitiesModal = ({
+  open,
+  onClose,
+  onSave,
+  catalog,
+  currentActivities,
+}) => {
   const [selectedActivity, setSelectedActivity] = useState("");
   const [activitiesList, setActivitiesList] = useState([]);
+
+  useEffect(() => {
+    if (open) {
+      setActivitiesList(currentActivities);
+    }
+  }, [open, currentActivities]);
 
   const handleAddActivity = () => {
     if (!selectedActivity) {
@@ -39,10 +51,11 @@ const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
     const activity = {
       id: selectedActivity,
       act_main: catalog.find((activity) => activity.id === selectedActivity)
-        .act_main,
+        ?.act_main,
     };
 
     setActivitiesList((prev) => [...prev, activity]);
+    setSelectedActivity("");
     toast.success("Actividad añadida correctamente.");
   };
 
@@ -53,12 +66,19 @@ const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
 
   const handleSave = () => {
     onSave(activitiesList);
+    setSelectedActivity("");
     onClose();
+  };
+
+  const handleClose = () => {
+    onClose();
+    setActivitiesList([]);
+    setSelectedActivity("");
   };
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle
           sx={{
             display: "flex",
@@ -143,7 +163,7 @@ const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
                     <TableRow key={activity.id}>
                       <TableCell
                         sx={{
-                          maxWidth: "2000px",
+                          maxWidth: "280px",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -172,7 +192,7 @@ const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} sx={categoryCreateStyles.buttonStyle1}>
+          <Button onClick={handleClose} sx={categoryCreateStyles.buttonStyle1}>
             Cancelar
           </Button>
           <Button onClick={handleSave} sx={categoryCreateStyles.buttonStyle2}>
