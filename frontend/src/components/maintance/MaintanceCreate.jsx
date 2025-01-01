@@ -73,20 +73,24 @@ const MaintanceCreate = () => {
     },
   ];
 
+  const columns = [
+    { key: "id", label: "Codigo", showInTable: false },
+    { key: "nam_com", label: "Nombre", showInTable: true },
+    { key: "des_com", label: "Descripción", showInTable: true },
+  ];
+
   const defaultState = {
     cod_main: "",
     typ_main: "",
     created_at: "",
     ended_at: "",
     dni_res_main: "",
-    activities: [],
-    observations: [],
-    components: [],
   };
 
   return (
     <MaintanceBaseCreate
       fields={fields}
+      columns={columns}
       defaultState={defaultState}
       assets={assets}
     />

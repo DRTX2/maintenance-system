@@ -8,6 +8,7 @@ import {
   TableContainer,
   Paper,
   Table,
+  TablePagination,
   TableHead,
   TableRow,
   TableCell,
@@ -18,108 +19,61 @@ import {
   DialogActions,
   Dialog,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import categoryCreateStyles from "../../generic/styles/CreateStyles";
+import tableStyles from "../../generic/styles/TableStyles";
+import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
 
-const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
-  const [selectedActivity, setSelectedActivity] = useState("");
-  const [activitiesList, setActivitiesList] = useState([]);
-
-  const handleAddActivity = () => {
-    if (!selectedActivity) {
-      toast.warning("Seleccione una actividad para añadir.");
-      return;
-    }
-
-    if (activitiesList.some((activity) => activity.id === selectedActivity)) {
-      toast.info("La actividad ya ha sido añadida.");
-      return;
-    }
-
-    const activity = {
-      id: selectedActivity,
-      act_main: catalog.find((activity) => activity.id === selectedActivity)
-        .act_main,
-    };
-
-    setActivitiesList((prev) => [...prev, activity]);
-    toast.success("Actividad añadida correctamente.");
-  };
-
-  const handleRemoveActivity = (id) => {
-    setActivitiesList((prev) => prev.filter((activity) => activity.id !== id));
-    toast.success("Actividad eliminada correctamente.");
-  };
+const ActivitiesModal = ({ open, columns, onClose, onSave, catalog }) => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(3);
+  const [componentsList, setComponentsList] = useState(
+    catalog.map((item) => ({
+      ...item,
+      pivot: {
+        ...item.pivot,
+        description: item.pivot?.description || "",
+      },
+      error: false,
+    }))
+  );
 
   const handleSave = () => {
-    onSave(activitiesList);
+    onSave(componentsList);
     onClose();
   };
+
+  // Tabla
+  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0);
+  };
+
+  // Cambio basado en la fila y su valor.
+  const handleDescription = (id, description) => {
+    setComponentsList((prevData) =>
+      prevData.map((component) =>
+        component.id === id
+          ? {
+              ...component,
+              pivot: { ...component.pivot, description }, // Actualiza la descripción
+              error: !description.trim(), // Maneja el error si está vacío
+            }
+          : component
+      )
+    );
+  };
+
+  const filteredColumn = columns.filter((column) => column.showInTable);
 
   return (
     <>
       <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-        <DialogTitle
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 2,
-            alignItems: "center",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: 2,
-              width: "100%",
-              "@media (max-width: 600px)": {
-                flexDirection: "column",
-                alignItems: "flex-start",
-              },
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
-            >
-              Reemplazar
-            </Typography>
-            <TextField
-              select
-              label="Seleccione una actividad"
-              value={selectedActivity}
-              onChange={(e) => setSelectedActivity(e.target.value)}
-              sx={{
-                marginTop: "15px",
-                flexGrow: 1,
-                minWidth: "150px",
-                maxWidth: "310px",
-                width: "100%",
-                "@media (max-width: 600px)": {
-                  maxWidth: "100%",
-                },
-              }}
-            >
-              {catalog.map((activity) => (
-                <MenuItem key={activity.id} value={activity.id}>
-                  {activity.act_main}
-                </MenuItem>
-              ))}
-            </TextField>
-            <Button
-              variant="contained"
-              onClick={handleAddActivity}
-              sx={{
-                flexShrink: 0,
-                whiteSpace: "nowrap",
-                minWidth: "90px",
-              }}
-            >
-              Añadir
-            </Button>
-          </Box>
+        <DialogTitle>
+          <Typography variant="h6" sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
+            Reemplazar
+          </Typography>
         </DialogTitle>
         <DialogContent
           sx={{
@@ -129,47 +83,85 @@ const ActivitiesModal = ({ open, onClose, onSave, catalog }) => {
           }}
         >
           {/* Tabla */}
-          {activitiesList.length > 0 ? (
-            <TableContainer component={Paper} sx={{ marginTop: "5px" }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Actividad</TableCell>
-                    <TableCell>{""}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {activitiesList.map((activity) => (
-                    <TableRow key={activity.id}>
-                      <TableCell
-                        sx={{
-                          maxWidth: "2000px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                        title={activity.act_main}
-                      >
-                        {activity.act_main}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          color="error"
-                          onClick={() => handleRemoveActivity(activity.id)}
-                        >
-                          Quitar
-                        </Button>
-                      </TableCell>
+          <TableContainer
+            className="table-container"
+            component={Paper}
+            sx={tableStyles.tableContainer}
+          >
+            <Table>
+              <TableHead sx={tableStyles.tableHead}>
+                <TableRow>
+                  {filteredColumn.map((column) => (
+                    <TableCell key={column.key}>{column.label}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {catalog
+                  .slice(
+                    currentPage * rowsPerPage,
+                    currentPage * rowsPerPage + rowsPerPage
+                  )
+                  // item -> es un componente
+                  .map((item) => (
+                    <TableRow key={item.id}>
+                      {filteredColumn.map((column) => (
+                        <TableCell key={column.key}>
+                          {/* Campo que se genera para la descripción */}
+                          {column.key === "des_com" ? (
+                            <TextField
+                              value={
+                                componentsList.find(
+                                  (comp) => comp.id === item.id
+                                )?.pivot?.description || ""
+                              }
+                              onChange={(e) =>
+                                handleDescription(item.id, e.target.value)
+                              }
+                              error={
+                                componentsList.find(
+                                  (comp) => comp.id === item.id
+                                )?.error || false
+                              }
+                              helperText={
+                                componentsList.find(
+                                  (comp) => comp.id === item.id
+                                )?.error
+                                  ? "Este campo es obligatorio"
+                                  : ""
+                              }
+                              InputProps={{
+                                readOnly: false,
+                              }}
+                            ></TextField>
+                          ) : (
+                            item[column.key]
+                          )}
+                        </TableCell>
+                      ))}
                     </TableRow>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Typography variant="text" marginTop="10px">
-              No se han encontrado actividades agregadas.
-            </Typography>
-          )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            count={catalog.length}
+            page={currentPage}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[3, 5]}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage={
+              <span style={tableStyles.labelRowsPerPage}>Filas por página</span>
+            }
+            labelDisplayedRows={() => ""}
+            ActionsComponent={(props) => (
+              <CustomTablePaginationActions {...props} />
+            )}
+            sx={tableStyles.pagination}
+          />
+          {/* End table */}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} sx={categoryCreateStyles.buttonStyle1}>

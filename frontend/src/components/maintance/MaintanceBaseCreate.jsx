@@ -11,7 +11,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TextField,
+  TablePagination,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
@@ -27,8 +27,11 @@ import AssetSelector from "./AssetSelector";
 import ActivitiesModal from "./ActivitiesModal";
 import ObservationsModal from "./ObservationsModal";
 import ComponentsModal from "./ComponentsModal";
+import CreateStyles from "../../generic/styles/CreateStyles";
+import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
+import { useNavigate } from "react-router-dom";
 
-const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
+const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const [entity, setEntity] = useState(defaultState);
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
   const [componentsCatalog, setComponentsCatalog] = useState([]);
@@ -37,10 +40,9 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
   const [openActivities, setOpenActivities] = useState(false);
   const [openObservations, setOpenObservations] = useState(false);
   const [openComponents, setOpenComponents] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
+  const navigate = useNavigate();
 
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
 
@@ -71,7 +73,7 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
 
     setAssetsTable((prev) => [
       ...prev,
-      { ...asset, activities: "", observations: "", components: "" },
+      { ...asset, activities: [], observations: [], components: [] },
     ]);
   };
   const onOpenActivities = async () => {
@@ -111,12 +113,25 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
     console.log("Entidad observaciones...", entity);
   };
 
-  const onSaveComponents = () => {};
+  const onSaveComponents = (componentsList) => {
+    // Añadir los componentes al objeto
+    setEntity((prev) => ({
+      ...prev,
+      components: componentsList,
+    }));
 
-  const onOpenComponents = (id) => {
-    // Cargar los datos del catalogo.
-    console.log(id);
-    setOpenComponents(true);
+    console.log("Entidad componentes", entity);
+  };
+
+  const onOpenComponents = async (id) => {
+    // Cargar los datos del catalogo de activo seleccionado.
+    try {
+      const response = await axiosInstance.get(`/assets/show/${id}`);
+      setComponentsCatalog(response.data.components);
+      setOpenComponents(true);
+    } catch (error) {
+      toast.error("No se ha podido obtener los componentes.");
+    }
   };
   const onOpenObservations = () => setOpenObservations(true);
 
@@ -126,6 +141,15 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
 
   const handleFetch = (key, value) => {
     console.log("Testing...");
+  };
+
+  const handleReturn = () => {
+    navigate("/dashboard/maintance");
+  };
+
+  const handleCreate = async () => {
+    console.log("El objeto a enviarse es:", entity);
+    console.log("Lo que hay en la tabla es:", assetsTable);
   };
 
   return (
@@ -180,55 +204,98 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
 
         <Box marginTop="30px">
           {assetsTable.length > 0 ? (
-            <TableContainer component={Paper} sx={tableStyles.tableContainer}>
-              <Table>
-                <TableHead sx={tableStyles.tableHead}>
-                  <TableRow>
-                    <TableCell>Código</TableCell>
-                    <TableCell>Número de serie</TableCell>
-                    <TableCell>Actividades</TableCell>
-                    <TableCell>Observaciones</TableCell>
-                    <TableCell>Componenes a reemplazar</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {assetsTable.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.cod_ass}</TableCell>
-                      <TableCell>{row.ser_num_ass}</TableCell>
-                      <TableCell>
-                        Actividades
-                        <IconButton
-                          onClick={onOpenActivities}
-                          arial-label="abrir"
-                        >
-                          <PlaylistAddIcon />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>
-                        Observaciones
-                        <IconButton
-                          onClick={onOpenObservations}
-                          arial-label="abrir"
-                        >
-                          <PlaylistAddIcon />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>
-                        Componentes
-                        <IconButton
-                          onClick={() => onOpenComponents(row.id)}
-                          arial-label="abrir"
-                        >
-                          <PlaylistAddIcon />
-                        </IconButton>
-                      </TableCell>
+            <>
+              <TableContainer component={Paper} sx={tableStyles.tableContainer}>
+                <Table>
+                  <TableHead sx={tableStyles.tableHead}>
+                    <TableRow>
+                      <TableCell>Código</TableCell>
+                      <TableCell>Número de serie</TableCell>
+                      <TableCell>Actividades</TableCell>
+                      <TableCell>Observaciones</TableCell>
+                      <TableCell>Componenes a reemplazar</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {assetsTable.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell>{row.cod_ass}</TableCell>
+                        <TableCell>{row.ser_num_ass}</TableCell>
+                        <TableCell>
+                          Actividades
+                          <IconButton
+                            onClick={onOpenActivities}
+                            arial-label="abrir"
+                          >
+                            <PlaylistAddIcon />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          Observaciones
+                          <IconButton
+                            onClick={onOpenObservations}
+                            arial-label="abrir"
+                          >
+                            <PlaylistAddIcon />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          Componentes
+                          <IconButton
+                            onClick={() => onOpenComponents(row.id)}
+                            arial-label="abrir"
+                          >
+                            <PlaylistAddIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                component="div"
+                count={assetsTable.length}
+                page={currentPage}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[3, 5]}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                labelRowsPerPage={
+                  <span style={tableStyles.labelRowsPerPage}>
+                    Filas por página
+                  </span>
+                }
+                labelDisplayedRows={() => ""}
+                ActionsComponent={(props) => (
+                  <CustomTablePaginationActions {...props} />
+                )}
+                sx={tableStyles.pagination}
+              />
+            </>
           ) : null}
+        </Box>
+
+        <Box
+          width="90%"
+          marginTop="20px"
+          display="flex"
+          justifyContent="flex-end"
+        >
+          <Button
+            color="primary"
+            sx={CreateStyles.buttonStyle2}
+            onClick={handleReturn}
+          >
+            Cancelar
+          </Button>
+          <Button
+            color="primary"
+            sx={CreateStyles.buttonStyle2}
+            onClick={handleCreate}
+          >
+            Guardar
+          </Button>
         </Box>
       </Box>
 
@@ -247,6 +314,7 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
 
       <ComponentsModal
         open={openComponents}
+        columns={columns}
         onSave={onSaveComponents}
         onClose={onCloseComponents}
         catalog={componentsCatalog}
