@@ -122,11 +122,15 @@ const ActivitiesModal = ({
                 },
               }}
             >
-              {catalog.map((activity) => (
-                <MenuItem key={activity.id} value={activity.id}>
-                  {activity.act_main}
-                </MenuItem>
-              ))}
+              {catalog.length > 0 ? (
+                catalog.map((activity) => (
+                  <MenuItem key={activity.id} value={activity.id}>
+                    {activity.act_main}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem>No se han encontrado actividades...</MenuItem>
+              )}
             </TextField>
             <Button
               variant="contained"

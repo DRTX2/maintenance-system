@@ -272,39 +272,44 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {assetsTable.map((row) => (
-                      <TableRow key={row.id}>
-                        <TableCell>{row.cod_ass}</TableCell>
-                        <TableCell>{row.ser_num_ass}</TableCell>
-                        <TableCell>
-                          {row.activities.length} {" Actividades"}
-                          <IconButton
-                            onClick={() => onOpenActivities(row.id)}
-                            arial-label="abrir"
-                          >
-                            <PlaylistAddIcon />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell>
-                          {row.observations.length} {" Observaciones"}
-                          <IconButton
-                            onClick={() => onOpenObservations(row.id)}
-                            arial-label="abrir"
-                          >
-                            <PlaylistAddIcon />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell>
-                          {row.components.length} {" Componentes"}
-                          <IconButton
-                            onClick={() => onOpenComponents(row.id)}
-                            arial-label="abrir"
-                          >
-                            <PlaylistAddIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {assetsTable
+                      .slice(
+                        currentPage * rowsPerPage,
+                        currentPage * rowsPerPage + rowsPerPage
+                      )
+                      .map((row) => (
+                        <TableRow key={row.id}>
+                          <TableCell>{row.cod_ass}</TableCell>
+                          <TableCell>{row.ser_num_ass}</TableCell>
+                          <TableCell>
+                            {row.activities.length} {" Actividades"}
+                            <IconButton
+                              onClick={() => onOpenActivities(row.id)}
+                              arial-label="abrir"
+                            >
+                              <PlaylistAddIcon />
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>
+                            {row.observations.length} {" Observaciones"}
+                            <IconButton
+                              onClick={() => onOpenObservations(row.id)}
+                              arial-label="abrir"
+                            >
+                              <PlaylistAddIcon />
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>
+                            {row.components.length} {" Componentes"}
+                            <IconButton
+                              onClick={() => onOpenComponents(row.id)}
+                              arial-label="abrir"
+                            >
+                              <PlaylistAddIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>

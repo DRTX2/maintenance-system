@@ -129,11 +129,15 @@ const ActivitiesModal = ({
               onChange={(e) => setSelectedComponentId(e.target.value)}
               fullWidth
             >
-              {catalog.map((component) => (
-                <MenuItem key={component.id} value={component.id}>
-                  {component.nam_com}
-                </MenuItem>
-              ))}
+              {catalog.length > 0 ? (
+                catalog.map((component) => (
+                  <MenuItem key={component.id} value={component.id}>
+                    {component.nam_com}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem>No se han encontrado componentes...</MenuItem>
+              )}
             </TextField>
             <Button variant="contained" onClick={handleAddComponent}>
               Añadir
