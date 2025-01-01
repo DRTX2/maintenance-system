@@ -14,11 +14,11 @@ class ReplacedComponent extends Model
 
     public function component()
     {
-        return $this->belongsTo(Component::class);
+        return $this->belongsTo(Component::class,'id_com_bel');
     }
 
     public function maintenanceDetail()
     {
-        return $this->belongsTo(MaintenanceDetail::class);
+        return $this->belongsTo(MaintenanceDetail::class,'id_det_main_bel');
     }
 }
