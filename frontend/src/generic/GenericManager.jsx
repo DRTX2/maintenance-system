@@ -182,7 +182,11 @@ const GenericManager = ({
       <Box className="flewColumnCenter">
         <Box
           className="flexRowCenterEnd"
-          style={{ justifyContent: "space-between", width: "100%" }}
+          style={{
+            justifyContent: "space-between",
+            width: "100%",
+            gap: "2rem",
+          }}
         >
           <h2>{entityNamePlural}</h2>
 

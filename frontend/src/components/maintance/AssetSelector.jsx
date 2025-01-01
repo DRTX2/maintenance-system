@@ -51,9 +51,6 @@ const AssetSelector = ({
           value={selectedValue}
           onChange={handleChange}
           InputLabelProps={{ shrink: true }}
-          sx={{
-            marginBottom: "0.5rem",
-          }}
           error={!!error}
           helperText={helperText}
         >
@@ -70,7 +67,7 @@ const AssetSelector = ({
           onClick={handleAdd}
           disabled={!selectedValue}
           sx={{
-            margin: "10px 15px",
+            margin: "0 15px",
             whiteSpace: "nowrap",
           }}
         >
