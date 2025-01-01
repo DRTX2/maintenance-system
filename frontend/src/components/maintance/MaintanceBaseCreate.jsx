@@ -222,46 +222,39 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       <Box p={3} border="1px solid #ddd" width="90%" borderRadius={2}>
         <Grid2 container spacing={3}>
           {fields.map((field) => (
-            <Grid2 item size={{ xs: 12, md: 6 }} key={field.key}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: "10px",
-                }}
+            <Grid2 item size={{ xs: 12, sm: 6, md: 6 }} key={field.key}>
+              {/* Título del campo */}
+              <Typography
+                variant="subtitle1"
+                width="100%"
+                color="#6068A5"
+                fontWeight="bold"
               >
-                {/* Título del campo */}
-                <Typography
-                  variant="subtitle1"
-                  width="100%"
-                  color="#6068A5"
-                  fontWeight="bold"
-                >
-                  {field.label}
-                </Typography>
-                {/* Campo dinámico */}
-                <DynamicField
-                  key={field.key}
-                  field={field}
-                  value={entity[field.key]}
-                  onChange={handleFieldChange}
-                  onFetch={handleFetch}
-                  error={errors[field.key]}
-                  helperText={errors[field.key]}
-                  readOnly={false}
-                />
-              </Box>
+                {field.label}
+              </Typography>
+              {/* Campo dinámico */}
+              <DynamicField
+                key={field.key}
+                field={field}
+                value={entity[field.key]}
+                onChange={handleFieldChange}
+                onFetch={handleFetch}
+                error={errors[field.key]}
+                helperText={errors[field.key]}
+                readOnly={false}
+              />
             </Grid2>
           ))}
-          <AssetSelector
-            options={assets}
-            onAdd={handleAddAsset}
-            error={errorAsset}
-            helperText={helperTextAsset}
-            setErrorAsset={setErrorAsset}
-            setHelperTextAsset={setHelperTextAsset}
-          />
+          <Grid2 item size={{ xs: 12, sm: 6, md: 6 }} key="assetsSelector">
+            <AssetSelector
+              options={assets}
+              onAdd={handleAddAsset}
+              error={errorAsset}
+              helperText={helperTextAsset}
+              setErrorAsset={setErrorAsset}
+              setHelperTextAsset={setHelperTextAsset}
+            />
+          </Grid2>
         </Grid2>
 
         <Box marginTop="30px">
@@ -337,28 +330,28 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
             </>
           ) : null}
         </Box>
+      </Box>
 
-        <Box
-          width="90%"
-          marginTop="20px"
-          display="flex"
-          justifyContent="flex-end"
+      <Box
+        width="90%"
+        marginTop="20px"
+        display="flex"
+        justifyContent="flex-end"
+      >
+        <Button
+          color="primary"
+          sx={CreateStyles.buttonStyle2}
+          onClick={handleReturn}
         >
-          <Button
-            color="primary"
-            sx={CreateStyles.buttonStyle2}
-            onClick={handleReturn}
-          >
-            Cancelar
-          </Button>
-          <Button
-            color="primary"
-            sx={CreateStyles.buttonStyle2}
-            onClick={handleCreate}
-          >
-            Guardar
-          </Button>
-        </Box>
+          Cancelar
+        </Button>
+        <Button
+          color="primary"
+          sx={CreateStyles.buttonStyle2}
+          onClick={handleCreate}
+        >
+          Guardar
+        </Button>
       </Box>
 
       <ActivitiesModal

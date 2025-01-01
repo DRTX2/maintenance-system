@@ -25,63 +25,59 @@ const AssetSelector = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        flexWrap: "wrap",
-        width: "100%",
-        marginLeft: "60px",
-      }}
-    >
+    <>
       <Typography
         variant="subtitle1"
-        sx={{
-          flexShrink: 0,
-          fontWeight: "bold",
-          color: "#6068A5",
-          marginRight: "80px",
-        }}
+        width="100%"
+        color="#6068A5"
+        fontWeight="bold"
       >
         Activos
       </Typography>
 
-      <TextField
-        select
-        label="Seleccione un Activo"
-        fullWidth
-        value={selectedValue}
-        onChange={handleChange}
+      <Box
         sx={{
-          flexGrow: 1,
-          minWidth: "200px",
-          maxWidth: "215px",
-          width: "100%",
+          marginTop: "2.2rem",
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: "center",
+          justifyContent: "center",
         }}
-        error={!!error}
-        helperText={helperText}
       >
-        {options.map((option) => (
-          <MenuItem key={option.id} value={option}>
-            {option.ser_num_ass} - {option.cod_ass}
-          </MenuItem>
-        ))}
-      </TextField>
+        <TextField
+          select
+          label="Seleccione un Activo"
+          fullWidth
+          value={selectedValue}
+          onChange={handleChange}
+          InputLabelProps={{ shrink: true }}
+          sx={{
+            marginBottom: "0.5rem",
+          }}
+          error={!!error}
+          helperText={helperText}
+        >
+          {options.map((option) => (
+            <MenuItem key={option.id} value={option}>
+              {option.ser_num_ass} - {option.cod_ass}
+            </MenuItem>
+          ))}
+        </TextField>
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleAdd}
-        disabled={!selectedValue}
-        sx={{
-          flexShrink: 0,
-          whiteSpace: "nowrap",
-        }}
-      >
-        +
-      </Button>
-    </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAdd}
+          disabled={!selectedValue}
+          sx={{
+            margin: "10px 15px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          +
+        </Button>
+      </Box>
+    </>
   );
 };
 
