@@ -1,6 +1,5 @@
-import React, { act, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Modal,
   Box,
   Typography,
   TextField,
@@ -19,7 +18,7 @@ import {
   Dialog,
 } from "@mui/material";
 import { toast } from "react-toastify";
-import categoryCreateStyles from "../../generic/styles/CreateStyles";
+import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 
 const ActivitiesModal = ({
   open,

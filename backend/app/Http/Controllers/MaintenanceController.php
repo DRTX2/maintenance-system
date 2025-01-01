@@ -14,16 +14,18 @@ class MaintenanceController extends Controller
     public function index()
     {
         $maintenances = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res'])
-        ->get()
-        ->map(function ($maintenance) {
-            return [
-                'id' => $maintenance->id,
-                'cod_main' => $maintenance->cod_main,
-                'vis_main' => $maintenance->vis_main,
-                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res, // Concatenar el nombre y apellido
-                'type' => $maintenance->maintenanceType->typ_main, // Nombre del tipo de mantenimiento
-            ];
-        });
+            ->get()
+            ->map(function ($maintenance) {
+                return [
+                    'id' => $maintenance->id,
+                    'cod_main' => $maintenance->cod_main,
+                    'created_at' => $maintenance->created_at,
+                    'ended_at' => $maintenance->ended_at,
+                    'vis_main' => $maintenance->vis_main,
+                    'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res, // Concatenar el nombre y apellido
+                    'type' => $maintenance->maintenanceType->typ_main, // Nombre del tipo de mantenimiento
+                ];
+            });
         return response()->json([
             "results" => $maintenances
         ], 200);
@@ -51,7 +53,7 @@ class MaintenanceController extends Controller
 
             return response()->json([
                 "results" => $maintenance,
-                "detaiul"=>$maintenanceDetail
+                "detaiul" => $maintenanceDetail
             ], 201);
         } catch (Exception $e) {
             return response()->json([
@@ -97,16 +99,21 @@ class MaintenanceController extends Controller
         try {
             $maintenance = Maintenance::findOrFail($id);
 
-            $maintenance->vis_main = "H";
+            // Alterna el estado de vis_main
+            $maintenance->vis_main = $maintenance->vis_main === "V" ? "H" : "V";
             $maintenance->save();
 
+            $message = $maintenance->vis_main === "V"
+                ? "Mantenimiento ahora está visible"
+                : "Mantenimiento archivado";
+
             return response()->json([
-                "message" => "Mantenimiento archivado"
+                "message" => $message,
+                "status" => $maintenance->vis_main,
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 "message" => "Mantenimiento no encontrado",
-                // "error"=>;
             ], 404);
         } catch (Exception $e) {
             return response()->json([

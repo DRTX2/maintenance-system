@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/api";
+import axiosInstance from "../../../utils/api";
 import MaintanceBaseCreate from "./MaintanceBaseCreate";
-import { getDecodedToken } from "../../utils/authService";
+import { getDecodedToken } from "../../../utils/authService";
 import { toast } from "react-toastify";
+import { CircularProgress, Typography } from "@mui/material";
 
 const MaintanceCreate = () => {
   const [types, setTypes] = useState([]);
   const [responsibles, setResponsibles] = useState([]);
   const [assets, setAssets] = useState([]);
+  const [isReady, setIsReady] = useState(false);
   const rol = getDecodedToken()?.role;
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const MaintanceCreate = () => {
         setTypes(types.data.results);
         setResponsibles(responsibles.data.results);
         setAssets(assets.data);
+        setIsReady(true);
       } catch (error) {
         toast.error("No se ha podido obtener los datos.");
       }
@@ -87,6 +89,17 @@ const MaintanceCreate = () => {
     created_at: "",
     ended_at: "",
   };
+
+  if (!isReady) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <CircularProgress />
+        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
+          Cargando datos, por favor espera...
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <MaintanceBaseCreate

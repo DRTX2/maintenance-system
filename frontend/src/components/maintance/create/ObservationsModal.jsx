@@ -19,7 +19,7 @@ import {
   Dialog,
 } from "@mui/material";
 import { toast } from "react-toastify";
-import categoryCreateStyles from "../../generic/styles/CreateStyles";
+import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 
 const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
   const [selectedObservation, setSelectedObservation] = useState("");

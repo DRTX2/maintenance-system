@@ -16,19 +16,19 @@ import {
 import IconButton from "@mui/material/IconButton";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 
-import { validateField, validateFields } from "../../utils/validations";
+import { validateField, validateFields } from "../../../utils/validations";
 import { toast } from "react-toastify";
 
-import axiosInstance from "../../utils/api";
+import axiosInstance from "../../../utils/api";
 
-import tableStyles from "../../generic/styles/TableStyles";
-import DynamicField from "../../generic/DynamicField";
+import tableStyles from "../../../generic/styles/TableStyles";
+import DynamicField from "../../../generic/DynamicField";
 import AssetSelector from "./AssetSelector";
 import ActivitiesModal from "./ActivitiesModal";
 import ObservationsModal from "./ObservationsModal";
 import ComponentsModal from "./ComponentsModal";
-import CreateStyles from "../../generic/styles/CreateStyles";
-import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
+import CreateStyles from "../../../generic/styles/CreateStyles";
+import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
 import { useNavigate } from "react-router-dom";
 
 const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {

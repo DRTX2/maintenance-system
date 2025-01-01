@@ -19,12 +19,12 @@ import {
   Dialog,
   MenuItem,
 } from "@mui/material";
-import categoryCreateStyles from "../../generic/styles/CreateStyles";
-import tableStyles from "../../generic/styles/TableStyles";
-import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
+import categoryCreateStyles from "../../../generic/styles/CreateStyles";
+import tableStyles from "../../../generic/styles/TableStyles";
+import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
 import { toast } from "react-toastify";
 
-const ActivitiesModal = ({
+const ComponentsModal = ({
   open,
   columns,
   onClose,
@@ -233,4 +233,4 @@ const ActivitiesModal = ({
   );
 };
 
-export default ActivitiesModal;
+export default ComponentsModal;
