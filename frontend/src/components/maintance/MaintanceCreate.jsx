@@ -50,18 +50,18 @@ const MaintanceCreate = () => {
   const fields = [
     { key: "cod_main", label: "Código", type: "text" },
     {
-      key: "typ_main",
+      key: "id_typ_main",
       label: "Tipo de mantenimiento",
       type: "select",
       options: resultsTypes,
     },
     {
-      key: "fec_ini_main",
+      key: "created_at",
       label: "Fecha de inicio",
       type: "date",
     },
     {
-      key: "fec_fin_main",
+      key: "ended_at",
       label: "Fecha fin",
       type: "date",
     },
@@ -80,11 +80,12 @@ const MaintanceCreate = () => {
   ];
 
   const defaultState = {
+    dni_res_main: "",
     cod_main: "",
-    typ_main: "",
+    id_typ_main: "",
+    vis_main: "V",
     created_at: "",
     ended_at: "",
-    dni_res_main: "",
   };
 
   return (

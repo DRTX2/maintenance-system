@@ -54,13 +54,14 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
 
   const handleFieldChange = (key, value) => {
     setEntity((prev) => ({ ...prev, [key]: value }));
+    console.log(key, value);
     const errorMessage = validateField(key, value);
     setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
 
   const handleAddAsset = (asset) => {
     // Tiene que haber seleccionado un tipo de mantenimiento antes de añadir algun activo.
-    if (!entity.typ_main) {
+    if (!entity.id_typ_main) {
       toast.info(
         "Debe seleccionar un tipo de mantenimiento antes de añadir un activo."
       );
@@ -82,7 +83,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const onOpenActivities = async (assetId) => {
     // Si ya añadio un tipo de mantenimiento, cargar las actividades de ese mantenimiento.
     try {
-      const id = entity.typ_main;
+      const id = entity.id_typ_main;
       const response = await axiosInstance.get(`/type-maintenance/${id}`);
       setActivitiesCatalog(response.data.results.activities);
       const asset = assetsTable.find((item) => item.id === assetId);
@@ -128,6 +129,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
     try {
       const response = await axiosInstance.get(`/assets/show/${id}`);
       setComponentsCatalog(response.data.components);
+      console.log("Compnnes", response.data.components);
       const asset = assetsTable.find((item) => item.id === id);
       setCurrentAsset(asset);
       setOpenComponents(true);
@@ -144,6 +146,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
           : asset
       )
     );
+
     setOpenComponents(false);
   };
 
@@ -334,6 +337,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
         onSave={onSaveComponents}
         onClose={onCloseComponents}
         catalog={componentsCatalog}
+        currentComponents={currentAsset?.components || []}
       />
     </>
   );
