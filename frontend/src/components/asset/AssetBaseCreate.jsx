@@ -157,9 +157,9 @@ const Entry = ({ fields, columns, defaultState }) => {
   const handleCreate = async () => {
     const isEntityValid = validateAll();
     const isTableValid = validateTableFields();
+    const componentsEmpty = entity.components.length === 0;
 
-    console.log(entity);
-    if (isEntityValid && isTableValid) {
+    if (isEntityValid && isTableValid && !componentsEmpty) {
       try {
         await axiosInstance.post("/assets", { asset: entity });
         resetFields();
@@ -167,6 +167,8 @@ const Entry = ({ fields, columns, defaultState }) => {
       } catch (error) {
         toast.error("No se ha podido crear el activo.");
       }
+    } else {
+      toast.error("No hay componentes o hay campos vacíos.");
     }
   };
 
