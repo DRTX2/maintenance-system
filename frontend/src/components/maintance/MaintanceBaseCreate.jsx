@@ -16,7 +16,7 @@ import {
 import IconButton from "@mui/material/IconButton";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 
-import { validateField } from "../../utils/validations";
+import { validateField, validateFields } from "../../utils/validations";
 import { toast } from "react-toastify";
 
 import axiosInstance from "../../utils/api";
@@ -35,7 +35,6 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const [entity, setEntity] = useState(defaultState);
   const [currentAsset, setCurrentAsset] = useState(null);
   const [assetsTable, setAssetsTable] = useState([]);
-  const [errors, setErrors] = useState({});
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
   const [componentsCatalog, setComponentsCatalog] = useState([]);
   const [openActivities, setOpenActivities] = useState(false);
@@ -43,7 +42,12 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const [openComponents, setOpenComponents] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  // Mensajes para el select del asset ya que es un componente separado al dynamic.
+  const [errorAsset, setErrorAsset] = useState(false);
+  const [helperTextAsset, setHelperTextAsset] = useState("");
 
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
 
@@ -54,7 +58,20 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
 
   const handleFieldChange = (key, value) => {
     setEntity((prev) => ({ ...prev, [key]: value }));
-    console.log(key, value);
+
+    if (
+      key === "id_typ_main" &&
+      value !== entity.id_typ_main &&
+      assetsTable.length > 0
+    ) {
+      setAssetsTable([]);
+      setActivitiesCatalog([]);
+      setComponentsCatalog([]);
+      toast.info(
+        "Lista de activos reiniciada debido al cambio de tipo de mantenimiento."
+      );
+    }
+
     const errorMessage = validateField(key, value);
     setErrors((prevErrors) => ({ ...prevErrors, [key]: errorMessage }));
   };
@@ -77,6 +94,9 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       ...prev,
       { ...asset, activities: [], observations: [], components: [] },
     ]);
+
+    setErrorAsset(false);
+    setHelperTextAsset("");
   };
 
   // Actividades
@@ -156,18 +176,37 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const onCloseComponents = () => setOpenComponents(false);
 
   // Acciones para la api
-  const handleFetch = (key, value) => {
-    console.log("Testing...");
-  };
-
   const handleReturn = () => {
     navigate("/dashboard/maintance");
   };
 
-  const handleCreate = async () => {
-    console.log("El objeto a enviarse es:", entity);
-    console.log("Lo que hay en la tabla es:", assetsTable);
+  const validateAll = () => {
+    const validationErrors = validateFields(entity, fields);
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
   };
+
+  const handleCreate = async () => {
+    if (assetsTable.length === 0) {
+      setErrorAsset(true);
+      setHelperTextAsset("Debe agregar al menos un activo.");
+    }
+
+    if (validateAll()) {
+      try {
+        const response = await axiosInstance.post("/maintenances", {
+          ...entity,
+          assets: assetsTable,
+        });
+
+        console.log(response);
+      } catch (error) {
+        toast.error("Ha ocurrido un error.");
+      }
+    }
+  };
+
+  const handleFetch = (key, value) => {};
 
   return (
     <>
@@ -208,7 +247,6 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                   value={entity[field.key]}
                   onChange={handleFieldChange}
                   onFetch={handleFetch}
-                  onAdd={handleAddAsset}
                   error={errors[field.key]}
                   helperText={errors[field.key]}
                   readOnly={false}
@@ -216,7 +254,14 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
               </Box>
             </Grid2>
           ))}
-          <AssetSelector options={assets} onAdd={handleAddAsset} />
+          <AssetSelector
+            options={assets}
+            onAdd={handleAddAsset}
+            error={errorAsset}
+            helperText={helperTextAsset}
+            setErrorAsset={setErrorAsset}
+            setHelperTextAsset={setHelperTextAsset}
+          />
         </Grid2>
 
         <Box marginTop="30px">

@@ -149,15 +149,28 @@ const validationRules = {
     message: "Debe seleccionar algún tipo",
   },
   // Mantenimiento
+  dni_res_main: {
+    required: true,
+    selected: true,
+    message: "Debe seleccionar algún responsable",
+  },
   cod_main: {
     required: true,
     minLength: 3,
     message: "El código debe tener al menos 3 caracteres",
   },
-  typ_main: {
-    quired: true,
+  id_typ_main: {
+    required: true,
     selected: true,
     message: "Debe seleccionar algun mantenmiento",
+  },
+  created_at: {
+    required: true,
+    message: "Debe seleccionar una fecha",
+  },
+  ended_at: {
+    required: true,
+    message: "Debe seleccionar una fecha",
   },
 };
 // Todos los campos

@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import { Box, TextField, MenuItem, Button, Typography } from "@mui/material";
 
-const AssetSelector = ({ options, onAdd }) => {
+const AssetSelector = ({
+  options,
+  onAdd,
+  error,
+  helperText,
+  setErrorAsset,
+  setHelperTextAsset,
+}) => {
   const [selectedValue, setSelectedValue] = useState("");
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
+    setErrorAsset(false);
+    setHelperTextAsset("");
   };
 
   const handleAdd = () => {
@@ -50,6 +59,8 @@ const AssetSelector = ({ options, onAdd }) => {
           maxWidth: "215px",
           width: "100%",
         }}
+        error={!!error}
+        helperText={helperText}
       >
         {options.map((option) => (
           <MenuItem key={option.id} value={option}>
