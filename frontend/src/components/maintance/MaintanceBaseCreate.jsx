@@ -26,14 +26,17 @@ import DynamicField from "../../generic/DynamicField";
 import AssetSelector from "./AssetSelector";
 import ActivitiesModal from "./ActivitiesModal";
 import ObservationsModal from "./ObservationsModal";
+import ComponentsModal from "./ComponentsModal";
 
 const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
   const [entity, setEntity] = useState(defaultState);
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
+  const [componentsCatalog, setComponentsCatalog] = useState([]);
   const [assetsTable, setAssetsTable] = useState([]);
   const [errors, setErrors] = useState({});
   const [openActivities, setOpenActivities] = useState(false);
   const [openObservations, setOpenObservations] = useState(false);
+  const [openComponents, setOpenComponents] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
@@ -95,16 +98,31 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
       activities: activityList,
     }));
 
-    console.log("Entidad actualizada...", entity);
+    console.log("Entidad actividades...", entity);
   };
 
   const onSaveObservations = (observationsList) => {
-    console.log("Observaciones guardadas...");
+    // Darle a la entidad los valores de las observaciones.
+    setEntity((prev) => ({
+      ...prev,
+      observations: observationsList,
+    }));
+
+    console.log("Entidad observaciones...", entity);
   };
 
+  const onSaveComponents = () => {};
+
+  const onOpenComponents = (id) => {
+    // Cargar los datos del catalogo.
+    console.log(id);
+    setOpenComponents(true);
+  };
   const onOpenObservations = () => setOpenObservations(true);
+
   const onCloseActivities = () => setOpenActivities(false);
   const onCloseObservations = () => setOpenObservations(false);
+  const onCloseComponents = () => setOpenComponents(false);
 
   const handleFetch = (key, value) => {
     console.log("Testing...");
@@ -196,7 +214,15 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
                           <PlaylistAddIcon />
                         </IconButton>
                       </TableCell>
-                      <TableCell>Modal componentes</TableCell>
+                      <TableCell>
+                        Componentes
+                        <IconButton
+                          onClick={() => onOpenComponents(row.id)}
+                          arial-label="abrir"
+                        >
+                          <PlaylistAddIcon />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -208,8 +234,8 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
 
       <ActivitiesModal
         open={openActivities}
-        onClose={onCloseActivities}
         onSave={onSaveActivities}
+        onClose={onCloseActivities}
         catalog={activitiesCatalog}
       />
 
@@ -217,6 +243,13 @@ const MaintanceBaseCreate = ({ fields, defaultState, assets }) => {
         open={openObservations}
         onSave={onSaveObservations}
         onClose={onCloseObservations}
+      />
+
+      <ComponentsModal
+        open={openComponents}
+        onSave={onSaveComponents}
+        onClose={onCloseComponents}
+        catalog={componentsCatalog}
       />
     </>
   );

@@ -21,30 +21,35 @@ import {
 import { toast } from "react-toastify";
 import categoryCreateStyles from "../../generic/styles/CreateStyles";
 
-const ActivitiesModal = ({ open, onClose, onSave }) => {
-  const [selectedActivity, setSelectedActivity] = useState("");
+const ObservationsModal = ({ open, onClose, onSave }) => {
+  const [selectedObservation, setSelectedObservation] = useState("");
   const [observationsList, setObservationsList] = useState([]);
 
-  const handleAddActivity = () => {
-    if (!selectedActivity) {
-      toast.warning("Seleccione una actividad para añadir.");
+  const handleObservation = () => {
+    if (selectedObservation === "") {
+      toast.warning("Observación vacía.");
       return;
     }
 
-    if (observationsList.some((activity) => activity.id === selectedActivity)) {
-      toast.info("La actividad ya ha sido añadida.");
+    const observationExists = observationsList.find(
+      (obs) => obs === selectedObservation.trim()
+    );
+
+    if (observationExists) {
+      toast.warning("La observación ya ha sido añadida.");
       return;
     }
 
-    setObservationsList((prev) => [...prev, activity]);
-    toast.success("Actividad añadida correctamente.");
+    setObservationsList((prev) => [...prev, selectedObservation.trim()]);
+    setSelectedObservation("");
+    toast.success("Observación añadida correctamente.");
   };
 
-  const handleRemoveActivity = (id) => {
+  const handleRemoveActivity = (observationTable) => {
     setObservationsList((prev) =>
-      prev.filter((activity) => activity.id !== id)
+      prev.filter((observation) => observation !== observationTable)
     );
-    toast.success("Actividad eliminada correctamente.");
+    toast.success("Observación eliminada correctamente.");
   };
 
   const handleSave = () => {
@@ -84,8 +89,8 @@ const ActivitiesModal = ({ open, onClose, onSave }) => {
             </Typography>
             <TextField
               label="Seleccione una actividad"
-              value={selectedActivity}
-              onChange={(e) => setSelectedActivity(e.target.value)}
+              value={selectedObservation}
+              onChange={(e) => setSelectedObservation(e.target.value)}
               sx={{
                 marginTop: "15px",
                 flexGrow: 1,
@@ -99,7 +104,7 @@ const ActivitiesModal = ({ open, onClose, onSave }) => {
             ></TextField>
             <Button
               variant="contained"
-              onClick={handleAddActivity}
+              onClick={handleObservation}
               sx={{
                 flexShrink: 0,
                 whiteSpace: "nowrap",
@@ -123,28 +128,28 @@ const ActivitiesModal = ({ open, onClose, onSave }) => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Actividad</TableCell>
+                    <TableCell>Observación</TableCell>
                     <TableCell>{""}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {observationsList.map((activity) => (
-                    <TableRow key={activity.id}>
+                  {observationsList.map((observation, index) => (
+                    <TableRow key={index}>
                       <TableCell
                         sx={{
-                          maxWidth: "2000px",
+                          maxWidth: "300px",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                         }}
-                        title={activity.act_main}
+                        title={observation}
                       >
-                        {activity.act_main}
+                        {observation}
                       </TableCell>
                       <TableCell>
                         <Button
                           color="error"
-                          onClick={() => handleRemoveActivity(activity.id)}
+                          onClick={() => handleRemoveActivity(observation)}
                         >
                           Quitar
                         </Button>
@@ -173,4 +178,4 @@ const ActivitiesModal = ({ open, onClose, onSave }) => {
   );
 };
 
-export default ActivitiesModal;
+export default ObservationsModal;
