@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import ClearIcon from "@mui/icons-material/Clear";
 
 import { validateField, validateFields } from "../../../utils/validations";
 import { toast } from "react-toastify";
@@ -170,6 +171,11 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
     setOpenComponents(false);
   };
 
+  // Eliminar el activo de la tabla.
+  const deleteRow = (id) => {
+    setAssetsTable((prev) => prev.filter((asset) => asset.id !== id));
+  };
+
   // Botones de cerrar
   const onCloseActivities = () => setOpenActivities(false);
   const onCloseObservations = () => setOpenObservations(false);
@@ -269,6 +275,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                       <TableCell>Actividades</TableCell>
                       <TableCell>Observaciones</TableCell>
                       <TableCell>Componenes a reemplazar</TableCell>
+                      <TableCell>{""}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -306,6 +313,11 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                               arial-label="abrir"
                             >
                               <PlaylistAddIcon />
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>
+                            <IconButton onClick={() => deleteRow(row.id)}>
+                              <ClearIcon />
                             </IconButton>
                           </TableCell>
                         </TableRow>

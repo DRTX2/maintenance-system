@@ -65,7 +65,7 @@ const MaintanceBaseShow = ({ columns }) => {
   };
 
   const onEdit = (id) => {
-    console.log("...");
+    navigate(`/dashboard/maintance/edit/${id}`);
   };
 
   const onDelete = async (id, status) => {
