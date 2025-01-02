@@ -36,6 +36,7 @@ const ComponentsModal = ({
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [selectedComponentId, setSelectedComponentId] = useState("");
   const [selectedComponents, setSelectedComponents] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (open) {
@@ -83,10 +84,29 @@ const ComponentsModal = ({
     setSelectedComponents((prev) =>
       prev.filter((component) => component.id !== componentId)
     );
+
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[componentId];
+      return newErrors;
+    });
   };
 
   // Cambio basado en la fila y su valor.
   const handleDescriptionChange = (componentId, description) => {
+    if (description.length < 3 || description.length > 30) {
+      setErrors((prev) => ({
+        ...prev,
+        [componentId]: "La descripción debe tener entre 3 y 30 caracteres.",
+      }));
+    } else {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[componentId];
+        return newErrors;
+      });
+    }
+
     setSelectedComponents((prev) =>
       prev.map((component) =>
         component.id === componentId ? { ...component, description } : component
@@ -97,6 +117,12 @@ const ComponentsModal = ({
   };
 
   const handleSave = () => {
+    console.log(errors);
+    if (Object.keys(errors).length > 0) {
+      toast.warning("Corrija los errores antes de guardar.");
+      return;
+    }
+
     onSave(selectedComponents);
     onClose();
   };
@@ -104,6 +130,7 @@ const ComponentsModal = ({
   const handleClose = () => {
     setSelectedComponents([]);
     setSelectedComponentId("");
+    setErrors({});
     onClose();
   };
 
@@ -177,6 +204,8 @@ const ComponentsModal = ({
                             }
                             placeholder="Ingrese descripción"
                             fullWidth
+                            error={!!errors[component.id]}
+                            helperText={errors[component.id] || ""}
                           />
                         </TableCell>
                         <TableCell>

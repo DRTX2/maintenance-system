@@ -193,6 +193,8 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   };
 
   const handleCreate = async () => {
+    console.log("OBJETO A ENVIARSE", { ...entity, assets: assetsTable });
+
     if (assetsTable.length === 0) {
       setErrorAsset(true);
       setHelperTextAsset("Debe agregar al menos un activo.");

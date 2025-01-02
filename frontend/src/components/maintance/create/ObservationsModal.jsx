@@ -24,6 +24,7 @@ import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
   const [selectedObservation, setSelectedObservation] = useState("");
   const [observationsList, setObservationsList] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -34,6 +35,11 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
   const handleObservation = () => {
     if (selectedObservation === "") {
       toast.warning("Observación vacía.");
+      return;
+    }
+
+    if (selectedObservation.length > 30 || selectedObservation.length < 5) {
+      toast.warning("La observación debe tener entre 5 y 30 caracteres.");
       return;
     }
 
