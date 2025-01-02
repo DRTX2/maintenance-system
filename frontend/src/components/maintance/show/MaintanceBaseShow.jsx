@@ -4,7 +4,7 @@ import SearchBar from "../../../generic/SearchBar";
 import AddIcon from "@mui/icons-material/Add";
 import GenericStyles from "../../../generic/styles/GenericStyles";
 import dayjs from "dayjs";
-import { CircularProgress, Typography } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -61,7 +61,7 @@ const MaintanceBaseShow = ({ columns }) => {
   const onFetch = (param) => {};
 
   const onView = (id) => {
-    console.log("...");
+    navigate(`/dashboard/maintance/view/${id}`);
   };
 
   const onEdit = (id) => {
