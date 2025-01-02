@@ -16,6 +16,7 @@ import AssetView from "./components/asset/AssetView";
 import MaintanceCreate from "./components/maintance/create/MaintanceCreate";
 import MaintanceShow from "./components/maintance/show/MaintanceShow";
 import MaintanceView from "./components/maintance/view/MaintanceView";
+import MaintanceEdit from "./components/maintance/edit/MaintanceEdit";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
             <Route path="maintance" element={<MaintanceShow />} />
             <Route path="maintance/create" element={<MaintanceCreate />} />
             <Route path="maintance/view/:id" element={<MaintanceView />} />
+            <Route path="maintance/edit/:id" element={<MaintanceEdit />} />
           </Route>
         </Routes>
         {/* End routes */}
