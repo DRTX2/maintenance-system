@@ -19,4 +19,9 @@ class MaintenanceActivity extends Model
     {
         return $this->belongsTo(MaintenanceType::class, 'typ_main_id');
     }
+
+    public function maintenanceDetails()
+    {
+        return $this->belongsToMany(MaintenanceDetail::class, 'activity_maintenance_details', 'id_act', 'id_main');
+    }
 }

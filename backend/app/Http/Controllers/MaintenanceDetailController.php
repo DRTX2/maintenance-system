@@ -10,16 +10,38 @@ use App\Models\ReplacedComponent;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class MaintenanceDetailController extends Controller
 {
-    public function index($id)
+    public function index()
     {
-        $maintenanceDetail = Maintenance::with([
-            'maintenanceDetails.asset',
-            'maintenanceDetails.observations',
-            'maintenanceDetails.activities',
-            'maintenanceDetails.replacedComponents',
+        $maintenanceDetails = MaintenanceDetail::with([
+            'maintenance',
+            'asset',
+            'observations',
+            'activities',
+            'replacedComponents',
+        ])
+            ->get();
+
+        if (!$maintenanceDetails) {
+            return response()->json(["message" => "No existe el mantenimiento solicitado"], 404);
+        }
+
+        return response()->json([
+            "results" => $maintenanceDetails,
+        ], 200);
+    }
+
+    public function show($id)
+    {
+        $maintenanceDetail = MaintenanceDetail::with([
+            'maintenance',
+            'asset',
+            'observations',
+            'activities',
+            'replacedComponents',
         ])
             ->find($id);
 
@@ -32,7 +54,7 @@ class MaintenanceDetailController extends Controller
         ], 200);
     }
 
-    public function createMaintenanceWithDetails(MaintenanceDetailRequest $request)
+    public function store(MaintenanceDetailRequest $request)
     {
         $validatedData = $request->validated();
 
@@ -43,12 +65,24 @@ class MaintenanceDetailController extends Controller
                 'cod_main' => $validatedData['cod_main'],
                 'id_typ_main' => $validatedData['id_typ_main'],
                 'dni_res_main' => $validatedData['dni_res_main'],
+                'vis_main' => $validatedData['vis_main'] ?? 'V',
+                'ended_at' => $validatedData['ended_at'] ?? null,
+                'created_at' => $validatedData['created_at'],
             ]);
 
+            $maintenanceDetail = new MaintenanceDetail();
+            $maintenanceDetail->id_main_bel = $maintenance->id;
+            //            $maintenanceDetail->id_ass_bel = null;
+            $maintenanceDetail->save();
+
+            if (!$maintenanceDetail->id) {
+                throw new Exception("Error al crear el detalle de mantenimiento.");
+            }
+
             if (!empty($validatedData['observations'])) {
-                $observations = array_map(function ($observation) use ($maintenance) {
+                $observations = array_map(function ($observation) use ($maintenanceDetail) {
                     return [
-                        'id_det_main_obs' => $maintenance->id,
+                        'id_det_main_obs' => $maintenanceDetail->id,
                         'des_obs' => $observation['des_obs'],
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -58,9 +92,9 @@ class MaintenanceDetailController extends Controller
             }
 
             if (!empty($validatedData['replaced_components'])) {
-                $components = array_map(function ($component) use ($maintenance) {
+                $components = array_map(function ($component) use ($maintenanceDetail) {
                     return [
-                        'id_det_main_bel' => $maintenance->id,
+                        'id_det_main_bel' => $maintenanceDetail->id,
                         'id_com_bel' => $component['id_com_bel'],
                         'des_rep_com' => $component['des_rep_com'],
                         'created_at' => now(),
@@ -71,9 +105,9 @@ class MaintenanceDetailController extends Controller
             }
 
             if (!empty($validatedData['activities'])) {
-                $activities = array_map(function ($activityId) use ($maintenance) {
+                $activities = array_map(function ($activityId) use ($maintenanceDetail) {
                     return [
-                        'id_main' => $maintenance->id, // Relación con el mantenimiento
+                        'id_main' => $maintenanceDetail->id,
                         'id_act' => $activityId,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -86,7 +120,7 @@ class MaintenanceDetailController extends Controller
 
             return response()->json([
                 'message' => 'Mantenimiento creado exitosamente.',
-                'results' => $maintenance,
+                'results' => $maintenanceDetail,
             ], 201);
         } catch (Exception $e) {
             DB::rollBack();
@@ -97,9 +131,22 @@ class MaintenanceDetailController extends Controller
         }
     }
 
-    public function updateMaintenanceWithDetails(MaintenanceDetailRequest $request, $id)
+    public function update(MaintenanceDetailRequest $request, $id)
     {
-        $validatedData = $request->validated();
+        try {
+            $validatedData = $request->validated();
+            // Lógica de actualización
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar el mantenimiento.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
 
         DB::beginTransaction();
 
@@ -110,16 +157,17 @@ class MaintenanceDetailController extends Controller
                 'cod_main' => $validatedData['cod_main'],
                 'id_typ_main' => $validatedData['id_typ_main'],
                 'dni_res_main' => $validatedData['dni_res_main'],
+                'vis_main' => $validatedData['vis_main'] ?? 'V',
+                'ended_at' => $validatedData['ended_at'] ?? null,
             ]);
 
-            // Sincronizar observaciones ??
-            $this->syncObservations($maintenance->id, $validatedData['observations'] ?? []);
+            $maintenanceDetail = MaintenanceDetail::where('id_main_bel', $maintenance->id)->firstOrFail();
 
-            // Sincronizar componentes reemplazados
-            $this->syncReplacedComponents($maintenance->id, $validatedData['replaced_components'] ?? []);
+            $this->syncObservations($maintenanceDetail->id, $validatedData['observations'] ?? []);
 
-            // Sincronizar actividades
-            $this->syncActivities($maintenance->id, $validatedData['activities'] ?? []);
+            $this->syncReplacedComponents($maintenanceDetail->id, $validatedData['replaced_components'] ?? []);
+
+            $this->syncActivities($maintenanceDetail->id, $validatedData['activities'] ?? []);
 
             DB::commit();
 
@@ -138,21 +186,22 @@ class MaintenanceDetailController extends Controller
 
     protected function syncObservations($maintenanceId, array $observations)
     {
+        // Obtener las observaciones existentes
         $existingObservations = Observation::where('id_det_main_obs', $maintenanceId)->get();
 
-        // Crear un mapa de observaciones existentes para facilitar la búsqueda
+        // Crear un mapa de observaciones existentes
         $existingMap = $existingObservations->keyBy('id');
 
-        // Procesar nuevas observaciones
+        // Crear/Actualizar las observaciones que ya existen o agregar nuevas
         foreach ($observations as $observation) {
             if (isset($observation['id']) && $existingMap->has($observation['id'])) {
-                // Actualizar si existe
+                // Actualizar la observación si existe
                 $existingMap[$observation['id']]->update([
                     'des_obs' => $observation['des_obs'],
                 ]);
                 $existingMap->forget($observation['id']); // Marcar como procesada
             } else {
-                // Crear nueva observación
+                // Crear nueva observación si no existe
                 Observation::create([
                     'id_det_main_obs' => $maintenanceId,
                     'des_obs' => $observation['des_obs'],
@@ -163,10 +212,13 @@ class MaintenanceDetailController extends Controller
         // Eliminar las observaciones restantes no procesadas
         Observation::whereIn('id', $existingMap->keys())->delete();
     }
+
     protected function syncReplacedComponents($maintenanceId, array $components)
     {
+        // Obtener los componentes existentes
         $existingComponents = ReplacedComponent::where('id_det_main_bel', $maintenanceId)->get();
 
+        // Crear un mapa de componentes existentes
         $existingMap = $existingComponents->keyBy('id');
 
         foreach ($components as $component) {
@@ -178,7 +230,7 @@ class MaintenanceDetailController extends Controller
                 ]);
                 $existingMap->forget($component['id']);
             } else {
-                // Crear nuevo componente reemplazado
+                // Crear nuevo componente si no existe
                 ReplacedComponent::create([
                     'id_det_main_bel' => $maintenanceId,
                     'id_com_bel' => $component['id_com_bel'],
@@ -187,28 +239,27 @@ class MaintenanceDetailController extends Controller
             }
         }
 
-        // Eliminar componentes restantes no procesados
+        // Eliminar los componentes no procesados
         ReplacedComponent::whereIn('id', $existingMap->keys())->delete();
     }
-    protected function syncActivities($maintenanceId, array $activities)
+
+    protected function syncActivities($maintenanceDetailId, array $activities)
     {
         $existingActivities = DB::table('activity_maintenance_details')
-            ->where('id_main', $maintenanceId)
+            ->where('id_main', $maintenanceDetailId)
             ->pluck('id_act')
             ->toArray();
 
         $newActivities = collect($activities);
 
-        // Actividades a añadir
+        // Determinar actividades a añadir y eliminar
         $toAdd = $newActivities->diff($existingActivities)->all();
-
-        // Actividades a eliminar
         $toRemove = collect($existingActivities)->diff($newActivities)->all();
 
         // Insertar nuevas actividades
         foreach ($toAdd as $activityId) {
             DB::table('activity_maintenance_details')->insert([
-                'id_main' => $maintenanceId,
+                'id_main' => $maintenanceDetailId,
                 'id_act' => $activityId,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -217,7 +268,7 @@ class MaintenanceDetailController extends Controller
 
         // Eliminar actividades sobrantes
         DB::table('activity_maintenance_details')
-            ->where('id_main', $maintenanceId)
+            ->where('id_main', $maintenanceDetailId)
             ->whereIn('id_act', $toRemove)
             ->delete();
     }
