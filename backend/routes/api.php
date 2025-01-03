@@ -156,5 +156,7 @@ Route::delete('/replaced-components/{id}', [ReplacedComponentController::class, 
 Route::post('/replaced-components/search', [ReplacedComponentController::class, 'search']);
 
 // Maintenance Details
-
-Route::get('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'index']);
+Route::get('/maintenance-detail', [MaintenanceDetailController::class, 'index']);
+Route::get('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'show']);
+Route::post('/maintenance-detail', [MaintenanceDetailController::class, 'store']);
+Route::put('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'update']);
