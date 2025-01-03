@@ -74,6 +74,7 @@ class MaintenanceDetailController extends Controller
             foreach ($validatedData['assets'] as $asset) {
                 $maintenanceDetail = new MaintenanceDetail();
                 $maintenanceDetail->id_main_bel = $maintenance->id;
+                $maintenanceDetail->id_ass_bel= $asset['id'];
                 $maintenanceDetail->save();
 
                 if (!$maintenanceDetail->id) {
