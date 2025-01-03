@@ -7,6 +7,7 @@ use App\Models\MaintenanceActivity;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ActivityController extends Controller
 {
@@ -45,6 +46,39 @@ class ActivityController extends Controller
                 "error" => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function addActivitiesToMaintenanceDetail(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id_main' => 'required|exists:maintenance_details,id',
+            'activities' => 'required|array',
+            'activities.*' => 'exists:activities,id',
+        ]);
+
+        $idMain = $validatedData['id_main'];
+        $activityIds = $validatedData['activities'];
+
+        // Insertar múltiples registros en activity_maintenance_details
+        $data = array_map(function ($activityId) use ($idMain) {
+            return [
+                'id_main' => $idMain,
+                'id_act' => $activityId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $activityIds);
+
+        DB::beginTransaction();
+        try {
+            DB::table('activity_maintenance_details')->insert($data);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al agregar actividades', 'error' => $e->getMessage()], 500);
+        }
+
+        return response()->json(['message' => 'Activities added successfully.'], 201);
     }
 
     public function update(ActivityRequest $request, $id)
