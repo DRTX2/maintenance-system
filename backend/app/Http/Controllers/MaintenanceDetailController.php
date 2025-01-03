@@ -61,6 +61,7 @@ class MaintenanceDetailController extends Controller
         DB::beginTransaction();
 
         try {
+            // Crear el mantenimiento principal
             $maintenance = Maintenance::create([
                 'cod_main' => $validatedData['cod_main'],
                 'id_typ_main' => $validatedData['id_typ_main'],
@@ -70,57 +71,58 @@ class MaintenanceDetailController extends Controller
                 'created_at' => $validatedData['created_at'],
             ]);
 
-            $maintenanceDetail = new MaintenanceDetail();
-            $maintenanceDetail->id_main_bel = $maintenance->id;
-            //            $maintenanceDetail->id_ass_bel = null;
-            $maintenanceDetail->save();
+            foreach ($validatedData['assets'] as $asset) {
+                $maintenanceDetail = new MaintenanceDetail();
+                $maintenanceDetail->id_main_bel = $maintenance->id;
+                $maintenanceDetail->save();
 
-            if (!$maintenanceDetail->id) {
-                throw new Exception("Error al crear el detalle de mantenimiento.");
-            }
+                if (!$maintenanceDetail->id) {
+                    throw new Exception("Error al crear el detalle de mantenimiento para un asset.");
+                }
 
-            if (!empty($validatedData['observations'])) {
-                $observations = array_map(function ($observation) use ($maintenanceDetail) {
-                    return [
-                        'id_det_main_obs' => $maintenanceDetail->id,
-                        'des_obs' => $observation['des_obs'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }, $validatedData['observations']);
-                Observation::insert($observations);
-            }
+                if (!empty($asset['observations'])) {
+                    $observations = array_map(function ($observation) use ($maintenanceDetail) {
+                        return [
+                            'id_det_main_obs' => $maintenanceDetail->id,
+                            'des_obs' => $observation['des_obs'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }, $asset['observations']);
+                    Observation::insert($observations);
+                }
 
-            if (!empty($validatedData['replaced_components'])) {
-                $components = array_map(function ($component) use ($maintenanceDetail) {
-                    return [
-                        'id_det_main_bel' => $maintenanceDetail->id,
-                        'id_com_bel' => $component['id_com_bel'],
-                        'des_rep_com' => $component['des_rep_com'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }, $validatedData['replaced_components']);
-                ReplacedComponent::insert($components);
-            }
+                if (!empty($asset['replaced_components'])) {
+                    $components = array_map(function ($component) use ($maintenanceDetail) {
+                        return [
+                            'id_det_main_bel' => $maintenanceDetail->id,
+                            'id_com_bel' => $component['id_com_bel'],
+                            'des_rep_com' => $component['des_rep_com'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }, $asset['replaced_components']);
+                    ReplacedComponent::insert($components);
+                }
 
-            if (!empty($validatedData['activities'])) {
-                $activities = array_map(function ($activityId) use ($maintenanceDetail) {
-                    return [
-                        'id_main' => $maintenanceDetail->id,
-                        'id_act' => $activityId,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }, $validatedData['activities']);
-                DB::table('activity_maintenance_details')->insert($activities);
+                if (!empty($asset['activities'])) {
+                    $activities = array_map(function ($activityId) use ($maintenanceDetail) {
+                        return [
+                            'id_main' => $maintenanceDetail->id,
+                            'id_act' => $activityId,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }, $asset['activities']);
+                    DB::table('activity_maintenance_details')->insert($activities);
+                }
             }
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Mantenimiento creado exitosamente.',
-                'results' => $maintenanceDetail,
+                'results' => $maintenance,
             ], 201);
         } catch (Exception $e) {
             DB::rollBack();
