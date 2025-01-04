@@ -199,6 +199,7 @@ class MaintenanceDetailController extends Controller
                 'dni_res_main' => $validatedData['dni_res_main'],
                 'vis_main' => $validatedData['vis_main'] ?? 'V',
                 'ended_at' => $validatedData['ended_at'] ?? null,
+                'created_at' => $validatedData['created_at'] ?? null,
             ]);
 
             // Eliminar registros antiguos de mantenimiento
@@ -206,7 +207,7 @@ class MaintenanceDetailController extends Controller
             $this->deleteOldRecords($maintenanceDetail->id);
 
             // Re-crear los nuevos registros
-            $this->createNewRecords($maintenanceDetail->id, $validatedData);
+            $this->createNewRecords($maintenanceDetail->id, $validatedData["assets"]);
 
             DB::commit();
 
@@ -237,10 +238,11 @@ class MaintenanceDetailController extends Controller
             ->delete();
     }
 
-    protected function createNewRecords($maintenanceDetailId, $validatedData)
-    {
+    protected function createNewRecords($maintenanceDetailId, $assets)
+{
+    foreach ($assets as $asset) {
         // Insertar nuevas observaciones
-        if (!empty($validatedData['observations'])) {
+        if (!empty($asset['observations'])) {
             $observations = array_map(function ($observation) use ($maintenanceDetailId) {
                 return [
                     'id_det_main_obs' => $maintenanceDetailId,
@@ -248,12 +250,12 @@ class MaintenanceDetailController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
-            }, $validatedData['observations']);
-            Observation::insert($observations);
+            }, $asset['observations']);
+            Observation::insert($observations); // Inserta las observaciones
         }
 
         // Insertar nuevos componentes reemplazados
-        if (!empty($validatedData['replaced_components'])) {
+        if (!empty($asset['replaced_components'])) {
             $components = array_map(function ($component) use ($maintenanceDetailId) {
                 return [
                     'id_det_main_bel' => $maintenanceDetailId,
@@ -262,12 +264,12 @@ class MaintenanceDetailController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
-            }, $validatedData['replaced_components']);
-            ReplacedComponent::insert($components);
+            }, $asset['replaced_components']);
+            ReplacedComponent::insert($components); // Inserta los componentes reemplazados
         }
 
         // Insertar nuevas actividades
-        if (!empty($validatedData['activities'])) {
+        if (!empty($asset['activities'])) {
             $activities = array_map(function ($activityId) use ($maintenanceDetailId) {
                 return [
                     'id_main' => $maintenanceDetailId,
@@ -275,8 +277,9 @@ class MaintenanceDetailController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
-            }, $validatedData['activities']);
-            DB::table('activity_maintenance_details')->insert($activities);
+            }, $asset['activities']);
+            DB::table('activity_maintenance_details')->insert($activities); // Inserta las actividades
         }
     }
+}
 }

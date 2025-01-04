@@ -42,6 +42,7 @@ class MaintenanceDetailRequest extends FormRequest
                 Rule::unique('maintenances', 'cod_main')->ignore($this->route('id')),
             ];
 
+
         }
 
         return $rules;

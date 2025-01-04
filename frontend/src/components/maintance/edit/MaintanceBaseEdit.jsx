@@ -216,6 +216,8 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       try {
         const idMaintenance = maintanceEdited.id_main;
 
+        console.log("Maintenanced edit", maintanceEdited);
+
         const dataToSend = {
           ...maintanceEdited,
           assets: maintanceEdited.assets.map((item) => ({
