@@ -21,6 +21,7 @@ import { useState } from "react";
 import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 
 const ObservationsViewModal = ({ open, onClose, currentObservations }) => {
+  console.log("Observaciones actualices", currentObservations);
   const [observationsList, setObservationsList] = useState(
     currentObservations || []
   );
@@ -75,8 +76,8 @@ const ObservationsViewModal = ({ open, onClose, currentObservations }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {observationsList.map((observation, index) => (
-                    <TableRow key={index}>
+                  {observationsList.map((observation) => (
+                    <TableRow key={observation.id}>
                       <TableCell
                         sx={{
                           maxWidth: "280px",
