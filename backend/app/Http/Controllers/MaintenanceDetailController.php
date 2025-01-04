@@ -239,47 +239,47 @@ class MaintenanceDetailController extends Controller
     }
 
     protected function createNewRecords($maintenanceDetailId, $assets)
-{
-    foreach ($assets as $asset) {
-        // Insertar nuevas observaciones
-        if (!empty($asset['observations'])) {
-            $observations = array_map(function ($observation) use ($maintenanceDetailId) {
-                return [
-                    'id_det_main_obs' => $maintenanceDetailId,
-                    'des_obs' => $observation['des_obs'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $asset['observations']);
-            Observation::insert($observations); // Inserta las observaciones
-        }
-
-        // Insertar nuevos componentes reemplazados
-        if (!empty($asset['replaced_components'])) {
-            $components = array_map(function ($component) use ($maintenanceDetailId) {
-                return [
-                    'id_det_main_bel' => $maintenanceDetailId,
-                    'id_com_bel' => $component['id_com_bel'],
-                    'des_rep_com' => $component['des_rep_com'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $asset['replaced_components']);
-            ReplacedComponent::insert($components); // Inserta los componentes reemplazados
-        }
-
-        // Insertar nuevas actividades
-        if (!empty($asset['activities'])) {
-            $activities = array_map(function ($activityId) use ($maintenanceDetailId) {
-                return [
-                    'id_main' => $maintenanceDetailId,
-                    'id_act' => $activityId,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $asset['activities']);
-            DB::table('activity_maintenance_details')->insert($activities); // Inserta las actividades
+    {
+        foreach ($assets as $asset) {
+            // Insertar nuevas observaciones solo para el activo actual
+            if (!empty($asset['observations'])) {
+                $observations = array_map(function ($observation) use ($maintenanceDetailId) {
+                    return [
+                        'id_det_main_obs' => $maintenanceDetailId,
+                        'des_obs' => $observation['des_obs'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }, $asset['observations']);
+                Observation::insert($observations); 
+            }
+    
+            // Insertar nuevos componentes reemplazados solo para el activo actual
+            if (!empty($asset['replaced_components'])) {
+                $components = array_map(function ($component) use ($maintenanceDetailId) {
+                    return [
+                        'id_det_main_bel' => $maintenanceDetailId,
+                        'id_com_bel' => $component['id_com_bel'],
+                        'des_rep_com' => $component['des_rep_com'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }, $asset['replaced_components']);
+                ReplacedComponent::insert($components); // Inserta solo los componentes del activo actual
+            }
+    
+            // Insertar nuevas actividades solo para el activo actual
+            if (!empty($asset['activities'])) {
+                $activities = array_map(function ($activityId) use ($maintenanceDetailId) {
+                    return [
+                        'id_main' => $maintenanceDetailId,
+                        'id_act' => $activityId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }, $asset['activities']);
+                DB::table('activity_maintenance_details')->insert($activities); // Inserta solo las actividades del activo actual
+            }
         }
     }
-}
 }
