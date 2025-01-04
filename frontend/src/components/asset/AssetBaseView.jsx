@@ -50,6 +50,7 @@ const AssetBaseView = ({
         setIsEditing(false);
         navigate("/dashboard/assets");
       } catch (error) {
+        // console.log("error", error.response.data.errors.income[0]);
         toast.error("No se ha podido crear el activo.");
       }
     }

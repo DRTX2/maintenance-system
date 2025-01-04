@@ -79,7 +79,7 @@ const ResponsibleManager = () => {
     { key: "is_ext", label: "Tipo" },
   ];
 
-  const message = "nombre";
+  const message = "dni_res";
 
   const searchBy = "cedula";
 

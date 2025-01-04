@@ -93,7 +93,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
 
     setAssetsTable((prev) => [
       ...prev,
-      { ...asset, activities: [], observations: [], components: [] },
+      { ...asset, activities: [], observations: [], replaced_components: [] },
     ]);
 
     setErrorAsset(false);
@@ -163,7 +163,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
     setAssetsTable((prev) =>
       prev.map((asset) =>
         asset.id === currentAsset.id
-          ? { ...asset, components: componentsList }
+          ? { ...asset, replaced_components: componentsList }
           : asset
       )
     );
@@ -202,7 +202,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
 
     if (validateAll()) {
       try {
-        const response = await axiosInstance.post("/maintenances", {
+        const response = await axiosInstance.post("/maintenance-detail", {
           ...entity,
           assets: assetsTable,
         });
@@ -309,7 +309,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            {row.components.length} {" Componentes"}
+                            {row.replaced_components.length} {" Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.id)}
                               arial-label="abrir"
@@ -390,11 +390,10 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
 
       <ComponentsModal
         open={openComponents}
-        columns={columns}
         onSave={onSaveComponents}
         onClose={onCloseComponents}
         catalog={componentsCatalog}
-        currentComponents={currentAsset?.components || []}
+        currentComponents={currentAsset?.replaced_components || []}
       />
     </>
   );

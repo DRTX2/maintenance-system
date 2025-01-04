@@ -46,6 +46,8 @@ const ContentTable = ({
     return value || "-";
   };
 
+  console.log("data", data);
+
   return (
     <>
       <TableContainer

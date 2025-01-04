@@ -8,6 +8,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/api";
 import { getDecodedToken, removeToken } from "../utils/authService";
 import Box from "@mui/material/Box";
+import { Link } from "react-router-dom";
 
 function Dashboard({ window }) {
   const navigate = useNavigate();
@@ -56,7 +57,21 @@ function Dashboard({ window }) {
         homeUrl: "dashboard",
         logo: <EngineeringIcon style={{ color: "white", fontSize: 35 }} />,
         title: (
-          <span style={{ color: "white" }}>Sistema De Mantenimientos</span>
+          <span style={{ color: "white" }}>
+            {" "}
+            <Link
+              to={"/dashboard/maintance"}
+              style={{
+                display: "block",
+                width: "100%",
+                height: "100%",
+                textDecoration: "none",
+                color: "inherit",
+              }}
+            >
+              Sistema de Mantenimientos
+            </Link>
+          </span>
         ),
       }}
     >

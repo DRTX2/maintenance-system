@@ -28,7 +28,7 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
 
   useEffect(() => {
     if (open) {
-      setObservationsList(currentObservations);
+      setObservationsList(currentObservations || []);
     }
   }, [open, currentObservations]);
 
@@ -44,7 +44,7 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
     }
 
     const observationExists = observationsList.find(
-      (obs) => obs === selectedObservation.trim()
+      (obs) => obs.des_obs === selectedObservation.trim()
     );
 
     if (observationExists) {
@@ -52,7 +52,12 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
       return;
     }
 
-    setObservationsList((prev) => [...prev, selectedObservation.trim()]);
+    setObservationsList((prev) => [
+      ...prev,
+      {
+        des_obs: selectedObservation.trim(),
+      },
+    ]);
     setSelectedObservation("");
     toast.success("Observación añadida correctamente.");
   };
@@ -160,14 +165,16 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                         }}
-                        title={observation}
+                        title={observation.des_obs}
                       >
-                        {observation}
+                        {observation.des_obs}
                       </TableCell>
                       <TableCell>
                         <Button
                           color="error"
-                          onClick={() => handleRemoveActivity(observation)}
+                          onClick={() =>
+                            handleRemoveActivity(observation.des_obs)
+                          }
                         >
                           Quitar
                         </Button>

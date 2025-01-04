@@ -65,6 +65,9 @@ const GenericManager = ({
       const response = await axiosInstance.post(
         `${apiConfig.fetchSearch}${param}`
       );
+
+      console.log("data", response);
+
       setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
@@ -74,7 +77,7 @@ const GenericManager = ({
   const fetchEntities = async () => {
     try {
       const response = await axiosInstance.get(apiConfig.fetchAll);
-      console.log(response);
+      console.log("informacion", response);
       setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);

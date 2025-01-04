@@ -96,11 +96,11 @@ const AssetTableShow = ({
                       >
                         {item.est_ass === "V" ? (
                           <Tooltip title="Ocultar">
-                            <VisibilityOffIcon />
+                            <VisibilityIcon />
                           </Tooltip>
                         ) : (
                           <Tooltip title="Mostrar">
-                            <VisibilityIcon />
+                            <VisibilityOffIcon />
                           </Tooltip>
                         )}
                       </IconButton>

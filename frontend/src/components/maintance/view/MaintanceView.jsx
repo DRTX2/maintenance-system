@@ -18,7 +18,7 @@ const MaintanceView = () => {
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get(`/maintenances/${id}`);
-      console.log(response.data.results);
+      console.log("MANTENIMIENTO", response.data.results);
       setMaintance(response.data.results);
       setIsReady(true);
     } catch (error) {

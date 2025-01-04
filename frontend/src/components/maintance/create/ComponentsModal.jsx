@@ -26,7 +26,6 @@ import { toast } from "react-toastify";
 
 const ComponentsModal = ({
   open,
-  columns,
   onClose,
   onSave,
   catalog,
@@ -40,6 +39,7 @@ const ComponentsModal = ({
 
   useEffect(() => {
     if (open) {
+      console.log(currentComponents);
       setSelectedComponents(currentComponents);
     }
   }, [open, currentComponents]);
@@ -72,7 +72,7 @@ const ComponentsModal = ({
     if (component) {
       setSelectedComponents((prev) => [
         ...prev,
-        { ...component, description: "" },
+        { ...component, id_com_bel: selectedComponentId, des_rep_com: "" },
       ]);
       setSelectedComponentId("");
     }
@@ -109,7 +109,9 @@ const ComponentsModal = ({
 
     setSelectedComponents((prev) =>
       prev.map((component) =>
-        component.id === componentId ? { ...component, description } : component
+        component.id === componentId
+          ? { ...component, des_rep_com: description }
+          : component
       )
     );
 
@@ -195,7 +197,7 @@ const ComponentsModal = ({
                         <TableCell>{component.nam_com}</TableCell>
                         <TableCell>
                           <TextField
-                            value={component.description}
+                            value={component.des_rep_com}
                             onChange={(e) =>
                               handleDescriptionChange(
                                 component.id,
