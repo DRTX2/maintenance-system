@@ -130,10 +130,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   };
 
   const onSaveActivities = (activityList, assetId) => {
-    console.log("Que viene", activityList, assetId);
-
-    console.log("La lista de actividades es", activityList);
-
     setAssetsTable((prev) =>
       prev.map((item) =>
         item.asset.id === assetId
@@ -141,8 +137,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           : item
       )
     );
-
-    console.log("Como quedo", assetsTable);
     setOpenActivities(false);
   };
 
@@ -152,13 +146,20 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   };
 
   const onSaveObservations = (observationsList, assetId) => {
+    console.log("Las observaciones son", observationsList, assetId);
+
     setAssetsTable((prev) =>
-      prev.map((asset) =>
-        asset.asset.id === assetId
-          ? { ...asset, observations: observationsList }
-          : asset
+      prev.map((item) =>
+        item.asset.id === assetId
+          ? {
+              ...item,
+              asset: { ...item.asset, observations: observationsList },
+            }
+          : item
       )
     );
+
+    console.log("Que pasa en observaciones");
 
     setOpenObservations(false);
   };
@@ -176,10 +177,13 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
 
   const onSaveComponents = (componentsList, assetId) => {
     setAssetsTable((prev) =>
-      prev.map((asset) =>
-        asset.asset.id === assetId
-          ? { ...asset, replaced_components: componentsList }
-          : asset
+      prev.map((item) =>
+        item.asset.id === assetId
+          ? {
+              ...item,
+              asset: { ...item.asset, replaced_components: componentsList },
+            }
+          : item
       )
     );
 
@@ -208,26 +212,31 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    console.log("La tabla tiene la forma", assetsTable);
     if (validateAll()) {
       try {
         const idMaintenance = maintanceEdited.id_main;
 
         const dataToSend = {
           ...maintanceEdited,
-          assets: assetsTable.map((asset) => ({
-            ...asset,
-            activities: asset.asset.activities.map((activity) => activity.id),
+          assets: maintanceEdited.assets.map((item) => ({
+            cod_ass: item.asset.cod_ass,
+            est_ass: item.asset.est_ass,
+            ser_num_ass: item.asset.er_num_ass,
+            id: item.asset.id,
+            obs_add_ass: item.asset.obs_add_ass,
+            observations: item.asset.observations,
+            replaced_components: item.asset.replaced_components,
+            activities: item.asset.activities.map((activity) => activity.id),
           })),
         };
 
-        console.log("Se esta enviando", dataToSend);
+        console.log("Envio", dataToSend);
 
-        // const response = await axiosInstance.put(
-        //   `/maintenance-detail/${idMaintenance}`,
-        //   dataToSend
-        // );
-        // toast.success(response.data.message);
+        const response = await axiosInstance.put(
+          `/maintenance-detail/${idMaintenance}`,
+          dataToSend
+        );
+        toast.success(response.data.message);
       } catch (error) {
         toast.error("Ha ocurrido un error.");
       }
