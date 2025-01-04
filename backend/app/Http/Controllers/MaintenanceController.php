@@ -50,7 +50,7 @@ class MaintenanceController extends Controller
             : "Responsable no definido";
         $isExtern = $maintenance->responsible->is_ext === "Y" ? "Externo" : "Interno";
         // Obtener datos del tipo de mantenimiento
-        $maintenanceTypeName = $maintenance->maintenanceType->name ?? "Tipo de mantenimiento no definido";
+        $maintenanceTypeName = $maintenance->maintenanceType->typ_main ?? "Tipo de mantenimiento no definido";
     
         // Transformar los detalles del mantenimiento
         $details = $maintenance->maintenanceDetails->map(function ($detail) {
