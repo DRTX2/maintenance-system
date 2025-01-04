@@ -49,9 +49,9 @@ class MaintenanceDetailController extends Controller
             return response()->json(["message" => "No existe el mantenimiento solicitado"], 404);
         }
 
-        $fullName=$maintenanceDetail->maintenance->responsible->nam_res. $maintenanceDetail->maintenance->responsible->las_res?? "Responsable no definido";
+        $fullName = $maintenanceDetail->maintenance->responsible->nam_res . $maintenanceDetail->maintenance->responsible->las_res ?? "Responsable no definido";
 
-        $isExtern= $maintenanceDetail->maintenance->responsible->is_ext==="Y"?"Externo":"Interno";
+        $isExtern = $maintenanceDetail->maintenance->responsible->is_ext === "Y" ? "Externo" : "Interno";
         // Transformar los datos
         $response = [
             // Información general del mantenimiento
@@ -62,7 +62,7 @@ class MaintenanceDetailController extends Controller
             "cod_main" => $maintenanceDetail->maintenance->cod_main,
             "id_typ_main" => $maintenanceDetail->maintenance->id_typ_main,
             "typ_main" => $maintenanceDetail->maintenance->maintenanceType->typ_main,
-            "dni_res_main" => $maintenanceDetail->maintenance->dni_res_main ." - ". $fullName." (".$isExtern.")",
+            "dni_res_main" => $maintenanceDetail->maintenance->dni_res_main . " - " . $fullName . " (" . $isExtern . ")",
             "vis_main" => $maintenanceDetail->maintenance->vis_main,
             "ended_at" => $maintenanceDetail->maintenance->ended_at,
             "created_at" => $maintenanceDetail->maintenance->created_at,
