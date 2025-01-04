@@ -192,41 +192,48 @@ const ComponentsModal = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {selectedComponents.map((component) => (
-                      <TableRow key={component.id}>
-                        <TableCell>{component.nam_com}</TableCell>
-                        <TableCell>
-                          <TextField
-                            value={component.des_rep_com}
-                            onChange={(e) =>
-                              handleDescriptionChange(
-                                component.id,
-                                e.target.value
-                              )
-                            }
-                            placeholder="Ingrese descripción"
-                            fullWidth
-                            error={!!errors[component.id]}
-                            helperText={errors[component.id] || ""}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            color="error"
-                            onClick={() => handleRemoveComponent(component.id)}
-                            size="small"
-                          >
-                            Quitar
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {selectedComponents
+                      .slice(
+                        currentPage * rowsPerPage,
+                        currentPage * rowsPerPage + rowsPerPage
+                      )
+                      .map((component) => (
+                        <TableRow key={component.id}>
+                          <TableCell>{component.nam_com}</TableCell>
+                          <TableCell>
+                            <TextField
+                              value={component.des_rep_com}
+                              onChange={(e) =>
+                                handleDescriptionChange(
+                                  component.id,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Ingrese descripción"
+                              fullWidth
+                              error={!!errors[component.id]}
+                              helperText={errors[component.id] || ""}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              color="error"
+                              onClick={() =>
+                                handleRemoveComponent(component.id)
+                              }
+                              size="small"
+                            >
+                              Quitar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
               <TablePagination
                 component="div"
-                count={catalog.length}
+                count={selectedComponents?.length}
                 page={currentPage}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[3, 5]}
