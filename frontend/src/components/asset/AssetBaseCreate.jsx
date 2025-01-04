@@ -165,11 +165,28 @@ const Entry = ({ fields, columns, defaultState }) => {
         resetFields();
         toast.success("Activo creado con éxito.");
       } catch (error) {
-        toast.error("No se ha podido crear el activo.");
+        if (error.response.data.errors) {
+          const message = handleErrors(error.response.data.errors).join("\n");
+          toast.error(message);
+        } else {
+          toast.error("No se ha podido crear el activo.");
+        }
       }
     } else {
       toast.error("No hay componentes o hay campos vacíos.");
     }
+  };
+
+  const handleErrors = (errors) => {
+    const errorMessages = [];
+
+    for (const [key, messages] of Object.entries(errors)) {
+      messages.forEach((message) => {
+        errorMessages.push(`${message}`);
+      });
+    }
+
+    return errorMessages;
   };
 
   return (
