@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Box,
   Grid2,
@@ -14,10 +13,9 @@ import {
   TablePagination,
   TextField,
 } from "@mui/material";
+import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
-import { toast } from "react-toastify";
-import axiosInstance from "../../../utils/api";
 import tableStyles from "../../../generic/styles/TableStyles";
 import ActivitiesViewModal from "./ActivitiesViewModal";
 import ObservationsViewModal from "./ObservationsViewModal";
@@ -27,13 +25,8 @@ import CustomTablePaginationActions from "../../../generic/CustomTablePagination
 import { useNavigate } from "react-router-dom";
 
 const MaintanceBaseView = ({ data, fields, columns }) => {
-  console.log("la data es", data);
-  console.log("los campos son", fields);
-
   const [currentAsset, setCurrentAsset] = useState(null);
-  const [assetsTable, setAssetsTable] = useState([]);
-  const [activitiesCatalog, setActivitiesCatalog] = useState([]);
-  const [componentsCatalog, setComponentsCatalog] = useState([]);
+  const [assetsTable, setAssetsTable] = useState(data?.assets || []);
   const [openActivities, setOpenActivities] = useState(false);
   const [openObservations, setOpenObservations] = useState(false);
   const [openComponents, setOpenComponents] = useState(false);
@@ -55,17 +48,6 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
     setOpenActivities(true);
   };
 
-  const onSaveActivities = (activityList) => {
-    setAssetsTable((prev) =>
-      prev.map((asset) =>
-        asset.id === currentAsset.id
-          ? { ...asset, activities: activityList }
-          : asset
-      )
-    );
-    setOpenActivities(false);
-  };
-
   // Observaciones
   const onOpenObservations = (assetId) => {
     const asset = assetsTable.find((item) => item.id === assetId);
@@ -73,42 +55,11 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
     setOpenObservations(true);
   };
 
-  const onSaveObservations = (observationsList) => {
-    setAssetsTable((prev) =>
-      prev.map((asset) =>
-        asset.id === currentAsset.id
-          ? { ...asset, observations: observationsList }
-          : asset
-      )
-    );
-    setOpenObservations(false);
-  };
-
   // Componentes
   const onOpenComponents = async (id) => {
-    // Cargar los datos del catalogo de activo seleccionado.
-    try {
-      const response = await axiosInstance.get(`/assets/show/${id}`);
-      setComponentsCatalog(response.data.components);
-      console.log("Compnnes", response.data.components);
-      const asset = assetsTable.find((item) => item.id === id);
-      setCurrentAsset(asset);
-      setOpenComponents(true);
-    } catch (error) {
-      toast.error("No se ha podido obtener los componentes.");
-    }
-  };
-
-  const onSaveComponents = (componentsList) => {
-    setAssetsTable((prev) =>
-      prev.map((asset) =>
-        asset.id === currentAsset.id
-          ? { ...asset, components: componentsList }
-          : asset
-      )
-    );
-
-    setOpenComponents(false);
+    const asset = assetsTable.find((item) => item.id === id);
+    setCurrentAsset(asset);
+    setOpenComponents(true);
   };
 
   // Botones de cerrar
@@ -253,26 +204,20 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
 
       <ActivitiesViewModal
         open={openActivities}
-        onSave={onSaveActivities}
         onClose={onCloseActivities}
-        catalog={activitiesCatalog}
         currentActivities={currentAsset?.activities || []}
       />
 
       <ObservationsViewModal
         open={openObservations}
-        onSave={onSaveObservations}
         onClose={onCloseObservations}
         currentObservations={currentAsset?.observations || []}
       />
 
       <ComponentsViewModal
         open={openComponents}
-        columns={columns}
-        onSave={onSaveComponents}
         onClose={onCloseComponents}
-        catalog={componentsCatalog}
-        currentComponents={currentAsset?.components || []}
+        currentComponents={currentAsset?.replaced_components || []}
       />
     </>
   );
