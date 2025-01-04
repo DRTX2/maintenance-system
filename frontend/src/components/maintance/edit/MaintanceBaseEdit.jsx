@@ -17,7 +17,7 @@ import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import ClearIcon from "@mui/icons-material/Clear";
 import tableStyles from "../../../generic/styles/TableStyles";
 import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { validateField, validateFields } from "../../../utils/validations";
@@ -25,11 +25,17 @@ import AssetSelector from "../create/AssetSelector";
 import CreateStyles from "../../../generic/styles/CreateStyles";
 import axiosInstance from "../../../utils/api";
 import DynamicField from "../../../generic/DynamicField";
+import ActivitiesModal from "../create/ActivitiesModal";
+import ObservationsModal from "../create/ObservationsModal";
+import ComponentsModal from "../create/ComponentsModal";
 
 const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const [maintanceEdited, setMaintanceEdited] = useState(maintance);
   const [currentAsset, setCurrentAsset] = useState(null);
-  const [assetsTable, setAssetsTable] = useState([]);
+  const [assetsTable, setAssetsTable] = useState(maintance?.assets || []);
+
+  console.log(assetsTable);
+
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
   const [componentsCatalog, setComponentsCatalog] = useState([]);
   const [openActivities, setOpenActivities] = useState(false);
@@ -43,6 +49,11 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   // Mensajes para el select del asset ya que es un componente separado al dynamic.
   const [errorAsset, setErrorAsset] = useState(false);
   const [helperTextAsset, setHelperTextAsset] = useState("");
+
+  useEffect(() => {
+    setMaintanceEdited(maintance);
+    setAssetsTable(maintance?.assets || []);
+  }, [maintanceEdited]);
 
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
 
@@ -87,7 +98,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
 
     setAssetsTable((prev) => [
       ...prev,
-      { ...asset, activities: [], observations: [], components: [] },
+      { ...asset, activities: [], observations: [], replaced_components: [] },
     ]);
 
     setErrorAsset(false);
@@ -102,6 +113,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       const response = await axiosInstance.get(`/type-maintenance/${id}`);
       setActivitiesCatalog(response.data.results.activities);
       const asset = assetsTable.find((item) => item.id === assetId);
+      console.log("que tiene", asset);
       setCurrentAsset(asset);
       setOpenActivities(true);
     } catch (error) {
@@ -110,6 +122,14 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   };
 
   const onSaveActivities = (activityList) => {
+    console.log("sdfsd", activityList);
+
+    // Actualizar las actividades de currentAsset
+    setCurrentAsset((prev) => ({
+      ...prev,
+      activities: activityList,
+    }));
+
     setAssetsTable((prev) =>
       prev.map((asset) =>
         asset.id === currentAsset.id
@@ -117,6 +137,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           : asset
       )
     );
+    // Aqui además modificar currentAsset.
     setOpenActivities(false);
   };
 
@@ -144,7 +165,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
     try {
       const response = await axiosInstance.get(`/assets/show/${id}`);
       setComponentsCatalog(response.data.components);
-      console.log("Compnnes", response.data.components);
       const asset = assetsTable.find((item) => item.id === id);
       setCurrentAsset(asset);
       setOpenComponents(true);
@@ -157,7 +177,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
     setAssetsTable((prev) =>
       prev.map((asset) =>
         asset.id === currentAsset.id
-          ? { ...asset, components: componentsList }
+          ? { ...asset, replaced_components: componentsList }
           : asset
       )
     );
@@ -167,7 +187,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
 
   // Eliminar el activo de la tabla.
   const deleteRow = (id) => {
-    setAssetsTable((prev) => prev.filter((asset) => asset.id !== id));
+    setAssetsTable((prev) => prev.filter((item) => item.id !== id));
   };
 
   // Botones de cerrar
@@ -192,18 +212,23 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    if (validateAll()) {
-      try {
-        const response = await axiosInstance.post("/maintenances", {
-          ...maintanceEdited,
-          assets: assetsTable,
-        });
+    console.log("aa", maintanceEdited);
+    // if (validateAll()) {
+    //   try {
+    //     const idMaintenance = maintanceEdited.id_main;
+    //     const response = await axiosInstance.post(
+    //       `/maintenance-detail/${idMaintenance}`,
+    //       {
+    //         ...maintanceEdited,
+    //         assets: assetsTable,
+    //       }
+    //     );
 
-        console.log(response);
-      } catch (error) {
-        toast.error("Ha ocurrido un error.");
-      }
-    }
+    //     console.log(response);
+    //   } catch (error) {
+    //     toast.error("Ha ocurrido un error.");
+    //   }
+    // }
   };
 
   const handleFetch = (key, value) => {};
@@ -302,7 +327,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            {row.components.length} {" Componentes"}
+                            {row.replaced_components.length} {" Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.id)}
                               arial-label="abrir"
@@ -365,6 +390,29 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           Guardar
         </Button>
       </Box>
+
+      <ActivitiesModal
+        open={openActivities}
+        onSave={onSaveActivities}
+        onClose={onCloseActivities}
+        catalog={activitiesCatalog}
+        currentActivities={currentAsset?.activities || []}
+      />
+
+      <ObservationsModal
+        open={openObservations}
+        onSave={onSaveObservations}
+        onClose={onCloseObservations}
+        currentObservations={currentAsset?.observations || []}
+      />
+
+      <ComponentsModal
+        open={openComponents}
+        onSave={onSaveComponents}
+        onClose={onCloseComponents}
+        catalog={componentsCatalog}
+        currentComponents={currentAsset?.replaced_components || []}
+      />
     </>
   );
 };

@@ -198,6 +198,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
+    console.log("entity", entity);
     if (validateAll()) {
       try {
         const response = await axiosInstance.post("/maintenance-detail", {

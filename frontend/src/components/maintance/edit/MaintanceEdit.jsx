@@ -5,6 +5,7 @@ import { CircularProgress, Typography } from "@mui/material";
 import { getDecodedToken } from "../../../utils/authService";
 import MaintanceBaseEdit from "./MaintanceBaseEdit";
 import axiosInstance from "../../../utils/api";
+import dayjs from "dayjs";
 
 const MaintanceEdit = () => {
   const { id } = useParams();
@@ -91,8 +92,35 @@ const MaintanceEdit = () => {
     );
   }
 
+  console.log("main", maintance);
+
+  const formattedData = {
+    cod_main: maintance.cod_main || "N/A",
+    typ_main: maintance?.typ_main_name || "Tipo no definido",
+    created_at:
+      dayjs(maintance.created_at).utc().format("MM-DD-YYYY") || "Sin fecha",
+    ended_at:
+      dayjs(maintance.ended_at).utc().format("MM-DD-YYYY") || "Sin fecha",
+    dni_res_main: maintance.dni_res_main,
+    id_typ_main: maintance.id_typ_main,
+    assets:
+      maintance?.details.map((detail) => ({
+        ...detail.asset,
+        id_det_main: detail.id_det_main,
+        activities: detail.asset.activities || [],
+        observations: detail.asset.observations || [],
+        replaced_components: detail.asset.replaced_components || [],
+      })) || [],
+  };
+
+  console.log("formated", formattedData);
+
   return (
-    <MaintanceBaseEdit maintance={maintance} fields={fields} assets={assets} />
+    <MaintanceBaseEdit
+      maintance={formattedData}
+      fields={fields}
+      assets={assets}
+    />
   );
 };
 

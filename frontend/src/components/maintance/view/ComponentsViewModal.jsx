@@ -49,14 +49,6 @@ const ComponentsViewModal = ({ open, onClose, currentComponents }) => {
           <Typography variant="h6" sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
             Ver componentes reemplazados
           </Typography>
-
-          <Box
-            display="flex"
-            gap={2}
-            alignItems="center"
-            marginBottom={2}
-            marginTop={2}
-          ></Box>
         </DialogTitle>
         <DialogContent
           sx={{

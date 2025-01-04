@@ -143,36 +143,36 @@ const ComponentsModal = ({
           <Typography variant="h6" sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
             Reemplazar
           </Typography>
-
-          <Box
-            display="flex"
-            gap={2}
-            alignItems="center"
-            marginBottom={2}
-            marginTop={2}
-          >
-            <TextField
-              select
-              label="Seleccione un componente"
-              value={selectedComponentId}
-              onChange={(e) => setSelectedComponentId(e.target.value)}
-              fullWidth
-            >
-              {catalog.length > 0 ? (
-                catalog.map((component) => (
-                  <MenuItem key={component.id} value={component.id}>
-                    {component.nam_com}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem>No se han encontrado componentes...</MenuItem>
-              )}
-            </TextField>
-            <Button variant="contained" onClick={handleAddComponent}>
-              Añadir
-            </Button>
-          </Box>
         </DialogTitle>
+        <Box
+          display="flex"
+          gap={2}
+          alignItems="center"
+          marginBottom={2}
+          marginTop={2}
+          px={3}
+        >
+          <TextField
+            select
+            label="Seleccione un componente"
+            value={selectedComponentId}
+            onChange={(e) => setSelectedComponentId(e.target.value)}
+            fullWidth
+          >
+            {catalog.length > 0 ? (
+              catalog.map((component) => (
+                <MenuItem key={component.id} value={component.id}>
+                  {component.nam_com}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem>No se han encontrado componentes...</MenuItem>
+            )}
+          </TextField>
+          <Button variant="contained" onClick={handleAddComponent}>
+            Añadir
+          </Button>
+        </Box>
         <DialogContent
           sx={{
             display: "flex",
