@@ -37,20 +37,71 @@ class MaintenanceDetailController extends Controller
     public function show($id)
     {
         $maintenanceDetail = MaintenanceDetail::with([
-            'maintenance',
+            'maintenance.responsible',
+            'maintenance.maintenanceType',
             'asset',
             'observations',
             'activities',
             'replacedComponents',
-        ])
-            ->find($id);
+        ])->find($id);
 
         if (!$maintenanceDetail) {
             return response()->json(["message" => "No existe el mantenimiento solicitado"], 404);
         }
 
+        $fullName=$maintenanceDetail->maintenance->responsible->nam_res. $maintenanceDetail->maintenance->responsible->las_res?? "Responsable no definido";
+
+        $isExtern= $maintenanceDetail->maintenance->responsible->is_ext==="Y"?"Externo":"Interno";
+        // Transformar los datos
+        $response = [
+            // Información general del mantenimiento
+            "id_main_bel" => $maintenanceDetail->id_main_bel,
+            "id_det_main" => $maintenanceDetail->id,
+
+            // Datos del mantenimiento principal
+            "cod_main" => $maintenanceDetail->maintenance->cod_main,
+            "id_typ_main" => $maintenanceDetail->maintenance->id_typ_main,
+            "typ_main" => $maintenanceDetail->maintenance->maintenanceType->typ_main,
+            "dni_res_main" => $maintenanceDetail->maintenance->dni_res_main ." - ". $fullName." (".$isExtern.")",
+            "vis_main" => $maintenanceDetail->maintenance->vis_main,
+            "ended_at" => $maintenanceDetail->maintenance->ended_at,
+            "created_at" => $maintenanceDetail->maintenance->created_at,
+
+            // Información del activo
+            "assets" => [
+                [
+                    "id" => $maintenanceDetail->asset->id,
+                    "cod_ass" => $maintenanceDetail->asset->cod_ass,
+                    "ser_num_ass" => $maintenanceDetail->asset->ser_num_ass,
+                    "obs_add_ass" => $maintenanceDetail->asset->obs_add_ass,
+                    "est_ass" => $maintenanceDetail->asset->est_ass,
+
+                    // Observaciones, componentes reemplazados y actividades
+                    "observations" => $maintenanceDetail->observations->map(function ($observation) {
+                        return [
+                            "id" => $observation->id,
+                            "des_obs" => $observation->des_obs,
+                        ];
+                    }),
+                    "replaced_components" => $maintenanceDetail->replacedComponents->map(function ($component) {
+                        return [
+                            "id" => $component->id,
+                            "id_com_bel" => $component->id_com_bel,
+                            "des_rep_com" => $component->des_rep_com,
+                        ];
+                    }),
+                    "activities" => $maintenanceDetail->activities->map(function ($activity) {
+                        return [
+                            "id" => $activity->id,
+                            "act_main" => $activity->act_main,
+                        ];
+                    }),
+                ],
+            ],
+        ];
+
         return response()->json([
-            "results" => $maintenanceDetail,
+            "results" => $response,
         ], 200);
     }
 
