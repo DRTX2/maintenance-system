@@ -61,9 +61,9 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
     toast.success("Observación añadida correctamente.");
   };
 
-  const handleRemoveActivity = (observationTable) => {
+  const handleRemoveActivity = (observationToRemove) => {
     setObservationsList((prev) =>
-      prev.filter((observation) => observation !== observationTable)
+      prev.filter((observation) => observation.des_obs !== observationToRemove)
     );
     toast.success("Observación eliminada correctamente.");
   };

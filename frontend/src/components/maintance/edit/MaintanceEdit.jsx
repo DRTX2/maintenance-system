@@ -95,6 +95,7 @@ const MaintanceEdit = () => {
   console.log("main", maintance);
 
   const formattedData = {
+    id_main: maintance.id_main,
     cod_main: maintance.cod_main || "N/A",
     typ_main: maintance?.typ_main_name || "Tipo no definido",
     created_at:

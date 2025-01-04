@@ -17,7 +17,7 @@ import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import ClearIcon from "@mui/icons-material/Clear";
 import tableStyles from "../../../generic/styles/TableStyles";
 import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { validateField, validateFields } from "../../../utils/validations";
@@ -33,9 +33,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const [maintanceEdited, setMaintanceEdited] = useState(maintance);
   const [currentAsset, setCurrentAsset] = useState(null);
   const [assetsTable, setAssetsTable] = useState(maintance?.assets || []);
-
-  console.log(assetsTable);
-
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
   const [componentsCatalog, setComponentsCatalog] = useState([]);
   const [openActivities, setOpenActivities] = useState(false);
@@ -52,8 +49,14 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
 
   useEffect(() => {
     setMaintanceEdited(maintance);
-    setAssetsTable(maintance?.assets || []);
-  }, [maintanceEdited]);
+  }, [maintance]);
+
+  useEffect(() => {
+    setMaintanceEdited((prev) => ({
+      ...prev,
+      assets: assetsTable,
+    }));
+  }, [assetsTable]);
 
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
 
@@ -122,14 +125,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   };
 
   const onSaveActivities = (activityList) => {
-    console.log("sdfsd", activityList);
-
-    // Actualizar las actividades de currentAsset
-    setCurrentAsset((prev) => ({
-      ...prev,
-      activities: activityList,
-    }));
-
+    console.log("actual", activityList);
     setAssetsTable((prev) =>
       prev.map((asset) =>
         asset.id === currentAsset.id
@@ -137,7 +133,12 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           : asset
       )
     );
-    // Aqui además modificar currentAsset.
+
+    setCurrentAsset((prev) => ({
+      ...prev,
+      activities: activityList,
+    }));
+
     setOpenActivities(false);
   };
 
@@ -156,6 +157,12 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           : asset
       )
     );
+
+    setCurrentAsset((prev) => ({
+      ...prev,
+      observations: observationsList,
+    }));
+
     setOpenObservations(false);
   };
 
@@ -181,6 +188,11 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           : asset
       )
     );
+
+    setCurrentAsset((prev) => ({
+      ...prev,
+      replaced_components: componentsList,
+    }));
 
     setOpenComponents(false);
   };
@@ -212,23 +224,34 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    console.log("aa", maintanceEdited);
-    // if (validateAll()) {
-    //   try {
-    //     const idMaintenance = maintanceEdited.id_main;
-    //     const response = await axiosInstance.post(
-    //       `/maintenance-detail/${idMaintenance}`,
-    //       {
-    //         ...maintanceEdited,
-    //         assets: assetsTable,
-    //       }
-    //     );
+    console.log("Datos enviados:", {
+      ...maintanceEdited,
+      assets: assetsTable.map((asset) => ({
+        ...asset,
+        activities: asset.activities.map((activity) => activity.id),
+      })),
+    });
+    if (validateAll()) {
+      try {
+        const idMaintenance = maintanceEdited.id_main;
+        console.log("test", idMaintenance);
+        const response = await axiosInstance.put(
+          `/maintenance-detail/${idMaintenance}`,
+          {
+            ...maintanceEdited,
+            assets: assetsTable.map((asset) => ({
+              ...asset,
+              activities: asset.activities.map((activity) => activity.id),
+            })),
+          }
+        );
 
-    //     console.log(response);
-    //   } catch (error) {
-    //     toast.error("Ha ocurrido un error.");
-    //   }
-    // }
+        console.log(response);
+        toast.success(response.data.message);
+      } catch (error) {
+        toast.error("Ha ocurrido un error.");
+      }
+    }
   };
 
   const handleFetch = (key, value) => {};
