@@ -70,10 +70,8 @@ const MaintanceView = () => {
       dayjs(maintance.created_at).utc().format("MM-DD-YYYY") || "Sin fecha",
     ended_at:
       dayjs(maintance.ended_at).utc().format("MM-DD-YYYY") || "Sin fecha",
-    dni_res_main: maintance.responsible
-      ? `${maintance.responsible.dni_res} - ${maintance.responsible.nam_res} ${maintance.responsible.las_res}`
-      : "Responsable no definido",
-    assets: [],
+    dni_res_main: maintance.responsible_name || "Sin responsable",
+    assets: maintance?.details || [],
   };
 
   return (

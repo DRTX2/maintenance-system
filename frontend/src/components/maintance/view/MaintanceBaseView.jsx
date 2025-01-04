@@ -25,6 +25,8 @@ import CustomTablePaginationActions from "../../../generic/CustomTablePagination
 import { useNavigate } from "react-router-dom";
 
 const MaintanceBaseView = ({ data, fields, columns }) => {
+  console.log("La información que viene es", data);
+
   const [currentAsset, setCurrentAsset] = useState(null);
   const [assetsTable, setAssetsTable] = useState(data?.assets || []);
   const [openActivities, setOpenActivities] = useState(false);
@@ -44,21 +46,21 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
   // Actividades
   const onOpenActivities = async (assetId) => {
     const asset = assetsTable.find((item) => item.id === assetId);
-    setCurrentAsset(asset);
+    setCurrentAsset(asset.asset);
     setOpenActivities(true);
   };
 
   // Observaciones
   const onOpenObservations = (assetId) => {
     const asset = assetsTable.find((item) => item.id === assetId);
-    setCurrentAsset(asset);
+    setCurrentAsset(asset.asset);
     setOpenObservations(true);
   };
 
   // Componentes
   const onOpenComponents = async (id) => {
     const asset = assetsTable.find((item) => item.id === id);
-    setCurrentAsset(asset);
+    setCurrentAsset(asset.asset);
     setOpenComponents(true);
   };
 
@@ -96,7 +98,6 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
               >
                 {field.label}
               </Typography>
-              {/* Campo dinámico */}
               <TextField
                 value={data[field.key] || "No disponible"}
                 InputProps={{ readOnly: true }}
@@ -128,11 +129,11 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                         currentPage * rowsPerPage + rowsPerPage
                       )
                       .map((row) => (
-                        <TableRow key={row.id}>
-                          <TableCell>{row.cod_ass}</TableCell>
-                          <TableCell>{row.ser_num_ass}</TableCell>
+                        <TableRow key={row.asset.id}>
+                          <TableCell>{row.asset.cod_ass}</TableCell>
+                          <TableCell>{row.asset.ser_num_ass}</TableCell>
                           <TableCell>
-                            {row.activities.length} {" Actividades"}
+                            {row.asset.activities.length} {" Actividades"}
                             <IconButton
                               onClick={() => onOpenActivities(row.id)}
                               arial-label="abrir"
@@ -141,7 +142,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            {row.observations.length} {" Observaciones"}
+                            {row.asset.observations.length} {" Observaciones"}
                             <IconButton
                               onClick={() => onOpenObservations(row.id)}
                               arial-label="abrir"
@@ -150,7 +151,8 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            {row.components.length} {" Componentes"}
+                            {row.asset.replaced_components.length}{" "}
+                            {" Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.id)}
                               arial-label="abrir"

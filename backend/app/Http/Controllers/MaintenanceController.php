@@ -19,11 +19,9 @@ class MaintenanceController extends Controller
                 return [
                     'id' => $maintenance->id,
                     'cod_main' => $maintenance->cod_main,
-                    'created_at' => $maintenance->created_at,
-                    'ended_at' => $maintenance->ended_at,
                     'vis_main' => $maintenance->vis_main,
-                    'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res, // Concatenar el nombre y apellido
-                    'type' => $maintenance->maintenanceType->typ_main, // Nombre del tipo de mantenimiento
+                    'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
+                    'type' => $maintenance->maintenanceType->typ_main,
                 ];
             });
         return response()->json([
@@ -34,26 +32,26 @@ class MaintenanceController extends Controller
     public function show($id)
     {
         $maintenance = Maintenance::with([
-            'responsible', 
+            'responsible',
             'maintenanceType',
-            'maintenanceDetails.asset', 
-            'maintenanceDetails.observations', 
+            'maintenanceDetails.asset',
+            'maintenanceDetails.observations',
             'maintenanceDetails.activities',
             'maintenanceDetails.replacedComponents',
         ])->find($id);
-    
+
         if (!$maintenance) {
             return response()->json(["message" => "No existe el mantenimiento solicitado"], 404);
         }
-    
+
         // Obtener datos del responsable
         $responsibleFullName = $maintenance->responsible
             ? $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res
             : "Responsable no definido";
-    
+        $isExtern = $maintenance->responsible->is_ext === "Y" ? "Externo" : "Interno";
         // Obtener datos del tipo de mantenimiento
         $maintenanceTypeName = $maintenance->maintenanceType->name ?? "Tipo de mantenimiento no definido";
-    
+
         // Transformar los detalles del mantenimiento
         $details = $maintenance->maintenanceDetails->map(function ($detail) {
             return [
@@ -86,7 +84,7 @@ class MaintenanceController extends Controller
                 ],
             ];
         });
-    
+
         $response = [
             "id_main" => $maintenance->id,
             "cod_main" => $maintenance->cod_main,
@@ -94,12 +92,13 @@ class MaintenanceController extends Controller
             "typ_main_name" => $maintenanceTypeName,
             "dni_res_main" => $maintenance->dni_res_main,
             "responsible_name" => $responsibleFullName,
+            "is_ext" => $isExtern,
             "vis_main" => $maintenance->vis_main,
             "ended_at" => $maintenance->ended_at,
             "created_at" => $maintenance->created_at,
             "details" => $details,
         ];
-    
+
         return response()->json([
             "results" => $response,
         ], 200);

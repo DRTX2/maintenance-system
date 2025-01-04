@@ -24,7 +24,6 @@ import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
   const [selectedObservation, setSelectedObservation] = useState("");
   const [observationsList, setObservationsList] = useState([]);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -186,7 +185,7 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
             </TableContainer>
           ) : (
             <Typography variant="text" marginTop="10px">
-              No se han encontrado actividades agregadas.
+              No se han encontrado observaciones agregadas.
             </Typography>
           )}
         </DialogContent>
