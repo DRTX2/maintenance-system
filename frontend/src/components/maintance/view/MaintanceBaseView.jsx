@@ -46,6 +46,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
   // Actividades
   const onOpenActivities = async (assetId) => {
     const asset = assetsTable.find((item) => item.id === assetId);
+    console.log("Actividades", asset.asset);
     setCurrentAsset(asset.asset);
     setOpenActivities(true);
   };
@@ -53,6 +54,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
   // Observaciones
   const onOpenObservations = (assetId) => {
     const asset = assetsTable.find((item) => item.id === assetId);
+    console.log("Observaciones", asset.asset);
     setCurrentAsset(asset.asset);
     setOpenObservations(true);
   };
