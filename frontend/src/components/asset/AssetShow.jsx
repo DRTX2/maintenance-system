@@ -17,6 +17,7 @@ const AssetShow = () => {
     { key: "ser_num_ass", label: "Número de serie", showInTable: true },
     { key: "location_name", label: "Ubicación", showInTable: true },
     { key: "income_code", label: "Ingreso", showInTable: true },
+    { key: "category_name", label: "Categoría", showInTable: true },
   ];
 
   return <AssetBaseShow columns={columns} role={role} />;

@@ -6,7 +6,7 @@ use App\Http\Requests\AssetRequest;
 use App\Models\Asset;
 use App\Models\Income;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Exceptions\HttpResponseException;
 class AssetController extends Controller
 {
     //Crear, Actualizar,Eliminar,Ver, Filtrar   
@@ -131,6 +131,14 @@ class AssetController extends Controller
             'components:id,cod_com,nam_com'
         ])->findOrFail($id);
 
+        if ($asset->est_ass === 'H') {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'asset' => ['El activo solicitado no está disponible actualmente.']
+                ]
+            ], 422));
+        }
+
         // Mapear los componentes para incluir solo los atributos deseados
         $components = $asset->components->map(function ($component) {
             return [
@@ -167,27 +175,94 @@ class AssetController extends Controller
     public function store(AssetRequest $request)
     {
 
-        try {
-            $validatedData = $request->validated();
 
-            $service = $validatedData['asset'];
+        $validatedData = $request->validated();
 
-
-
-            $service = $request->input('asset');
-
-            $asset = Asset::create([
-
-                'id_inc_ass' => $service['id_inc_ass'],
-                'id_cat_ass' => $service['id_cat_ass'],
-                'id_loc_ass' => $service['id_loc_ass'],
-                'cod_ass' => $service['cod_ass'],
-                'ser_num_ass' => $service['ser_num_ass'],
-                'obs_add_ass' => $service['obs_add_ass'] ?? null,
-
-            ]);
+        $service = $validatedData['asset'];
 
 
+
+        $service = $request->input('asset');
+
+        $incomeId = $service['id_inc_ass'];
+
+        $income = Income::findOrFail($incomeId);
+
+        if ($income->est_inc === 'C') {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'income' => ['No se pudo registrar el activo, debido a que el ingreso asociado se encuentra actualmente cerrado.']
+                ]
+            ], 422));
+        }
+
+        $asset = Asset::create([
+
+            'id_inc_ass' => $service['id_inc_ass'],
+            'id_cat_ass' => $service['id_cat_ass'],
+            'id_loc_ass' => $service['id_loc_ass'],
+            'cod_ass' => $service['cod_ass'],
+            'ser_num_ass' => $service['ser_num_ass'],
+            'obs_add_ass' => $service['obs_add_ass'] ?? null,
+
+        ]);
+
+
+        $components = collect($service['components'])->mapWithKeys(function ($component) {
+            return [
+                $component['id'] => [
+                    'description' => $component['pivot']['description'],
+                ],
+            ];
+        });
+
+        $asset->components()->attach($components);
+
+        return response()->json([
+            'message' => 'Activo creado exitosamente.',
+            'asset' => $asset,
+        ]);
+
+
+
+
+
+    }
+
+    public function update(AssetRequest $request, string $id)
+    {
+
+        $validatedData = $request->validated();
+
+        $asset = Asset::findOrFail($id);
+
+        // Obtener los datos actualizados
+        $service = $validatedData['asset'];
+
+        $incomeId = $service['id_inc_ass'];
+
+
+        $income = Income::findOrFail($incomeId);
+
+        if ($income->est_inc === 'C') {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    'income' => ['No se pudo actualizar el activo, debido a que el ingreso asociado se encuentra actualmente cerrado.']
+                ]
+            ], 422));
+        }
+
+
+        $asset->update([
+            'id_inc_ass' => $service['id_inc_ass'],
+            'id_loc_ass' => $service['id_loc_ass'],
+            'cod_ass' => $service['cod_ass'],
+            'ser_num_ass' => $service['ser_num_ass'],
+            'obs_add_ass' => $service['obs_add_ass'] ?? $asset->obs_add_ass,
+        ]);
+
+        // Actualizar la relación con los componentes
+        if (isset($service['components'])) {
             $components = collect($service['components'])->mapWithKeys(function ($component) {
                 return [
                     $component['id'] => [
@@ -196,63 +271,15 @@ class AssetController extends Controller
                 ];
             });
 
-            $asset->components()->attach($components);
-
-            return response()->json([
-                'message' => 'Activo creado exitosamente.',
-                'asset' => $asset,
-            ]);
-
-
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error al crear el activo:' . $e], 500);
+            $asset->components()->sync($components);
         }
 
 
-    }
+        return response()->json([
+            'message' => 'Activo actualizado exitosamente.',
+            'asset' => $asset->fresh(),
+        ]);
 
-    public function update(AssetRequest $request, string $id)
-    {
-        try {
-
-            $validatedData = $request->validated();
-
-            $asset = Asset::findOrFail($id);
-
-            // Obtener los datos actualizados
-            $service = $validatedData['asset'];
-
-
-            $asset->update([
-                'id_inc_ass' => $service['id_inc_ass'],
-                'id_loc_ass' => $service['id_loc_ass'],
-                'cod_ass' => $service['cod_ass'],
-                'ser_num_ass' => $service['ser_num_ass'],
-                'obs_add_ass' => $service['obs_add_ass'] ?? $asset->obs_add_ass,
-            ]);
-
-            // Actualizar la relación con los componentes
-            if (isset($service['components'])) {
-                $components = collect($service['components'])->mapWithKeys(function ($component) {
-                    return [
-                        $component['id'] => [
-                            'description' => $component['pivot']['description'],
-                        ],
-                    ];
-                });
-
-                $asset->components()->sync($components);
-            }
-
-
-            return response()->json([
-                'message' => 'Activo actualizado exitosamente.',
-                'asset' => $asset->fresh(),
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error al actualizar el activo:' . $e], 500);
-        }
 
     }
     public function search(Request $request, $rol)
@@ -303,39 +330,36 @@ class AssetController extends Controller
         $assets = Asset::query();
 
 
-        if ($request->has('location')) {
-            $locations = $request->input('location'); // Forzar array
-            $assets->whereIn('id_loc_ass', $locations);
+        if ($request->has('location') && count($request->input('location')) > 0) {
+            $assets->whereIn('id_loc_ass', $request->input('location'));
         }
 
-        if ($request->has('income')) {
+        if ($request->has('income') && count($request->input('income')) > 0) {
             $assets->whereIn('id_inc_ass', $request->input('income'));
         }
 
 
-        if ($request->has('type')) {
+        if ($request->has('type') && count($request->input('type')) > 0) {
             $assets->whereHas('category', function ($query) use ($request) {
-                $query->where('tip_dis', $request->type);
+                $query->whereIn('tip_dis', $request->input('type'));
             });
         }
 
-        if ($request->has('device')) {
+        if ($request->has('device') && count($request->input('device')) > 0) {
             $assets->whereHas('category', function ($query) use ($request) {
-                $query->where('nom_dis', $request->device);
+                $query->whereIn('nom_dis', $request->input('device'));
             });
-        }
-
-
-        if ($request->has('status')) {
-            $assets->whereIn('est_ass', $request->input('status'));
         }
 
         $rol = $request->input('rol');
 
-
+        // Lógica para usuarios (rol "user")
         if ($rol === 'user') {
-
+            // Ignorar cualquier filtro de estado y mostrar solo los activos visibles
             $assets->where('est_ass', 'V');
+        } else if ($rol === 'admin' && $request->has('status') && count($request->input('status')) > 0) {
+            // Lógica para administradores: permitir filtro por estado
+            $assets->whereIn('est_ass', $request->input('status'));
         }
 
 

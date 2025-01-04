@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { navigation } from "../components/NavigationConfig";
+import { getNavigationByRole } from "../components/NavigationConfig";
 import { demoTheme } from "../components/Theme";
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -26,6 +26,16 @@ function Dashboard({ window }) {
       },
     };
   });
+
+  const [navigation, setNavigation] = useState(getNavigationByRole);
+
+  useEffect(() => {
+    const handleNavigationUpdate = () => {
+      setNavigation(getNavigationByRole());
+    };
+
+    handleNavigationUpdate();
+  }, []);
 
   const authentication = {
     signOut: async () => {
