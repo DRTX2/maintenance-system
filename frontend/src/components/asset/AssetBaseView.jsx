@@ -43,12 +43,12 @@ const AssetBaseView = ({
     const isTableValid = validateTableFields();
     if (isEntityValid && isTableValid) {
       try {
-        console.log("Anterior", asset);
-        const response = await axiosInstance.put(`/assets/${asset.id}`, {
+        await axiosInstance.put(`/assets/${asset.id}`, {
           asset: asset,
         });
-        console.log("Nuevo", response.data);
-        toast.success("Activo creado con éxito.");
+        toast.success("Activo actualizado con éxito.");
+        setIsEditing(false);
+        navigate("/dashboard/assets");
       } catch (error) {
         toast.error("No se ha podido crear el activo.");
       }

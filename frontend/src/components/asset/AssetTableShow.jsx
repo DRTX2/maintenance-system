@@ -12,10 +12,11 @@ import {
 } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import tableStyles from "../../generic/styles/TableStyles";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { getDecodedToken } from "../../utils/authService";
+import Tooltip from "@mui/material/Tooltip";
 
 const AssetTableShow = ({
   isLoading,
@@ -52,6 +53,11 @@ const AssetTableShow = ({
       </div>
     );
   }
+
+  // Verificando el rol del usuario.
+  const decodedToken = getDecodedToken();
+  const role = decodedToken?.role;
+
   return (
     <>
       <TableContainer
@@ -83,16 +89,22 @@ const AssetTableShow = ({
                     <IconButton onClick={() => onView(item.id)} color="primary">
                       <VisibilityIcon />
                     </IconButton>
-                    <IconButton
-                      onClick={() => onDelete(item.id, item.est_ass)}
-                      color={item.est_ass === "V" ? "secondary" : "sucess"}
-                    >
-                      {item.est_ass === "V" ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <VisibilityIcon />
-                      )}
-                    </IconButton>
+                    {role === "admin" ? (
+                      <IconButton
+                        onClick={() => onDelete(item.id, item.est_ass)}
+                        color={item.est_ass === "V" ? "secondary" : "sucess"}
+                      >
+                        {item.est_ass === "V" ? (
+                          <Tooltip title="Ocultar">
+                            <VisibilityOffIcon />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="Mostrar">
+                            <VisibilityIcon />
+                          </Tooltip>
+                        )}
+                      </IconButton>
+                    ) : null}
                   </TableCell>
                 </TableRow>
               ))}

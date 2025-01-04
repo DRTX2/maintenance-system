@@ -7,9 +7,10 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import HandymanIcon from "@mui/icons-material/Handyman";
+import { getDecodedToken } from "../utils/authService";
 import { Link } from "react-router-dom";
 
-export const navigation = [
+export const navigationAdmin = [
   {
     kind: "page",
     pattern: "dashboard/users",
@@ -145,4 +146,83 @@ export const navigation = [
   },
 ];
 
-export default navigation;
+export const navigationUser = [
+  {
+    segment: "dashboard/assets",
+    title: (
+      <Link
+        to={"/dashboard/assets"}
+        style={{
+          display: "block",
+          width: "100%",
+          height: "100%",
+          textDecoration: "none",
+          color: "inherit",
+        }}
+      >
+        Activos
+      </Link>
+    ),
+    icon: <InventoryIcon style={{ color: "white" }} />, // Ícono blanco
+  },
+  {
+    segment: "mantenimientos",
+    title: "Mantenimientos",
+    icon: <HandymanIcon style={{ color: "white" }} />, // Ícono blanco
+  },
+  {
+    segment: "reports",
+    title: "Reports",
+    icon: <BarChartIcon style={{ color: "white" }} />, // Ícono blanco
+    children: [
+      {
+        segment: "sales",
+        title: "Sales",
+        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
+      },
+      {
+        segment: "traffic",
+        title: "Traffic",
+        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
+      },
+    ],
+  },
+];
+
+export const navigationGuest = [
+  {
+    segment: "login",
+    title: (
+      <Link
+        to="/login"
+        style={{
+          display: "block",
+          width: "100%",
+          height: "100%",
+          textDecoration: "none",
+          color: "inherit",
+        }}
+      >
+        Iniciar sesión
+      </Link>
+    ),
+    icon: <PersonIcon style={{ color: "white" }} />,
+  },
+];
+
+export const getNavigationByRole = () => {
+  const decodedToken = getDecodedToken();
+  const role = decodedToken?.role;
+
+  if (!role) {
+    return navigationGuest;
+  }
+
+  if (role === "admin") {
+    return navigationAdmin;
+  } else if (role === "user") {
+    return navigationUser;
+  }
+
+  return navigationGuest;
+};
