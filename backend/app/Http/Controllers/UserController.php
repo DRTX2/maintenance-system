@@ -28,14 +28,17 @@ class UserController extends Controller
                 "email" => "required|string|max:255|unique:users,email",
                 "password" => "required|string|max:255",
                 "role" => "nullable|string",
+                "dni_usr" => "required|string|size:10|unique:responsibles,dni_usr", 
             ], [
-                "email.unique" => "Correo electronico duplicado"
+                "email.unique" => "Correo electronico duplicado",
+                "dni_usr.unique" => "Cédula duplicada"
             ]);
 
             $user = User::create([
                 "name" => $validated["name"],
                 "email" => $validated["email"],
                 "password" => Hash::make($validated["password"]),
+                "dni_usr" => $validated["dni_usr"],
                 "role" => $validated["role"] ?? "user",
             ]);
 

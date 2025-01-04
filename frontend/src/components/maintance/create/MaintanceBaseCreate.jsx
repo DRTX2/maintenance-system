@@ -193,8 +193,6 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   };
 
   const handleCreate = async () => {
-    console.log("OBJETO A ENVIARSE", { ...entity, assets: assetsTable });
-
     if (assetsTable.length === 0) {
       setErrorAsset(true);
       setHelperTextAsset("Debe agregar al menos un activo.");
@@ -206,8 +204,8 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
           ...entity,
           assets: assetsTable,
         });
-
-        console.log(response);
+        toast.success(response.data.message);
+        navigate("/dashboard/maintance");
       } catch (error) {
         toast.error("Ha ocurrido un error.");
       }

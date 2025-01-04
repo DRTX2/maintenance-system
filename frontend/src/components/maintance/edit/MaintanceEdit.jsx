@@ -25,7 +25,7 @@ const MaintanceEdit = () => {
           axiosInstance.get(`/maintenances/${id}`),
         ]);
 
-        console.log(maintance.data.results);
+        console.log("mantenimiento", maintance.data.results);
         setTypes(types.data.results);
         setResponsibles(responsibles.data.results);
         setAssets(assets.data);

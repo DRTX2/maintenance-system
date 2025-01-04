@@ -27,6 +27,7 @@ const ActivitiesModal = ({
   catalog,
   currentActivities,
 }) => {
+  // Esto es un id
   const [selectedActivity, setSelectedActivity] = useState("");
   const [activitiesList, setActivitiesList] = useState([]);
 
@@ -64,7 +65,8 @@ const ActivitiesModal = ({
   };
 
   const handleSave = () => {
-    onSave(activitiesList);
+    const activityIds = activitiesList.map((activity) => activity.id);
+    onSave(activityIds);
     setSelectedActivity("");
     onClose();
   };
