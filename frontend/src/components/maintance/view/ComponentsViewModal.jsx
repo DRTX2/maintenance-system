@@ -17,15 +17,17 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import tableStyles from "../../../generic/styles/TableStyles";
 import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
 import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 
 const ComponentsViewModal = ({ open, onClose, currentComponents }) => {
-  console.log("Los componentes son", currentComponents);
+  const [selectedComponents, setSelectedComponents] =
+    useState(currentComponents);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
+
   // Paginación
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
 
@@ -34,9 +36,11 @@ const ComponentsViewModal = ({ open, onClose, currentComponents }) => {
     setCurrentPage(0);
   };
 
-  const [selectedComponents, setSelectedComponents] = useState(
-    currentComponents || []
-  );
+  useEffect(() => {
+    if (open) {
+      setSelectedComponents(currentComponents);
+    }
+  }, [open, currentComponents]);
 
   return (
     <>

@@ -65,12 +65,18 @@ const MaintanceView = () => {
 
   const formattedData = {
     cod_main: maintance.cod_main || "N/A",
-    typ_main: maintance.maintenance_type?.typ_main || "Tipo no definido",
+    typ_main: maintance?.typ_main_name || "Tipo no definido",
     created_at:
       dayjs(maintance.created_at).utc().format("MM-DD-YYYY") || "Sin fecha",
     ended_at:
       dayjs(maintance.ended_at).utc().format("MM-DD-YYYY") || "Sin fecha",
-    dni_res_main: maintance.responsible_name || "Sin responsable",
+    dni_res_main:
+      maintance.dni_res_main +
+        " - " +
+        maintance.responsible_name +
+        " (" +
+        maintance.is_ext +
+        ")" || "Sin responsable",
     assets: maintance?.details || [],
   };
 

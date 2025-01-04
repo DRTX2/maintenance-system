@@ -10,21 +10,23 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TablePagination,
   Dialog,
   DialogTitle,
-  TextField,
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 
 const ObservationsViewModal = ({ open, onClose, currentObservations }) => {
   console.log("Observaciones actualices", currentObservations);
-  const [observationsList, setObservationsList] = useState(
-    currentObservations || []
-  );
+  const [observationsList, setObservationsList] = useState(currentObservations);
+
+  useEffect(() => {
+    if (open) {
+      setObservationsList(currentObservations);
+    }
+  }, [open, currentObservations]);
 
   return (
     <>

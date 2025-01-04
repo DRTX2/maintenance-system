@@ -25,8 +25,6 @@ import CustomTablePaginationActions from "../../../generic/CustomTablePagination
 import { useNavigate } from "react-router-dom";
 
 const MaintanceBaseView = ({ data, fields, columns }) => {
-  console.log("La información que viene es", data);
-
   const [currentAsset, setCurrentAsset] = useState(null);
   const [assetsTable, setAssetsTable] = useState(data?.assets || []);
   const [openActivities, setOpenActivities] = useState(false);
@@ -45,7 +43,8 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
 
   // Actividades
   const onOpenActivities = async (assetId) => {
-    const asset = assetsTable.find((item) => item.id === assetId);
+    console.log(assetId);
+    const asset = assetsTable.find((item) => item.asset.id === assetId);
     console.log("Actividades", asset.asset);
     setCurrentAsset(asset.asset);
     setOpenActivities(true);
@@ -53,7 +52,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
 
   // Observaciones
   const onOpenObservations = (assetId) => {
-    const asset = assetsTable.find((item) => item.id === assetId);
+    const asset = assetsTable.find((item) => item.asset.id === assetId);
     console.log("Observaciones", asset.asset);
     setCurrentAsset(asset.asset);
     setOpenObservations(true);
@@ -61,7 +60,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
 
   // Componentes
   const onOpenComponents = async (id) => {
-    const asset = assetsTable.find((item) => item.id === id);
+    const asset = assetsTable.find((item) => item.asset.id === id);
     setCurrentAsset(asset.asset);
     setOpenComponents(true);
   };
@@ -137,7 +136,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                           <TableCell>
                             {row.asset.activities.length} {" Actividades"}
                             <IconButton
-                              onClick={() => onOpenActivities(row.id)}
+                              onClick={() => onOpenActivities(row.asset.id)}
                               arial-label="abrir"
                             >
                               <PlaylistAddIcon />
@@ -146,7 +145,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                           <TableCell>
                             {row.asset.observations.length} {" Observaciones"}
                             <IconButton
-                              onClick={() => onOpenObservations(row.id)}
+                              onClick={() => onOpenObservations(row.asset.id)}
                               arial-label="abrir"
                             >
                               <PlaylistAddIcon />
@@ -156,7 +155,7 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                             {row.asset.replaced_components.length}{" "}
                             {" Componentes"}
                             <IconButton
-                              onClick={() => onOpenComponents(row.id)}
+                              onClick={() => onOpenComponents(row.asset.id)}
                               arial-label="abrir"
                             >
                               <PlaylistAddIcon />
