@@ -19,7 +19,6 @@ import { useEffect, useState } from "react";
 import categoryCreateStyles from "../../../generic/styles/CreateStyles";
 
 const ObservationsViewModal = ({ open, onClose, currentObservations }) => {
-  console.log("Observaciones actualices", currentObservations);
   const [observationsList, setObservationsList] = useState(currentObservations);
 
   useEffect(() => {

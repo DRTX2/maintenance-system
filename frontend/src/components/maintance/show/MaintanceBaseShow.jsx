@@ -255,7 +255,7 @@ const MaintanceBaseShow = ({ columns }) => {
           </>
         ) : (
           <div style={{ textAlign: "center", marginTop: "20px" }}>
-            <CircularProgress />
+            No se han encontrado mantenimientos.
           </div>
         )}
       </Box>

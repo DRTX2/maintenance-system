@@ -17,7 +17,7 @@ import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import ClearIcon from "@mui/icons-material/Clear";
 import tableStyles from "../../../generic/styles/TableStyles";
 import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
-import { act, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { validateField, validateFields } from "../../../utils/validations";
@@ -31,7 +31,6 @@ import ComponentsModal from "../create/ComponentsModal";
 
 const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const [maintanceEdited, setMaintanceEdited] = useState(maintance);
-  const [currentAsset, setCurrentAsset] = useState(null);
   const [assetsTable, setAssetsTable] = useState(maintance?.assets || []);
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
   const [componentsCatalog, setComponentsCatalog] = useState([]);
@@ -42,7 +41,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
   // Mensajes para el select del asset ya que es un componente separado al dynamic.
   const [errorAsset, setErrorAsset] = useState(false);
   const [helperTextAsset, setHelperTextAsset] = useState("");
@@ -94,16 +92,26 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       return;
     }
 
-    if (assetsTable.some((row) => row.id === asset.id)) {
+    if (assetsTable.some((row) => row.asset.id === asset.id)) {
       toast.info("El activo ya ha sido agregado a la tabla.");
       return;
     }
 
+    console.log("El objeto hasta este punto es", asset);
+
     setAssetsTable((prev) => [
       ...prev,
-      { ...asset, activities: [], observations: [], replaced_components: [] },
+      {
+        asset: {
+          ...asset,
+          activities: [],
+          observations: [],
+          replaced_components: [],
+        },
+      },
     ]);
 
+    console.log("Como se añadió", assetsTable);
     setErrorAsset(false);
     setHelperTextAsset("");
   };
@@ -115,97 +123,73 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       const id = maintanceEdited.id_typ_main;
       const response = await axiosInstance.get(`/type-maintenance/${id}`);
       setActivitiesCatalog(response.data.results.activities);
-      const asset = assetsTable.find((item) => item.id === assetId);
-      console.log("que tiene", asset);
-      setCurrentAsset(asset);
-      setOpenActivities(true);
+      setOpenActivities(assetId);
     } catch (error) {
       toast.error("No se ha podido obtener las actividades.");
     }
   };
 
-  const onSaveActivities = (activityList) => {
-    console.log("actual", activityList);
+  const onSaveActivities = (activityList, assetId) => {
+    console.log("Que viene", activityList, assetId);
+
+    console.log("La lista de actividades es", activityList);
+
     setAssetsTable((prev) =>
-      prev.map((asset) =>
-        asset.id === currentAsset.id
-          ? { ...asset, activities: activityList }
-          : asset
+      prev.map((item) =>
+        item.asset.id === assetId
+          ? { ...item, asset: { ...item.asset, activities: activityList } }
+          : item
       )
     );
 
-    setCurrentAsset((prev) => ({
-      ...prev,
-      activities: activityList,
-    }));
-
+    console.log("Como quedo", assetsTable);
     setOpenActivities(false);
   };
 
   // Observaciones
   const onOpenObservations = (assetId) => {
-    const asset = assetsTable.find((item) => item.id === assetId);
-    setCurrentAsset(asset);
-    setOpenObservations(true);
+    setOpenObservations(assetId);
   };
 
-  const onSaveObservations = (observationsList) => {
+  const onSaveObservations = (observationsList, assetId) => {
     setAssetsTable((prev) =>
       prev.map((asset) =>
-        asset.id === currentAsset.id
+        asset.asset.id === assetId
           ? { ...asset, observations: observationsList }
           : asset
       )
     );
 
-    setCurrentAsset((prev) => ({
-      ...prev,
-      observations: observationsList,
-    }));
-
     setOpenObservations(false);
   };
 
   // Componentes
-  const onOpenComponents = async (id) => {
-    // Cargar los datos del catalogo de activo seleccionado.
+  const onOpenComponents = async (assetId) => {
     try {
-      const response = await axiosInstance.get(`/assets/show/${id}`);
+      const response = await axiosInstance.get(`/assets/show/${assetId}`);
       setComponentsCatalog(response.data.components);
-      const asset = assetsTable.find((item) => item.id === id);
-      setCurrentAsset(asset);
-      setOpenComponents(true);
+      setOpenComponents(assetId);
     } catch (error) {
       toast.error("No se ha podido obtener los componentes.");
     }
   };
 
-  const onSaveComponents = (componentsList) => {
+  const onSaveComponents = (componentsList, assetId) => {
     setAssetsTable((prev) =>
       prev.map((asset) =>
-        asset.id === currentAsset.id
+        asset.asset.id === assetId
           ? { ...asset, replaced_components: componentsList }
           : asset
       )
     );
-
-    setCurrentAsset((prev) => ({
-      ...prev,
-      replaced_components: componentsList,
-    }));
 
     setOpenComponents(false);
   };
 
   // Eliminar el activo de la tabla.
   const deleteRow = (id) => {
-    setAssetsTable((prev) => prev.filter((item) => item.id !== id));
+    setAssetsTable((prev) => prev.filter((item) => item.asset.id !== id));
   };
-
-  // Botones de cerrar
-  const onCloseActivities = () => setOpenActivities(false);
-  const onCloseObservations = () => setOpenObservations(false);
-  const onCloseComponents = () => setOpenComponents(false);
 
   // Acciones para la api
   const handleReturn = () => {
@@ -224,30 +208,26 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    console.log("Datos enviados:", {
-      ...maintanceEdited,
-      assets: assetsTable.map((asset) => ({
-        ...asset,
-        activities: asset.activities.map((activity) => activity.id),
-      })),
-    });
+    console.log("La tabla tiene la forma", assetsTable);
     if (validateAll()) {
       try {
         const idMaintenance = maintanceEdited.id_main;
-        console.log("test", idMaintenance);
-        const response = await axiosInstance.put(
-          `/maintenance-detail/${idMaintenance}`,
-          {
-            ...maintanceEdited,
-            assets: assetsTable.map((asset) => ({
-              ...asset,
-              activities: asset.activities.map((activity) => activity.id),
-            })),
-          }
-        );
 
-        console.log(response);
-        toast.success(response.data.message);
+        const dataToSend = {
+          ...maintanceEdited,
+          assets: assetsTable.map((asset) => ({
+            ...asset,
+            activities: asset.asset.activities.map((activity) => activity.id),
+          })),
+        };
+
+        console.log("Se esta enviando", dataToSend);
+
+        // const response = await axiosInstance.put(
+        //   `/maintenance-detail/${idMaintenance}`,
+        //   dataToSend
+        // );
+        // toast.success(response.data.message);
       } catch (error) {
         toast.error("Ha ocurrido un error.");
       }
@@ -328,38 +308,39 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                         currentPage * rowsPerPage + rowsPerPage
                       )
                       .map((row) => (
-                        <TableRow key={row.id}>
-                          <TableCell>{row.cod_ass}</TableCell>
-                          <TableCell>{row.ser_num_ass}</TableCell>
+                        <TableRow key={row.asset.id}>
+                          <TableCell>{row.asset.cod_ass}</TableCell>
+                          <TableCell>{row.asset.ser_num_ass}</TableCell>
                           <TableCell>
-                            {row.activities.length} {" Actividades"}
+                            {row.asset.activities.length} {" Actividades"}
                             <IconButton
-                              onClick={() => onOpenActivities(row.id)}
+                              onClick={() => onOpenActivities(row.asset.id)}
                               arial-label="abrir"
                             >
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            {row.observations.length} {" Observaciones"}
+                            {row.asset.observations.length} {" Observaciones"}
                             <IconButton
-                              onClick={() => onOpenObservations(row.id)}
+                              onClick={() => onOpenObservations(row.asset.id)}
                               arial-label="abrir"
                             >
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            {row.replaced_components.length} {" Componentes"}
+                            {row.asset.replaced_components.length}{" "}
+                            {" Componentes"}
                             <IconButton
-                              onClick={() => onOpenComponents(row.id)}
+                              onClick={() => onOpenComponents(row.asset.id)}
                               arial-label="abrir"
                             >
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            <IconButton onClick={() => deleteRow(row.id)}>
+                            <IconButton onClick={() => deleteRow(row.asset.id)}>
                               <ClearIcon />
                             </IconButton>
                           </TableCell>
@@ -415,26 +396,41 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       </Box>
 
       <ActivitiesModal
-        open={openActivities}
-        onSave={onSaveActivities}
-        onClose={onCloseActivities}
+        open={!!openActivities}
+        onSave={(activityList) =>
+          onSaveActivities(activityList, openActivities)
+        }
+        onClose={() => setOpenActivities(false)}
         catalog={activitiesCatalog}
-        currentActivities={currentAsset?.activities || []}
+        currentActivities={
+          assetsTable.find((item) => item.asset.id === openActivities)?.asset
+            .activities || []
+        }
       />
 
       <ObservationsModal
         open={openObservations}
-        onSave={onSaveObservations}
-        onClose={onCloseObservations}
-        currentObservations={currentAsset?.observations || []}
+        onSave={(observationsList) =>
+          onSaveObservations(observationsList, openObservations)
+        }
+        onClose={() => setOpenObservations(false)}
+        currentObservations={
+          assetsTable.find((asset) => asset.asset.id === openObservations)
+            ?.asset.observations || []
+        }
       />
 
       <ComponentsModal
         open={openComponents}
-        onSave={onSaveComponents}
-        onClose={onCloseComponents}
+        onSave={(componentsList) =>
+          onSaveComponents(componentsList, openComponents)
+        }
+        onClose={() => setOpenComponents(false)}
         catalog={componentsCatalog}
-        currentComponents={currentAsset?.replaced_components || []}
+        currentComponents={
+          assetsTable.find((asset) => asset.asset.id === openComponents)?.asset
+            .replaced_components || []
+        }
       />
     </>
   );

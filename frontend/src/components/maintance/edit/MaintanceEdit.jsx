@@ -5,7 +5,6 @@ import { CircularProgress, Typography } from "@mui/material";
 import { getDecodedToken } from "../../../utils/authService";
 import MaintanceBaseEdit from "./MaintanceBaseEdit";
 import axiosInstance from "../../../utils/api";
-import dayjs from "dayjs";
 
 const MaintanceEdit = () => {
   const { id } = useParams();
@@ -26,7 +25,6 @@ const MaintanceEdit = () => {
           axiosInstance.get(`/maintenances/${id}`),
         ]);
 
-        console.log("mantenimiento", maintance.data.results);
         setTypes(types.data.results);
         setResponsibles(responsibles.data.results);
         setAssets(assets.data);
@@ -92,33 +90,23 @@ const MaintanceEdit = () => {
     );
   }
 
-  console.log("main", maintance);
-
-  const formattedData = {
-    id_main: maintance.id_main,
-    cod_main: maintance.cod_main || "N/A",
-    typ_main: maintance?.typ_main_name || "Tipo no definido",
-    created_at:
-      dayjs(maintance.created_at).utc().format("MM-DD-YYYY") || "Sin fecha",
-    ended_at:
-      dayjs(maintance.ended_at).utc().format("MM-DD-YYYY") || "Sin fecha",
+  const formattedMaintance = {
+    cod_main: maintance.cod_main,
+    created_at: maintance.created_at,
     dni_res_main: maintance.dni_res_main,
+    ended_at: maintance.ended_at,
+    id_main: maintance.id_main,
     id_typ_main: maintance.id_typ_main,
-    assets:
-      maintance?.details.map((detail) => ({
-        ...detail.asset,
-        id_det_main: detail.id_det_main,
-        activities: detail.asset.activities || [],
-        observations: detail.asset.observations || [],
-        replaced_components: detail.asset.replaced_components || [],
-      })) || [],
+    is_ext: maintance.is_ext,
+    responsible_name: maintance.responsible_name,
+    typ_main_name: maintance.typ_main_name,
+    vis_main: maintance.vis_main,
+    assets: maintance.details,
   };
-
-  console.log("formated", formattedData);
 
   return (
     <MaintanceBaseEdit
-      maintance={formattedData}
+      maintance={formattedMaintance}
       fields={fields}
       assets={assets}
     />

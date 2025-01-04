@@ -33,9 +33,9 @@ const ActivitiesModal = ({
 
   useEffect(() => {
     if (open) {
-      setActivitiesList([...currentActivities]);
+      setActivitiesList(currentActivities);
     }
-  }, [open]);
+  }, [open, currentActivities]);
 
   const handleAddActivity = () => {
     if (!selectedActivity) {
@@ -60,17 +60,14 @@ const ActivitiesModal = ({
   };
 
   const handleRemoveActivity = (id) => {
-    console.log("ID a eliminar:", id);
     setActivitiesList((prev) => {
       const updatedList = prev.filter((activity) => activity.id !== id);
-      console.log("Lista después de eliminar:", updatedList);
       return updatedList;
     });
     toast.success("Actividad eliminada correctamente.");
   };
 
   const handleSave = () => {
-    console.log("lista", activitiesList);
     onSave(activitiesList);
     setSelectedActivity("");
     onClose();

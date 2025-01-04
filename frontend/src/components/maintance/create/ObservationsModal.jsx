@@ -27,7 +27,7 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
 
   useEffect(() => {
     if (open) {
-      setObservationsList(currentObservations || []);
+      setObservationsList(currentObservations);
     }
   }, [open, currentObservations]);
 

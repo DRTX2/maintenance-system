@@ -42,8 +42,6 @@ class MaintenanceDetailRequest extends FormRequest
                 Rule::unique('maintenances', 'cod_main')->ignore($this->route('id')),
             ];
 
-            $rules['assets.*.observations.*.id'] = 'required|exists:observations,id';
-            $rules['assets.*.replaced_components.*.id'] = 'required|exists:replaced_components,id';
         }
 
         return $rules;
