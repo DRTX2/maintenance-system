@@ -20,8 +20,8 @@ class MaintenanceController extends Controller
                 'id' => $maintenance->id,
                 'cod_main' => $maintenance->cod_main,
                 'vis_main' => $maintenance->vis_main,
-                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res, // Concatenar el nombre y apellido
-                'type' => $maintenance->maintenanceType->typ_main, // Nombre del tipo de mantenimiento
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res, 
+                'type' => $maintenance->maintenanceType->typ_main,
             ];
         });
         return response()->json([
@@ -48,7 +48,7 @@ class MaintenanceController extends Controller
         $responsibleFullName = $maintenance->responsible
             ? $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res
             : "Responsable no definido";
-    
+        $isExtern = $maintenance->responsible->is_ext === "Y" ? "Externo" : "Interno";
         // Obtener datos del tipo de mantenimiento
         $maintenanceTypeName = $maintenance->maintenanceType->name ?? "Tipo de mantenimiento no definido";
     
@@ -92,6 +92,7 @@ class MaintenanceController extends Controller
             "typ_main_name" => $maintenanceTypeName,
             "dni_res_main" => $maintenance->dni_res_main,
             "responsible_name" => $responsibleFullName,
+            "is_ext"=>$isExtern,
             "vis_main" => $maintenance->vis_main,
             "ended_at" => $maintenance->ended_at,
             "created_at" => $maintenance->created_at,
