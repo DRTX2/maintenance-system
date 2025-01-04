@@ -37,7 +37,7 @@ class MaintenanceController extends Controller
             'maintenanceDetails.asset', 
             'maintenanceDetails.observations', 
             'maintenanceDetails.activities',
-            'maintenanceDetails.replacedComponents',
+            'maintenanceDetails.replacedComponents.component',
         ])->find($id);
     
         if (!$maintenance) {
@@ -68,11 +68,12 @@ class MaintenanceController extends Controller
                             "des_obs" => $observation->des_obs,
                         ];
                     }),
-                    "replaced_components" => $detail->replacedComponents->map(function ($component) {
+                    "replaced_components" => $detail->replacedComponents->map(function ($replacedComponent) {
                         return [
-                            "id" => $component->id,
-                            "id_com_bel" => $component->id_com_bel,
-                            "des_rep_com" => $component->des_rep_com,
+                            "id" => $replacedComponent->id,
+                            "id_com_bel" => $replacedComponent->id_com_bel,
+                            "des_rep_com" => $replacedComponent->des_rep_com,
+                            "nam_com" => $replacedComponent->component->nam_com
                         ];
                     }),
                     "activities" => $detail->activities->map(function ($activity) {
