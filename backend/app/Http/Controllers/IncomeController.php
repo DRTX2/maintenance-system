@@ -113,19 +113,34 @@ class IncomeController extends Controller
 
     public function search(Request $request)
     {
-
         $request->validate([
             'term' => 'required|string|max:25',
         ]);
 
         $term = $request->input('term');
-        $incomes = Income::where('cod_inc', 'LIKE', "%{$term}%")->get();
+
+
+        $incomes = Income::with('supplier:id,nam_sup')
+            ->where('cod_inc', 'LIKE', "%{$term}%")
+            ->get();
+
+
+        $formattedIncomes = $incomes->map(function ($income) {
+            return [
+                'id' => $income->id,
+                'cod_inc' => $income->cod_inc,
+                'date_inc' => $income->date_inc,
+                'est_inc' => $income->est_inc,
+                'supplier_name' => $income->supplier->nam_sup ?? null,
+            ];
+        });
 
         return response()->json([
-            'results' => $incomes,
+            'results' => $formattedIncomes,
             'message' => 'Búsqueda realizada con éxito.',
         ], 200);
     }
+
 
 
     //  * Search categories based on term.
