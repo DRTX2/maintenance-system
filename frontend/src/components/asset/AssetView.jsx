@@ -14,6 +14,8 @@ const AssetView = () => {
   const [asset, setAsset] = useState({});
   const [errors, setErrors] = useState({});
   const [isReady, setIsReady] = useState(false);
+  const [isRelatedDataInitialized, setIsRelatedDataInitialized] =
+    useState(false);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -37,6 +39,18 @@ const AssetView = () => {
 
     fetchAllData();
   }, []);
+
+  useEffect(() => {
+    if (asset.components && !isRelatedDataInitialized) {
+      const initializedData = asset.components.map((component) => ({
+        ...component,
+        error: false,
+      }));
+
+      setRelatedData(initializedData);
+      setIsRelatedDataInitialized(true);
+    }
+  }, [asset, isRelatedDataInitialized]);
 
   const resultsLocations =
     locations.length > 0
@@ -97,58 +111,51 @@ const AssetView = () => {
     return Object.keys(validationErrors).length === 0;
   };
 
-  const handleDescription = async (id, description) => {
+  const validateSingleField = (id, description) => {
+    const hasError =
+      !description.trim() || description.length < 3 || description.length > 50;
+
+    console.log("¿Tiene error?", hasError);
+    setRelatedData((prevData) =>
+      prevData.map((component) =>
+        component.id === id
+          ? {
+              ...component,
+              pivot: { ...component.pivot, description },
+              error: hasError,
+            }
+          : component
+      )
+    );
+  };
+
+  const handleDescription = (id, description) => {
+    validateSingleField(id, description);
+    console.log("Que sucedió", relatedData);
     setAsset((prevEntity) => {
-      const componentExists = prevEntity.components.some(
-        (component) => component.id === id
-      );
-
-      let updatedComponents;
-      const hasError = !description.trim();
-
-      // Actualizar el compoentne si existe
-      if (componentExists) {
-        updatedComponents = prevEntity.components.map((component) =>
-          component.id === id
-            ? {
-                ...component,
-                pivot: { ...component.pivot, description },
-              }
-            : component
-        );
-        // Crear el componente si no existe
-      } else {
-        updatedComponents = [
-          ...prevEntity.components,
-          { id, pivot: { description } },
-        ];
-      }
-
-      // Actualizar relatedData para mantener los datos que escribe el usuario en la tabla.
-      setRelatedData((prevData) =>
-        prevData.map((component) =>
-          component.id === id
-            ? {
-                ...component,
-                pivot: { ...component.pivot, description },
-                error: hasError,
-              }
-            : component
-        )
+      const updatedComponents = prevEntity.components.map((component) =>
+        component.id === id
+          ? {
+              ...component,
+              pivot: { ...component.pivot, description },
+            }
+          : component
       );
 
       return { ...prevEntity, components: updatedComponents };
     });
+
+    console.log("Related despues", relatedData);
   };
 
   const validateTableFields = () => {
     let hasErrors = false;
 
     const updatedRelatedData = relatedData.map((component) => {
-      const hasDescription = component.pivot?.description?.trim();
+      const description = component.pivot?.description?.trim();
 
-      // Error, no ha escrito en la tabla
-      if (!hasDescription) {
+      // Validar descripción: Obligatorio, entre 3 y 50 caracteres
+      if (!description || description.length < 3 || description.length > 50) {
         hasErrors = true;
         return { ...component, error: true };
       }
@@ -182,6 +189,7 @@ const AssetView = () => {
   return (
     <AssetBaseView
       asset={asset}
+      relatedData={relatedData}
       fields={fields}
       columns={columns}
       validateAll={validateAll}

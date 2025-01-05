@@ -199,11 +199,17 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
     }
 
     console.log("entity", entity);
+    console.log("assetsTable", assetsTable);
     if (validateAll()) {
       try {
+        const formatted = assetsTable.map((item) => ({
+          ...item,
+          activities: item.activities.map((activity) => activity.id),
+        }));
+
         const response = await axiosInstance.post("/maintenance-detail", {
           ...entity,
-          assets: assetsTable,
+          assets: formatted,
         });
         toast.success(response.data.message);
         navigate("/dashboard/maintance");

@@ -9,9 +9,11 @@ import { FormControlLabel, Switch } from "@mui/material";
 import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
 import { Grid2 } from "@mui/material";
+import { handleErrors } from "../../utils/validations";
 
 const AssetBaseView = ({
   asset,
+  relatedData,
   fields,
   columns,
   errors,
@@ -41,6 +43,7 @@ const AssetBaseView = ({
   const handleUpdate = async () => {
     const isEntityValid = validateAll();
     const isTableValid = validateTableFields();
+
     if (isEntityValid && isTableValid) {
       try {
         await axiosInstance.put(`/assets/${asset.id}`, {
@@ -50,8 +53,12 @@ const AssetBaseView = ({
         setIsEditing(false);
         navigate("/dashboard/assets");
       } catch (error) {
-        // console.log("error", error.response.data.errors.income[0]);
-        toast.error("No se ha podido crear el activo.");
+        if (error.response.data.errors) {
+          const message = handleErrors(error.response.data.errors);
+          toast.error(message);
+        } else {
+          toast.error("No se ha podido crear el activo.");
+        }
       }
     }
   };
@@ -114,7 +121,7 @@ const AssetBaseView = ({
         {/* Poner la tabla */}
         <Box marginTop="30px">
           <AssetTableCreate
-            data={asset.components || []}
+            data={relatedData || []}
             columns={columns}
             currentPage={currentPage}
             rowsPerPage={rowsPerPage}

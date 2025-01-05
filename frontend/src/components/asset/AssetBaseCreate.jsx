@@ -5,7 +5,11 @@ import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
 import axiosInstance from "../../utils/api";
 import { toast } from "react-toastify";
-import { validateField, validateFields } from "../../utils/validations";
+import {
+  validateField,
+  validateFields,
+  handleErrors,
+} from "../../utils/validations";
 import { useNavigate } from "react-router-dom";
 
 const Entry = ({ fields, columns, defaultState }) => {
@@ -125,10 +129,10 @@ const Entry = ({ fields, columns, defaultState }) => {
     let hasErrors = false;
 
     const updatedRelatedData = relatedData.map((component) => {
-      const hasDescription = component.pivot?.description?.trim();
+      const description = component.pivot?.description?.trim();
 
-      // Error, no ha escrito en la tabla
-      if (!hasDescription) {
+      // Validar que la descripción exista y tenga entre 3 y 30 caracteres
+      if (!description || description.length < 3 || description.length > 50) {
         hasErrors = true;
         return { ...component, error: true };
       }
@@ -163,6 +167,7 @@ const Entry = ({ fields, columns, defaultState }) => {
       try {
         await axiosInstance.post("/assets", { asset: entity });
         resetFields();
+        navigate("/dashboard/assets");
         toast.success("Activo creado con éxito.");
       } catch (error) {
         if (error.response.data.errors) {
@@ -172,21 +177,7 @@ const Entry = ({ fields, columns, defaultState }) => {
           toast.error("No se ha podido crear el activo.");
         }
       }
-    } else {
-      toast.error("No hay componentes o hay campos vacíos.");
     }
-  };
-
-  const handleErrors = (errors) => {
-    const errorMessages = [];
-
-    for (const [key, messages] of Object.entries(errors)) {
-      messages.forEach((message) => {
-        errorMessages.push(`${message}`);
-      });
-    }
-
-    return errorMessages;
   };
 
   return (
