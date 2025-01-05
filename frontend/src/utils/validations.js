@@ -237,6 +237,7 @@ export const generateErrorMessage = (errors) => {
   let message = "";
 
   console.log("Los errores son", errors);
+  console.log(Object.entries(errors));
   Object.entries(errors).forEach(([key, errorMessages]) => {
     if (Array.isArray(errorMessages)) {
       message += errorMessages.join(" ") + " ";
