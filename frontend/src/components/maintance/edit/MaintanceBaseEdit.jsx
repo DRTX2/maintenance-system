@@ -33,7 +33,7 @@ import ActivitiesModal from "../create/ActivitiesModal";
 import ObservationsModal from "../create/ObservationsModal";
 import ComponentsModal from "../create/ComponentsModal";
 
-const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
+const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const [maintanceEdited, setMaintanceEdited] = useState(maintance);
   const [assetsTable, setAssetsTable] = useState(maintance?.assets || []);
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
@@ -167,19 +167,18 @@ const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
   const onOpenComponents = async (assetId) => {
     try {
       const response = await axiosInstance.get(
-        `/assets/show/${assetId}?role=${rol}`
+        `/assets/showForMaintances/${assetId}`
       );
-      console.log(response);
+      console.log(response.data);
       setComponentsCatalog(response.data.components);
       setOpenComponents(assetId);
     } catch (error) {
+      console.log(error.response.data);
       toast.error("No se ha podido obtener los componentes.");
     }
   };
 
   const onSaveComponents = (componentsList, assetId) => {
-    console.log("lista de comp", componentsList);
-
     setAssetsTable((prev) =>
       prev.map((item) =>
         item.asset.id === assetId
@@ -217,6 +216,17 @@ const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
     }
 
     if (validateAll()) {
+      const hasMissingActivities = assetsTable.some(
+        (item) => item.asset.activities.length === 0
+      );
+
+      if (hasMissingActivities) {
+        toast.error(
+          "Todos los activos deben tener al menos una actividad asignada."
+        );
+        return;
+      }
+
       try {
         const idMaintenance = maintanceEdited.id_main;
 
@@ -328,8 +338,13 @@ const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
                         <TableRow key={row.asset.id}>
                           <TableCell>{row.asset.cod_ass}</TableCell>
                           <TableCell>{row.asset.ser_num_ass}</TableCell>
-                          <TableCell>
-                            {row.asset.activities.length} {" Actividades"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.asset.activities.length}{" "}
+                            {row.asset.activities.length === 1
+                              ? "Actividad"
+                              : "Actividades"}
                             <IconButton
                               onClick={() => onOpenActivities(row.asset.id)}
                               arial-label="abrir"
@@ -337,8 +352,13 @@ const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
-                            {row.asset.observations.length} {" Observaciones"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.asset.observations.length}{" "}
+                            {row.asset.observations.length === 1
+                              ? "Observación"
+                              : "Observaciones"}
                             <IconButton
                               onClick={() => onOpenObservations(row.asset.id)}
                               arial-label="abrir"
@@ -346,9 +366,13 @@ const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
                             {row.asset.replaced_components.length}{" "}
-                            {" Componentes"}
+                            {row.asset.replaced_components.length === 1
+                              ? "Componente"
+                              : "Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.asset.id)}
                               arial-label="abrir"

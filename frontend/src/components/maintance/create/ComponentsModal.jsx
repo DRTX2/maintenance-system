@@ -114,14 +114,29 @@ const ComponentsModal = ({
           : component
       )
     );
-
-    console.log("Lo que se cambio en la tabla es", selectedComponents);
   };
 
   const handleSave = () => {
-    console.log(errors);
-    if (Object.keys(errors).length > 0) {
-      toast.warning("Corrija los errores antes de guardar.");
+    // Validar que todos los componentes tengan descripciones válidas
+    const invalidComponents = selectedComponents.filter(
+      (component) =>
+        !component.des_rep_com ||
+        component.des_rep_com.length < 3 ||
+        component.des_rep_com.length > 30
+    );
+
+    if (invalidComponents.length > 0) {
+      // Marcar errores en los componentes inválidos
+      const newErrors = {};
+      invalidComponents.forEach((component) => {
+        newErrors[component.id] =
+          "La descripción debe tener entre 3 y 30 caracteres.";
+      });
+      setErrors(newErrors);
+
+      toast.warning(
+        "Todos los componentes deben tener descripciones válidas antes de guardar."
+      );
       return;
     }
 
