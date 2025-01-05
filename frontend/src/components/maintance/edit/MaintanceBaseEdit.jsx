@@ -20,7 +20,11 @@ import CustomTablePaginationActions from "../../../generic/CustomTablePagination
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { validateField, validateFields } from "../../../utils/validations";
+import {
+  validateField,
+  validateFields,
+  handleErrors,
+} from "../../../utils/validations";
 import AssetSelector from "../create/AssetSelector";
 import CreateStyles from "../../../generic/styles/CreateStyles";
 import axiosInstance from "../../../utils/api";
@@ -29,7 +33,7 @@ import ActivitiesModal from "../create/ActivitiesModal";
 import ObservationsModal from "../create/ObservationsModal";
 import ComponentsModal from "../create/ComponentsModal";
 
-const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
+const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
   const [maintanceEdited, setMaintanceEdited] = useState(maintance);
   const [assetsTable, setAssetsTable] = useState(maintance?.assets || []);
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
@@ -146,8 +150,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   };
 
   const onSaveObservations = (observationsList, assetId) => {
-    console.log("Las observaciones son", observationsList, assetId);
-
     setAssetsTable((prev) =>
       prev.map((item) =>
         item.asset.id === assetId
@@ -158,16 +160,16 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           : item
       )
     );
-
-    console.log("Que pasa en observaciones");
-
     setOpenObservations(false);
   };
 
   // Componentes
   const onOpenComponents = async (assetId) => {
     try {
-      const response = await axiosInstance.get(`/assets/show/${assetId}`);
+      const response = await axiosInstance.get(
+        `/assets/show/${assetId}?role=${rol}`
+      );
+      console.log(response);
       setComponentsCatalog(response.data.components);
       setOpenComponents(assetId);
     } catch (error) {
@@ -176,6 +178,8 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   };
 
   const onSaveComponents = (componentsList, assetId) => {
+    console.log("lista de comp", componentsList);
+
     setAssetsTable((prev) =>
       prev.map((item) =>
         item.asset.id === assetId
@@ -216,8 +220,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       try {
         const idMaintenance = maintanceEdited.id_main;
 
-        console.log("Maintenanced edit", maintanceEdited);
-
         const dataToSend = {
           ...maintanceEdited,
           assets: maintanceEdited.assets.map((item) => ({
@@ -232,15 +234,19 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           })),
         };
 
-        console.log("Envio", dataToSend);
-
         const response = await axiosInstance.put(
           `/maintenance-detail/${idMaintenance}`,
           dataToSend
         );
         toast.success(response.data.message);
+        navigate("/dashboard/maintance");
       } catch (error) {
-        toast.error("Ha ocurrido un error.");
+        if (error.response.data.errors) {
+          const message = handleErrors(error.response.data.errors).join("\n");
+          toast.error(message);
+        } else {
+          toast.error("Ha ocurrido un error inesperado");
+        }
       }
     }
   };

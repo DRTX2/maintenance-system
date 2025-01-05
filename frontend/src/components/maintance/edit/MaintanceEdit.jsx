@@ -109,6 +109,7 @@ const MaintanceEdit = () => {
       maintance={formattedMaintance}
       fields={fields}
       assets={assets}
+      rol={rol}
     />
   );
 };

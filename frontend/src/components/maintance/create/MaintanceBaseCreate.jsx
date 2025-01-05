@@ -17,7 +17,11 @@ import IconButton from "@mui/material/IconButton";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import ClearIcon from "@mui/icons-material/Clear";
 
-import { validateField, validateFields } from "../../../utils/validations";
+import {
+  validateField,
+  validateFields,
+  handleErrors,
+} from "../../../utils/validations";
 import { toast } from "react-toastify";
 
 import axiosInstance from "../../../utils/api";
@@ -198,8 +202,17 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    console.log("entity", entity);
-    console.log("assetsTable", assetsTable);
+    const hasMissingActivities = assetsTable.some(
+      (asset) => asset.activities.length === 0
+    );
+
+    if (hasMissingActivities) {
+      toast.error(
+        "Todos los activos deben tener al menos una actividad asignada."
+      );
+      return;
+    }
+
     if (validateAll()) {
       try {
         const formatted = assetsTable.map((item) => ({
@@ -214,7 +227,12 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
         toast.success(response.data.message);
         navigate("/dashboard/maintance");
       } catch (error) {
-        toast.error("Ha ocurrido un error.");
+        if (error.response.data.errors) {
+          const message = handleErrors(error.response.data.errors).join("\n");
+          toast.error(message);
+        } else {
+          toast.error("Ha ocurrido un error inesperado");
+        }
       }
     }
   };

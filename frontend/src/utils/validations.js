@@ -164,7 +164,8 @@ const validationRules = {
   cod_main: {
     required: true,
     minLength: 3,
-    message: "El código debe tener al menos 3 caracteres",
+    maxLength: 10,
+    message: "El código debe tener mínimo 3 y máximo 10 caracteres",
   },
   id_typ_main: {
     required: true,
