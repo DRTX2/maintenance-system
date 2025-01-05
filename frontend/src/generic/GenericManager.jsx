@@ -88,6 +88,7 @@ const GenericManager = ({
 
   const handleCreate = async (item) => {
     try {
+      console.log(item);
       await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();
       toast.success(`Registro creado correctamente.`);

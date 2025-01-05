@@ -76,7 +76,7 @@ const UserManager = () => {
   //   En la tabla
   const columns = [
     { key: "dni_usr", label: "Cedula" },
-    { key: "name", label: "Nombre" },
+    { key: "name", label: "Nombre y Apellido" },
     { key: "email", label: "Correo" },
     { key: "role", label: "Rol" },
   ];
