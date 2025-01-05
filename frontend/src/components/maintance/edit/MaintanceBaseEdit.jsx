@@ -33,7 +33,7 @@ import ActivitiesModal from "../create/ActivitiesModal";
 import ObservationsModal from "../create/ObservationsModal";
 import ComponentsModal from "../create/ComponentsModal";
 
-const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
+const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const [maintanceEdited, setMaintanceEdited] = useState(maintance);
   const [assetsTable, setAssetsTable] = useState(maintance?.assets || []);
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
@@ -166,9 +166,8 @@ const MaintanceBaseEdit = ({ maintance, fields, assets, rol }) => {
   // Componentes
   const onOpenComponents = async (assetId) => {
     try {
-      const response = await axiosInstance.get(
-        `/assets/show/${assetId}?role=${rol}`
-      );
+      // Aqui simplemente carga los componentes de ese activo.
+      const response = await axiosInstance.get(`/assets/show/${assetId}`);
       console.log(response);
       setComponentsCatalog(response.data.components);
       setOpenComponents(assetId);

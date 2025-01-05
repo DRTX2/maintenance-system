@@ -21,6 +21,7 @@ const MaintanceEdit = () => {
         const [types, responsibles, assets, maintance] = await Promise.all([
           axiosInstance.get("/type-maintenance"),
           axiosInstance.get("/responsibles"),
+          // Simplemente todos los activos visibles
           axiosInstance.get(`/assets/${rol}`),
           axiosInstance.get(`/maintenances/${id}`),
         ]);
@@ -109,7 +110,6 @@ const MaintanceEdit = () => {
       maintance={formattedMaintance}
       fields={fields}
       assets={assets}
-      rol={rol}
     />
   );
 };
