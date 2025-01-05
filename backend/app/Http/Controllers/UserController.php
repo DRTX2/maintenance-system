@@ -28,7 +28,7 @@ class UserController extends Controller
                 "email" => "required|string|max:255|unique:users,email",
                 "password" => "required|string|max:255",
                 "role" => "nullable|string",
-                "dni_usr" => "required|string|size:10|unique:responsibles,dni_res",
+                "dni_usr" => "required|string|size:10|unique:users,dni_usr|unique:responsibles,dni_res",
             ], [
                 "email.unique" => "Correo electronico duplicado",
                 "dni_usr.unique" => "Cédula duplicada"
