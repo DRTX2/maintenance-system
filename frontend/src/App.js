@@ -53,6 +53,7 @@ function App() {
             <Route path="maintance/create" element={<MaintanceCreate />} />
             <Route path="maintance/view/:id" element={<MaintanceView />} />
             <Route path="maintance/edit/:id" element={<MaintanceEdit />} />
+            <Route path="reports" element={<div>hola</div>} />
           </Route>
         </Routes>
         {/* End routes */}

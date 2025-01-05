@@ -315,8 +315,13 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                         <TableRow key={row.id}>
                           <TableCell>{row.cod_ass}</TableCell>
                           <TableCell>{row.ser_num_ass}</TableCell>
-                          <TableCell>
-                            {row.activities.length} {" Actividades"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.activities.length}{" "}
+                            {row.activities.length === 1
+                              ? "Actividad"
+                              : "Actividades"}
                             <IconButton
                               onClick={() => onOpenActivities(row.id)}
                               arial-label="abrir"
@@ -324,8 +329,13 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
-                            {row.observations.length} {" Observaciones"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.observations.length}{" "}
+                            {row.observations.length === 1
+                              ? "Observación"
+                              : "Observaciones"}
                             <IconButton
                               onClick={() => onOpenObservations(row.id)}
                               arial-label="abrir"
@@ -333,8 +343,13 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
-                            {row.replaced_components.length} {" Componentes"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.replaced_components.length}{" "}
+                            {row.replaced_components.length === 1
+                              ? "Componente"
+                              : "Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.id)}
                               arial-label="abrir"

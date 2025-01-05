@@ -131,7 +131,10 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                           <TableCell>{row.asset.cod_ass}</TableCell>
                           <TableCell>{row.asset.ser_num_ass}</TableCell>
                           <TableCell>
-                            {row.asset.activities.length} {" Actividades"}
+                            {row.asset.activities.length}{" "}
+                            {row.asset.activities.length === 1
+                              ? "Actividad"
+                              : "Actividades"}
                             <IconButton
                               onClick={() => onOpenActivities(row.asset.id)}
                               arial-label="abrir"
@@ -140,7 +143,10 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                             </IconButton>
                           </TableCell>
                           <TableCell>
-                            {row.asset.observations.length} {" Observaciones"}
+                            {row.asset.observations.length}{" "}
+                            {row.asset.observations.length === 1
+                              ? "Observación"
+                              : "Observaciones"}
                             <IconButton
                               onClick={() => onOpenObservations(row.asset.id)}
                               arial-label="abrir"
@@ -150,7 +156,9 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
                           </TableCell>
                           <TableCell>
                             {row.asset.replaced_components.length}{" "}
-                            {" Componentes"}
+                            {row.asset.replaced_components.length === 1
+                              ? "Componente"
+                              : "Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.asset.id)}
                               arial-label="abrir"

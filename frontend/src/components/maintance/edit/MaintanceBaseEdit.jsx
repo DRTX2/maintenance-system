@@ -338,8 +338,13 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                         <TableRow key={row.asset.id}>
                           <TableCell>{row.asset.cod_ass}</TableCell>
                           <TableCell>{row.asset.ser_num_ass}</TableCell>
-                          <TableCell>
-                            {row.asset.activities.length} {" Actividades"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.asset.activities.length}{" "}
+                            {row.asset.activities.length === 1
+                              ? "Actividad"
+                              : "Actividades"}
                             <IconButton
                               onClick={() => onOpenActivities(row.asset.id)}
                               arial-label="abrir"
@@ -347,8 +352,13 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
-                            {row.asset.observations.length} {" Observaciones"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.asset.observations.length}{" "}
+                            {row.asset.observations.length === 1
+                              ? "Observación"
+                              : "Observaciones"}
                             <IconButton
                               onClick={() => onOpenObservations(row.asset.id)}
                               arial-label="abrir"
@@ -356,9 +366,13 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
                             {row.asset.replaced_components.length}{" "}
-                            {" Componentes"}
+                            {row.asset.replaced_components.length === 1
+                              ? "Componente"
+                              : "Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.asset.id)}
                               arial-label="abrir"

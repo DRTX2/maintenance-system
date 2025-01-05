@@ -141,21 +141,22 @@ export const navigationAdmin = [
     icon: <HandymanIcon style={{ color: "white" }} />, // Ícono blanco
   },
   {
-    segment: "reports",
-    title: "Reports",
+    segment: "dashboard/reports",
+    title: (
+      <Link
+        to={"/dashboard/reports"}
+        style={{
+          display: "block",
+          width: "100%",
+          height: "100%",
+          textDecoration: "none",
+          color: "inherit",
+        }}
+      >
+        Reportes
+      </Link>
+    ),
     icon: <BarChartIcon style={{ color: "white" }} />, // Ícono blanco
-    children: [
-      {
-        segment: "sales",
-        title: "Sales",
-        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
-      },
-      {
-        segment: "traffic",
-        title: "Traffic",
-        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
-      },
-    ],
   },
 ];
 
@@ -195,23 +196,6 @@ export const navigationUser = [
       </Link>
     ),
     icon: <HandymanIcon style={{ color: "white" }} />, // Ícono blanco
-  },
-  {
-    segment: "reports",
-    title: "Reports",
-    icon: <BarChartIcon style={{ color: "white" }} />, // Ícono blanco
-    children: [
-      {
-        segment: "sales",
-        title: "Sales",
-        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
-      },
-      {
-        segment: "traffic",
-        title: "Traffic",
-        icon: <DescriptionIcon style={{ color: "white" }} />, // Ícono blanco
-      },
-    ],
   },
 ];
 
