@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AssetRequest;
 use App\Models\Asset;
+use App\Models\Category;
 use App\Models\Income;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Validator;
 class AssetController extends Controller
 {
     //Crear, Actualizar,Eliminar,Ver, Filtrar   
@@ -92,11 +95,15 @@ class AssetController extends Controller
 
             $assets = Asset::with(['income', 'category', 'location'])->get();
         }
+
+
+
         // if ($assets->isEmpty()) {
         //     return response()->json([
         //         'message' => 'No se encontraron activos'
         //     ]);
         // }
+
 
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
@@ -113,6 +120,37 @@ class AssetController extends Controller
                 'ser_num_ass' => $asset->ser_num_ass,
                 'obs_add_ass' => $asset->obs_add_ass ?? null,
                 'est_ass' => $rol === 'admin' ? $asset->est_ass : null,
+
+            ];
+        });
+        return response()->json($transformedAssets, 200);
+    }
+
+
+    public function indexForMaintenances()
+    {
+
+
+        $assets = Asset::where('est_ass', 'V')
+            ->with(['income', 'category', 'location'])
+            ->get();
+
+
+
+        $transformedAssets = $assets->map(function ($asset) {
+            return [
+                'id' => $asset->id,
+                'id_inc_ass' => $asset->income->id,
+                'id_cat_ass' => $asset->category->id,
+                'id_loc_ass' => $asset->location->id,
+                'income_code' => $asset->income->cod_inc,
+                'category_code' => $asset->category->cod_dis,
+                'category_name' => $asset->category->nom_dis,
+                'location_code' => $asset->location->cod_loc,
+                'location_name' => $asset->location->nam_loc,
+                'cod_ass' => $asset->cod_ass,
+                'ser_num_ass' => $asset->ser_num_ass,
+                'obs_add_ass' => $asset->obs_add_ass ?? null,
 
             ];
         });
@@ -180,6 +218,8 @@ class AssetController extends Controller
 
         return response()->json($response);
     }
+
+
 
     public function store(AssetRequest $request)
     {
@@ -411,6 +451,193 @@ class AssetController extends Controller
 
         return response()->json($mappedStatuses, 200);
     }
+
+    public function validateAssets(Request $request)
+    {
+        $assets = $request->input('assets');
+
+        $validAssets = [];
+        $invalidAssets = [];
+        $codAssArray = [];
+        $serNumArray = [];
+
+        foreach ($assets as $key => $asset) {
+            $errors = []; // Inicializar el array de errores para cada activo
+
+            // Verificar si el código o número de serie se repiten en el JSON
+            if (in_array($asset['cod_ass'], $codAssArray)) {
+                $errors['cod_ass'][] = "El código '{$asset['cod_ass']}' ya se ha ingresado.";
+            } else {
+                $codAssArray[] = $asset['cod_ass'];
+            }
+
+            if (in_array($asset['ser_num_ass'], $serNumArray)) {
+                $errors['ser_num_ass'][] = "El número de serie '{$asset['ser_num_ass']}' ya se ha ingresado.";
+            } else {
+                $serNumArray[] = $asset['ser_num_ass'];
+            }
+
+            // Buscar el ingreso por su código
+            try {
+                $income = Income::where('cod_inc', $asset['id_inc_ass'])->firstOrFail();
+
+                if ($income->est_inc == 'C') {
+                    $errors['id_inc_ass'][] = "El ingreso asociado está cerrado y no puede usarse.";
+                } else {
+                    // Asignamos el ID del ingreso al activo
+                    $asset['id_inc_ass'] = $income->id;
+                }
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                $errors['id_inc_ass'][] = "El ingreso asociado al activo no existe.";
+            }
+
+            // Buscar la localización por su código
+            try {
+                $location = Location::where('cod_loc', $asset['id_loc_ass'])->firstOrFail();
+                // Asignamos el ID de la localización al activo
+                $asset['id_loc_ass'] = $location->id;
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                $errors['id_loc_ass'][] = "La localización ingresada no existe.";
+            }
+
+            // Continuamos con las demás validaciones
+            try {
+                $rules = [
+                    'id_inc_ass' => 'required',
+                    'id_loc_ass' => 'required',
+                    'id_cat_ass' => 'required',
+                    'cod_ass' => 'required|unique:assets,cod_ass',
+                    'ser_num_ass' => 'required|unique:assets,ser_num_ass',
+                    'components.*.id' => 'required|exists:components,id',
+                    'components.*.pivot.description' => 'required|string',
+                    'obs_add_ass' => 'nullable|string|max:500',
+                ];
+
+                // Definir los mensajes personalizados para las reglas de validación
+                $messages = [
+                    'id_loc_ass.required' => "La localización es obligatoria.",
+                    'id_inc_ass.required' => "El ingreso es obligatorio.",
+                    'id_cat_ass.required' => "La categoría del activo es obligatoria.",
+                    'cod_ass.unique' => "El código de activo '{$asset['cod_ass']}' ya esta registrado en la base de datos.",
+                    'components.*.id.exists' => "El componente especificado no existe para el activo en la posición {$key}.",
+                    'components.*.pivot.description.required' => "La descripción del componente es obligatoria para el activo en la posición {$key}.",
+                    'components.*.pivot.description.string' => "La descripción del componente debe ser una cadena de texto para el activo en la posición {$key}.",
+                ];
+
+                // Validar cada activo usando las reglas definidas
+                $validator = Validator::make($asset, $rules, $messages);
+
+                if ($validator->fails()) {
+                    // Agrupar los errores por campo
+                    $errors = array_merge($errors, $validator->errors()->toArray());
+                }
+
+                // Validación de la categoría y sus componentes
+                try {
+                    $category = Category::findOrFail($asset['id_cat_ass']);
+                } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                    $errors['id_cat_ass'][] = "La categoría ingresada no existe.";
+                }
+
+                $requiredComponents = $category ? $category->components->pluck('id')->toArray() : [];
+                $providedComponents = collect($asset['components'])->pluck('id')->toArray();
+
+                // Verificar que todos los componentes requeridos están presentes
+                if (array_diff($requiredComponents, $providedComponents)) {
+                    $errors['components'][] = "Faltan componentes obligatorios para la categoría seleccionada en el activo {$key}.";
+                }
+
+                // Si hay errores acumulados, los agregamos a los activos inválidos
+                if (!empty($errors)) {
+                    $invalidAssets[] = [
+                        'header' => "El asset {$asset['cod_ass']} no se pudo registrar debido a los siguientes errores",
+                        'errors' => $errors, // Incluye los errores agrupados por campo
+                    ];
+                } else {
+                    // Si no hay errores, lo añadimos a los válidos
+                    $validAssets[] = $asset;
+                }
+
+            } catch (\Exception $e) {
+                // Si ocurre algún error inesperado, lo agregamos al array de errores
+                $invalidAssets[] = [
+                    'asset' => $asset,
+                    'error' => $e->getMessage(),
+                ];
+            }
+        }
+
+        // Devolver tanto los válidos como los inválidos con sus razones de error
+        return response()->json([
+            'valid_assets' => $validAssets,
+            'invalid_assets' => $invalidAssets,
+        ]);
+    }
+
+
+
+    public function storeBatch(Request $request)
+    {
+        $assets = $request->input('assets');
+
+        $successMessages = [];
+        $errorMessages = [];
+
+        foreach ($assets as $key => $service) {
+            // Validar cada activo
+            try {
+                // Verificar el estado del ingreso asociado
+                $income = Income::findOrFail($service['id_inc_ass']);
+                if ($income->est_inc === 'C') {
+                    throw new \Exception("El ingreso asociado está cerrado.");
+                }
+
+                // Crear el activo
+                $asset = Asset::create([
+                    'id_inc_ass' => $service['id_inc_ass'],
+                    'id_cat_ass' => $service['id_cat_ass'],
+                    'id_loc_ass' => $service['id_loc_ass'],
+                    'cod_ass' => $service['cod_ass'],
+                    'ser_num_ass' => $service['ser_num_ass'],
+                    'obs_add_ass' => $service['obs_add_ass'] ?? null,
+                ]);
+
+                // Asociar los componentes
+                $components = collect($service['components'])->mapWithKeys(function ($component) {
+                    return [
+                        $component['id'] => [
+                            'description' => $component['pivot']['description'],
+                        ],
+                    ];
+                });
+                $asset->components()->attach($components);
+
+                // Mensaje de éxito
+                $successMessages[] = "Activo con código '{$service['cod_ass']}' registrado exitosamente.";
+
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                // Si el ingreso o la ubicación no se encuentran
+                $errorMessages[] = [
+                    'cod_ass' => $service['cod_ass'],
+                    'error' => "No se pudo encontrar el ingreso o la ubicación asociada."
+                ];
+            } catch (\Exception $e) {
+                // Cualquier otro error (por ejemplo, ingreso cerrado)
+                $errorMessages[] = [
+                    'cod_ass' => $service['cod_ass'],
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
+
+        // Responder con los mensajes de éxito y error
+        return response()->json([
+            'message' => 'Proceso de registro de activos en lote completado.',
+            'success_messages' => $successMessages,
+            'error_messages' => $errorMessages,
+        ]);
+    }
+
 
 
 
