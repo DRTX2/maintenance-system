@@ -215,18 +215,18 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    const hasMissingActivities = assetsTable.some(
-      (item) => item.asset.activities.length === 0
-    );
-
-    if (hasMissingActivities) {
-      toast.error(
-        "Todos los activos deben tener al menos una actividad asignada."
-      );
-      return;
-    }
-
     if (validateAll()) {
+      const hasMissingActivities = assetsTable.some(
+        (item) => item.asset.activities.length === 0
+      );
+
+      if (hasMissingActivities) {
+        toast.error(
+          "Todos los activos deben tener al menos una actividad asignada."
+        );
+        return;
+      }
+
       try {
         const idMaintenance = maintanceEdited.id_main;
 

@@ -204,18 +204,18 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    const hasMissingActivities = assetsTable.some(
-      (asset) => asset.activities.length === 0
-    );
-
-    if (hasMissingActivities) {
-      toast.error(
-        "Todos los activos deben tener al menos una actividad asignada."
-      );
-      return;
-    }
-
     if (validateAll()) {
+      const hasMissingActivities = assetsTable.some(
+        (asset) => asset.activities.length === 0
+      );
+
+      if (hasMissingActivities) {
+        toast.error(
+          "Todos los activos deben tener al menos una actividad asignada."
+        );
+        return;
+      }
+
       try {
         const formatted = assetsTable.map((item) => ({
           ...item,
