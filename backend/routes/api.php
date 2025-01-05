@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\IncomeController;
 use Illuminate\Http\Request;
@@ -8,8 +9,12 @@ use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\MaintenanceDetailController;
+use App\Http\Controllers\ObservationController;
+use App\Http\Controllers\ReplacedComponentController;
 use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\SuppliersController;
+use App\Http\Controllers\TypeMaintenanceController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\JwtMiddleware;
 
@@ -88,6 +93,7 @@ Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
 //Activos
 Route::get('/assets/{rol}', [AssetController::class, 'index']);
 Route::get('/assets/show/{id}', [AssetController::class, 'show']);
+
 //Mostrar ingresoso solo abiertos
 
 Route::get('/assets/incomes/create', [AssetController::class, 'showOpenIncomesCreate']);
@@ -108,13 +114,54 @@ Route::post('/assets/status', [AssetController::class, 'getStatus']);
 Route::post('/assets/validate', [AssetController::class, 'validateAssets']);
 Route::post('/assets/batch', [AssetController::class, 'storeBatch']);
 
-//Mantenimientos - aun no gestiono su relacion con activos/responsables
+//Mantenimientos - aun no gestiono su relacion con responsables
 
 Route::get('/maintenances', [MaintenanceController::class, 'index']);
 Route::post('/maintenances', [MaintenanceController::class, 'store']);
-Route::post('/maintenances/search', [MaintenanceController::class, 'search']); // Antes
+Route::post('/maintenances/search', [MaintenanceController::class, 'search']);
 Route::get('/maintenances/{id}', [MaintenanceController::class, 'show']);
 Route::put('/maintenances/{id}', [MaintenanceController::class, 'update']);
 Route::post('/maintenances/{id}', [MaintenanceController::class, 'hide'])->where('id', '[0-9]+');
 
-// aun no probe los cambios hechos al usar id, ni testeado estas rutas de mantenimientos
+// Observations
+
+Route::get('/observations', [ObservationController::class, 'index']);
+Route::post('/observations', [ObservationController::class, 'store']);
+Route::get('/observations/{id}', [ObservationController::class, 'show']);
+Route::put('/observations/{id}', [ObservationController::class, 'update']);
+Route::delete('/observations/{id}', [ObservationController::class, 'destroy']);
+Route::post('/observations/search', [ObservationController::class, 'search']);
+
+// Type Maintenances
+// comente algunas porq creo q no vamos a usar, pero por si acaso tenerlas
+Route::get('/type-maintenance', [TypeMaintenanceController::class, 'index']);
+// Route::post('/type-maintenance', [ActivityController::class, 'store']);
+Route::get('/type-maintenance/{id}', [TypeMaintenanceController::class, 'show']);
+// Route::put('/type-maintenance/{id}', [ActivityController::class, 'update']);
+// Route::delete('/type-maintenance/{id}', [ActivityController::class, 'destroy']);
+// Route::post('/type-maintenance/search', [ActivityController::class, 'search']);
+
+
+// Maintenance activities
+
+Route::get('/activities', [ActivityController::class, 'index']);
+Route::post('/activities', [ActivityController::class, 'store']);
+Route::get('/activities/{id}', [ActivityController::class, 'show']);
+Route::put('/activities/{id}', [ActivityController::class, 'update']);
+Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
+Route::post('/activities/search', [ActivityController::class, 'search']);
+
+// Replaced Components
+
+Route::get('/replaced-components', [ReplacedComponentController::class, 'index']);
+Route::post('/replaced-components', [ReplacedComponentController::class, 'store']);
+Route::get('/replaced-components/{id}', [ReplacedComponentController::class, 'show']);
+Route::put('/replaced-components/{id}', [ReplacedComponentController::class, 'update']);
+Route::delete('/replaced-components/{id}', [ReplacedComponentController::class, 'destroy']);
+Route::post('/replaced-components/search', [ReplacedComponentController::class, 'search']);
+
+// Maintenance Details
+Route::get('/maintenance-detail', [MaintenanceDetailController::class, 'index']);
+Route::get('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'show']);
+Route::post('/maintenance-detail', [MaintenanceDetailController::class, 'store']);
+Route::put('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'update']);

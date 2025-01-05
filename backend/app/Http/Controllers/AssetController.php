@@ -124,8 +124,18 @@ class AssetController extends Controller
 
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
+
+        $userRole = $request->query('role');
+
+        if (!$userRole) {
+            return response()->json([
+                'errors' => [
+                    'role' => ['El rol del usuario no fue proporcionado.']
+                ]
+            ], 400);
+        }
 
         $asset = Asset::with([
             'income:id,cod_inc',
@@ -134,7 +144,7 @@ class AssetController extends Controller
             'components:id,cod_com,nam_com'
         ])->findOrFail($id);
 
-        if ($asset->est_ass === 'H') {
+        if ($asset->est_ass === 'H' && $userRole !== "admin") {
             throw new HttpResponseException(response()->json([
                 'errors' => [
                     'asset' => ['El activo solicitado no está disponible actualmente.']
@@ -173,7 +183,6 @@ class AssetController extends Controller
 
         return response()->json($response);
     }
-
 
     public function store(AssetRequest $request)
     {
@@ -354,17 +363,15 @@ class AssetController extends Controller
             });
         }
 
-
-        if ($request->has('status')) {
-            $assets->whereIn('est_ass', $request->input('status'));
-        }
-
         $rol = $request->input('rol');
 
-
+        // Lógica para usuarios (rol "user")
         if ($rol === 'user') {
-
+            // Ignorar cualquier filtro de estado y mostrar solo los activos visibles
             $assets->where('est_ass', 'V');
+        } else if ($rol === 'admin' && $request->has('status') && count($request->input('status')) > 0) {
+            // Lógica para administradores: permitir filtro por estado
+            $assets->whereIn('est_ass', $request->input('status'));
         }
 
 

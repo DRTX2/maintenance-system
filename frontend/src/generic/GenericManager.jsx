@@ -65,6 +65,9 @@ const GenericManager = ({
       const response = await axiosInstance.post(
         `${apiConfig.fetchSearch}${param}`
       );
+
+      console.log("data", response);
+
       setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
@@ -74,7 +77,7 @@ const GenericManager = ({
   const fetchEntities = async () => {
     try {
       const response = await axiosInstance.get(apiConfig.fetchAll);
-      console.log(response);
+      console.log("informacion", response);
       setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
@@ -84,7 +87,6 @@ const GenericManager = ({
   };
 
   const handleCreate = async (item) => {
-    console.log("Creando...", item);
     try {
       await axiosInstance.post(apiConfig.create, item);
       await fetchEntities();
@@ -96,6 +98,7 @@ const GenericManager = ({
 
   const handleUpdate = async (item) => {
     try {
+      console.log("Que envio", item);
       await axiosInstance.put(`${apiConfig.update}/${item.id}`, item);
       await fetchEntities();
       toast.success(`Registro actualizado correctamente.`);
@@ -111,7 +114,6 @@ const GenericManager = ({
 
   const handleDelete = async (id) => {
     try {
-      console.log("Delete", `${apiConfig.delete}/${id}`);
       await axiosInstance.delete(`${apiConfig.delete}/${id}`);
       await fetchEntities();
 
@@ -135,7 +137,6 @@ const GenericManager = ({
   };
 
   const handleView = async (id) => {
-    console.log("Viendo", id);
     try {
       const response = await axiosInstance.get(`${apiConfig.fetchOne}/${id}`);
       setEntity(response?.data?.result);
@@ -166,7 +167,6 @@ const GenericManager = ({
   };
 
   const openCreateModal = () => {
-    console.log("Creando");
     setModalCreateOpen(true);
   };
   const closeCreateModal = () => setModalCreateOpen(false);
@@ -186,7 +186,11 @@ const GenericManager = ({
       <Box className="flewColumnCenter">
         <Box
           className="flexRowCenterEnd"
-          style={{ justifyContent: "space-between", width: "100%" }}
+          style={{
+            justifyContent: "space-between",
+            width: "100%",
+            gap: "2rem",
+          }}
         >
           <h2>{entityNamePlural}</h2>
 

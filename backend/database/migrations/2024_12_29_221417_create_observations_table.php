@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('id_det_main_obs')
-            ->constrained('maintenance_details')
-            ->onDelete('cascade');
+                ->constrained('maintenance_details')
+                ->onDelete('cascade');
             $table->text('des_obs');
         });
     }

@@ -12,7 +12,7 @@ class Maintenance extends Model
         "ended_at",
         "cod_main",
         "vis_main",
-        "typ_main"
+        "id_typ_main"
     ];
 
     protected $casts = [
@@ -22,5 +22,15 @@ class Maintenance extends Model
 
     public function responsible(){
         return$this->belongsTo(Responsible::class, "dni_res_main","dni_res");
+    }
+
+    public function maintenanceType()
+    {
+        return $this->belongsTo(MaintenanceType::class, 'id_typ_main');
+    }
+
+    public function maintenanceDetails()
+    {
+        return $this->hasMany(MaintenanceDetail::class, 'id_main_bel');
     }
 }

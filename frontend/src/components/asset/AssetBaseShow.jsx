@@ -5,6 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import GenericStyles from "../../generic/styles/GenericStyles";
 import SearchBar from "../../generic/SearchBar";
 import AssetTableShow from "./AssetTableShow";
+import AssetFilters from "../../generic/filters/AssetFilters";
 import axiosInstance from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,7 +18,6 @@ const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
 
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(0);
@@ -30,10 +30,21 @@ const AssetShow = ({ columns, role }) => {
   const fetchAssets = async () => {
     try {
       const response = await axiosInstance.get(`/assets/${role}`);
-      console.log("Activos", response.data);
       setAssets(response.data);
     } catch (error) {
       toast.error("No se ha podido obtener los activos.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchAssetsFilter = async (filters = {}) => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/assets/filters", filters);
+      setAssets(response.data);
+    } catch (error) {
+      toast.error("No se ha podido filtrar.");
     } finally {
       setIsLoading(false);
     }
@@ -53,14 +64,6 @@ const AssetShow = ({ columns, role }) => {
     } catch (error) {
       toast.error("Ha ocurrido un error con la busqueda");
     }
-  };
-
-  const onCreate = () => {
-    navigate("/dashboard/assets/create");
-  };
-
-  const onView = async (id) => {
-    navigate(`/dashboard/assets/view/${id}`);
   };
 
   const toggleVisibility = async (id, currentState) => {
@@ -88,6 +91,58 @@ const AssetShow = ({ columns, role }) => {
     }
   };
 
+  // 2. El padre es notifiacdo.
+  const handleFilterChange = async (updatedFilters) => {
+    console.log("Updated", updatedFilters);
+    if (!updatedFilters) {
+      toast.error("Filtros no definidos");
+      return;
+    }
+
+    const isFilterEmpty = Object.values(updatedFilters).every(
+      (filter) => !filter || Object.values(filter).every((value) => !value)
+    );
+
+    if (isFilterEmpty) {
+      toast.info(
+        "No se han encontrado filtros aplicados, recargando activos..."
+      );
+      await fetchAssets();
+      return;
+    }
+
+    const cleanedData = buildFilterPayload(updatedFilters);
+    await fetchAssetsFilter(cleanedData);
+  };
+
+  const processFilter = (filter) => {
+    if (!filter) return [];
+
+    return Object.keys(filter)
+      .filter((key) => filter[key])
+      .map((key) => (isNaN(key) ? key : parseInt(key, 10)));
+  };
+
+  const buildFilterPayload = (selectedValues) => {
+    const payload = {
+      location: processFilter(selectedValues.locations),
+      income: processFilter(selectedValues.incomes),
+      type: processFilter(selectedValues.categories),
+      device: processFilter(selectedValues.devices),
+      status: processFilter(selectedValues.status),
+      rol: role,
+    };
+    return payload;
+  };
+
+  const onCreate = () => {
+    navigate("/dashboard/assets/create");
+  };
+
+  const onView = (id) => {
+    navigate(`/dashboard/assets/show/${id}?role=${role}`);
+  };
+
   return (
     <div
       className="flexColumnCenter"
@@ -96,25 +151,57 @@ const AssetShow = ({ columns, role }) => {
       <Box className="flewColumnCenter">
         <Box
           className="flexRowCenterEnd"
-          style={{ justifyContent: "space-between", width: "100%" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            marginBottom: "20px",
+          }}
         >
-          <h2>Activos</h2>
-
-          {/* Busqueda por search */}
-          <SearchBar
-            placeholder={`Buscar por número de serie`}
-            onSearch={onFetch}
-          />
-
-          {/* Boton para añadir */}
-          <Button
-            onClick={onCreate}
-            variant="contained"
-            sx={GenericStyles.buttonStyle}
-            startIcon={<AddIcon />}
+          {/* Fila 1 */}
+          <Box
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+            }}
           >
-            Agregar activo
-          </Button>
+            <h2 style={{ marginRight: "20px" }}>Activos</h2>
+
+            <Button
+              onClick={onCreate}
+              variant="contained"
+              sx={GenericStyles.buttonStyle}
+              startIcon={<AddIcon />}
+            >
+              Agregar activo
+            </Button>
+          </Box>
+
+          {/* Fila 2 */}
+          <Box
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              gap: "16px",
+            }}
+          >
+            <SearchBar
+              placeholder={`Buscar por número de serie`}
+              onSearch={onFetch}
+            />
+
+            {/* Filtros */}
+            <AssetFilters
+              onFilterChange={handleFilterChange}
+              onClear={fetchAssets}
+            />
+          </Box>
         </Box>
       </Box>
 

@@ -22,7 +22,6 @@ const ContentGenericTable = ({
     );
   }
 
-  console.log(data);
   if (!Array.isArray(data)) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>

@@ -10,18 +10,18 @@ class TypeMaintenanceController extends Controller
     public function index()
     {
         $data = MaintenanceType::all();
-        return response()->json(["results" => $data, "message" => "Tipos de mantenimiento obtenidos con éxito"]);
+        return response()->json(["results" => $data]);
     }
 
     public function show($id)
     {
-        $tipo = MaintenanceType::find($id);
+        $tipo = MaintenanceType::with("activities")->find($id);
 
         if (!$tipo) {
             return response()->json(["results" => null, "message" => "Tipo de mantenimiento no encontrado"], 404);
         }
 
-        return response()->json(["results" => $tipo, "message" => "Tipo de mantenimiento obtenido con éxito"]);
+        return response()->json(["results" => $tipo]);
     }
 
     public function store(Request $request)

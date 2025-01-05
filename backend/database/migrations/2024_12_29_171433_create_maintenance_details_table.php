@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('maintenance_details', function (Blueprint $table) {
@@ -19,17 +16,15 @@ return new class extends Migration
                     ->constrained("maintenances")
                     ->onDelete("cascade"); 
             //id_asset_belongs
-            $table->foreignId('id_ass_bel') 
+            $table->foreignId('id_ass_bel')
+                    ->nullable() 
                     ->constrained("assets")
-                    ->onDelete("cascade");
+                    ->onDelete("cascade");// esto no se como poderlo inicializar en nulo pero luego ya podria tener un valor
             // $table->enum("prev_sta_main", ["nuevo","viejo"])->default("nuevo");
             // $table->enum("prev_sta_main", ["nuevo","viejo"])->default("nuevo");
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('maintenance_details');
