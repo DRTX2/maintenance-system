@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
-import { handleErrors } from "../utils/validations";
 
 import GenericStyles from "./styles/GenericStyles";
 import CreateModal from "./CreateModal";
