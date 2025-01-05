@@ -166,19 +166,19 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   // Componentes
   const onOpenComponents = async (assetId) => {
     try {
-      // Aqui simplemente carga los componentes de ese activo.
-      const response = await axiosInstance.get(`/assets/show/${assetId}`);
-      console.log(response);
+      const response = await axiosInstance.get(
+        `/assets/showForMaintances/${assetId}`
+      );
+      console.log(response.data);
       setComponentsCatalog(response.data.components);
       setOpenComponents(assetId);
     } catch (error) {
+      console.log(error.response.data);
       toast.error("No se ha podido obtener los componentes.");
     }
   };
 
   const onSaveComponents = (componentsList, assetId) => {
-    console.log("lista de comp", componentsList);
-
     setAssetsTable((prev) =>
       prev.map((item) =>
         item.asset.id === assetId
@@ -213,6 +213,17 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
     if (assetsTable.length === 0) {
       setErrorAsset(true);
       setHelperTextAsset("Debe agregar al menos un activo.");
+    }
+
+    const hasMissingActivities = assetsTable.some(
+      (item) => item.asset.activities.length === 0
+    );
+
+    if (hasMissingActivities) {
+      toast.error(
+        "Todos los activos deben tener al menos una actividad asignada."
+      );
+      return;
     }
 
     if (validateAll()) {

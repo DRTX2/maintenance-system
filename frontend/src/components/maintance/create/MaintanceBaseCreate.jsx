@@ -152,8 +152,9 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const onOpenComponents = async (id) => {
     // Cargar los datos del catalogo de activo seleccionado.
     try {
-      // Aqui simplmenete: carga los componentes del activo
-      const response = await axiosInstance.get(`/assets/show/${id}`);
+      const response = await axiosInstance.get(
+        `/assets/showForMaintances/${id}`
+      );
       setComponentsCatalog(response.data.components);
       console.log("Compnnes", response.data.components);
       const asset = assetsTable.find((item) => item.id === id);

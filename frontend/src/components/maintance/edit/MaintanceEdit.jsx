@@ -22,7 +22,7 @@ const MaintanceEdit = () => {
           axiosInstance.get("/type-maintenance"),
           axiosInstance.get("/responsibles"),
           // Simplemente todos los activos visibles
-          axiosInstance.get(`/assets/${rol}`),
+          axiosInstance.get(`/assetsForMaintances`),
           axiosInstance.get(`/maintenances/${id}`),
         ]);
 

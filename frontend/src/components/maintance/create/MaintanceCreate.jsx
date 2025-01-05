@@ -18,8 +18,7 @@ const MaintanceCreate = () => {
         const [types, responsibles, assets] = await Promise.all([
           axiosInstance.get("/type-maintenance"),
           axiosInstance.get("/responsibles"),
-          // Simplemente, todos los activos visibles
-          axiosInstance.get(`/assets/${rol}`),
+          axiosInstance.get(`/assetsForMaintances`),
         ]);
 
         setTypes(types.data.results);
