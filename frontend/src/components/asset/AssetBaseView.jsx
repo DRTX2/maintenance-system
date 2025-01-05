@@ -9,7 +9,7 @@ import { FormControlLabel, Switch } from "@mui/material";
 import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
 import { Grid2 } from "@mui/material";
-import { handleErrors } from "../../utils/validations";
+import { handleErrors, generateErrorMessage } from "../../utils/validations";
 
 const AssetBaseView = ({
   asset,
@@ -44,6 +44,8 @@ const AssetBaseView = ({
     const isEntityValid = validateAll();
     const isTableValid = validateTableFields();
 
+    console.log(isEntityValid);
+    console.log(isTableValid);
     if (isEntityValid && isTableValid) {
       try {
         await axiosInstance.put(`/assets/${asset.id}`, {
@@ -53,11 +55,12 @@ const AssetBaseView = ({
         setIsEditing(false);
         navigate("/dashboard/assets");
       } catch (error) {
+        console.log(error.response);
         if (error.response.data.errors) {
-          const message = handleErrors(error.response.data.errors);
+          const message = generateErrorMessage(error.response.data.errors);
           toast.error(message);
         } else {
-          toast.error("No se ha podido crear el activo.");
+          toast.error("No se ha podido editar el activo.");
         }
       }
     }

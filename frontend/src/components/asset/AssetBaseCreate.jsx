@@ -161,9 +161,8 @@ const Entry = ({ fields, columns, defaultState }) => {
   const handleCreate = async () => {
     const isEntityValid = validateAll();
     const isTableValid = validateTableFields();
-    const componentsEmpty = entity.components.length === 0;
 
-    if (isEntityValid && isTableValid && !componentsEmpty) {
+    if (isEntityValid && isTableValid) {
       try {
         await axiosInstance.post("/assets", { asset: entity });
         resetFields();
