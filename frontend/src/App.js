@@ -48,7 +48,7 @@ function App() {
             <Route path="incomes" element={<IncomeManager />} />
             <Route path="assets" element={<AssetShow />} />
             <Route path="assets/create" element={<AssetCreate />} />
-            <Route path="assets/view/:id" element={<AssetView />} />
+            <Route path="assets/show/:id" element={<AssetView />} />
             <Route path="maintance" element={<MaintanceShow />} />
             <Route path="maintance/create" element={<MaintanceCreate />} />
             <Route path="maintance/view/:id" element={<MaintanceView />} />

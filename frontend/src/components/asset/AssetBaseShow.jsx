@@ -139,8 +139,8 @@ const AssetShow = ({ columns, role }) => {
     navigate("/dashboard/assets/create");
   };
 
-  const onView = async (id) => {
-    navigate(`/dashboard/assets/view/${id}`);
+  const onView = (id) => {
+    navigate(`/dashboard/assets/show/${id}?role=${role}`);
   };
 
   return (

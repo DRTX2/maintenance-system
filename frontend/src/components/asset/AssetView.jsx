@@ -5,9 +5,11 @@ import AssetBaseView from "./AssetBaseView";
 import { CircularProgress, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { validateField, validateFields } from "../../utils/validations";
+import { getDecodedToken } from "../../utils/authService";
 
 const AssetView = () => {
   const { id } = useParams();
+  const role = getDecodedToken()?.role;
   const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [relatedData, setRelatedData] = useState([]);
@@ -21,7 +23,7 @@ const AssetView = () => {
     const fetchAllData = async () => {
       try {
         const [asset, locationsData, incomesData] = await Promise.all([
-          axiosInstance.get(`/assets/show/${id}`),
+          axiosInstance.get(`/assets/show/${id}?role=${role}`),
           axiosInstance.get("/locations"),
           axiosInstance.get(`/assets/incomes/${id}`),
         ]);

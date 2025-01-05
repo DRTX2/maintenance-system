@@ -98,6 +98,7 @@ const GenericManager = ({
 
   const handleUpdate = async (item) => {
     try {
+      console.log("Que envio", item);
       await axiosInstance.put(`${apiConfig.update}/${item.id}`, item);
       await fetchEntities();
       toast.success(`Registro actualizado correctamente.`);

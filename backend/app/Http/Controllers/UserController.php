@@ -81,8 +81,10 @@ class UserController extends Controller
                 "name" => "required|string|max:255",
                 "email" => "required|string|max:255|unique:users,email,$id",
                 "password" => "nullable|string|max:255",
+                "role" => "required|string|in:admin,user"
             ], [
-                "email.unique" => "Correo electronico duplicado"
+                "email.unique" => "Correo electronico duplicado",
+                "role.in" => "El rol debe ser 'admin' o 'user'"
             ]);
             //si no esta quitarlo del arreglo
             if (!empty($validatedData["password"])) {
