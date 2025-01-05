@@ -13,6 +13,10 @@ import IncomeManager from "./generic/implementations/IncomeManager";
 import AssetShow from "./components/asset/AssetShow";
 import AssetCreate from "./components/asset/AssetCreate";
 import AssetView from "./components/asset/AssetView";
+import MaintanceCreate from "./components/maintance/create/MaintanceCreate";
+import MaintanceShow from "./components/maintance/show/MaintanceShow";
+import MaintanceView from "./components/maintance/view/MaintanceView";
+import MaintanceEdit from "./components/maintance/edit/MaintanceEdit";
 
 function App() {
   return (
@@ -44,7 +48,11 @@ function App() {
             <Route path="incomes" element={<IncomeManager />} />
             <Route path="assets" element={<AssetShow />} />
             <Route path="assets/create" element={<AssetCreate />} />
-            <Route path="assets/view/:id" element={<AssetView />} />
+            <Route path="assets/show/:id" element={<AssetView />} />
+            <Route path="maintance" element={<MaintanceShow />} />
+            <Route path="maintance/create" element={<MaintanceCreate />} />
+            <Route path="maintance/view/:id" element={<MaintanceView />} />
+            <Route path="maintance/edit/:id" element={<MaintanceEdit />} />
           </Route>
         </Routes>
         {/* End routes */}

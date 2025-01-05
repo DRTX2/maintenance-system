@@ -18,7 +18,6 @@ const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
 
   const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(0);
@@ -113,7 +112,6 @@ const AssetShow = ({ columns, role }) => {
     }
 
     const cleanedData = buildFilterPayload(updatedFilters);
-    console.log("Limpio", cleanedData);
     await fetchAssetsFilter(cleanedData);
   };
 
@@ -141,8 +139,8 @@ const AssetShow = ({ columns, role }) => {
     navigate("/dashboard/assets/create");
   };
 
-  const onView = async (id) => {
-    navigate(`/dashboard/assets/view/${id}`);
+  const onView = (id) => {
+    navigate(`/dashboard/assets/show/${id}?role=${role}`);
   };
 
   return (

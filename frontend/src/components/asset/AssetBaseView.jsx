@@ -9,9 +9,11 @@ import { FormControlLabel, Switch } from "@mui/material";
 import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
 import { Grid2 } from "@mui/material";
+import { handleErrors } from "../../utils/validations";
 
 const AssetBaseView = ({
   asset,
+  relatedData,
   fields,
   columns,
   errors,
@@ -41,6 +43,7 @@ const AssetBaseView = ({
   const handleUpdate = async () => {
     const isEntityValid = validateAll();
     const isTableValid = validateTableFields();
+
     if (isEntityValid && isTableValid) {
       try {
         await axiosInstance.put(`/assets/${asset.id}`, {
@@ -50,7 +53,12 @@ const AssetBaseView = ({
         setIsEditing(false);
         navigate("/dashboard/assets");
       } catch (error) {
-        toast.error("No se ha podido crear el activo.");
+        if (error.response.data.errors) {
+          const message = handleErrors(error.response.data.errors);
+          toast.error(message);
+        } else {
+          toast.error("No se ha podido crear el activo.");
+        }
       }
     }
   };
@@ -87,52 +95,42 @@ const AssetBaseView = ({
         <Grid2 container spacing={3}>
           {fields.map((field) => (
             <Grid2 item size={{ xs: 12, md: 6 }} key={field.key}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: "10px",
-                }}
+              {/* Título del campo */}
+              <Typography
+                variant="subtitle1"
+                width="100%"
+                color="#6068A5"
+                fontWeight="bold"
               >
-                {/* Título del campo */}
-                <Typography
-                  variant="subtitle1"
-                  width="100%"
-                  color="#6068A5"
-                  fontWeight="bold"
-                >
-                  {field.label}
-                </Typography>
-                {/* Campo dinámico */}
-                <DynamicField
-                  key={field.key}
-                  field={field}
-                  value={asset[field.key]}
-                  onChange={handleFieldChange}
-                  onFetch={handleFetch}
-                  error={errors[field.key]}
-                  helperText={errors[field.key]}
-                  readOnly={!isEditing || !field.editable}
-                />
-              </Box>
+                {field.label}
+              </Typography>
+              {/* Campo dinámico */}
+              <DynamicField
+                key={field.key}
+                field={field}
+                value={asset[field.key]}
+                onChange={handleFieldChange}
+                onFetch={handleFetch}
+                error={errors[field.key]}
+                helperText={errors[field.key]}
+                readOnly={!isEditing || !field.editable}
+              />
             </Grid2>
           ))}
         </Grid2>
-      </Box>
-
-      {/* Poner la tabla */}
-      <Box marginTop="30px" width="90%">
-        <AssetTableCreate
-          data={asset.components || []}
-          columns={columns}
-          currentPage={currentPage}
-          rowsPerPage={rowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-          handleDescription={handleDescription}
-          readOnly={!isEditing}
-        />
+        {/* Poner la tabla */}
+        <Box marginTop="30px">
+          <AssetTableCreate
+            data={relatedData || []}
+            columns={columns}
+            currentPage={currentPage}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+            handleDescription={handleDescription}
+            readOnly={!isEditing}
+          />
+        </Box>
       </Box>
 
       {/* Footer */}

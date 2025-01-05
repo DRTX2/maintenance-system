@@ -1,6 +1,18 @@
 import GenericManager from "../GenericManager";
+import { getDecodedToken } from "../../utils/authService";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserManager = () => {
+  const role = getDecodedToken()?.role;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (role !== "admin") {
+      navigate("/dashboard/maintance");
+    }
+  }, [role, navigate]);
+
   const apiConfig = {
     fetchAll: "/users",
     fetchOne: "/users",
@@ -11,6 +23,7 @@ const UserManager = () => {
   };
 
   const defaultEntityState = {
+    dni_usr: "",
     role: "",
     name: "",
     email: "",
@@ -19,6 +32,13 @@ const UserManager = () => {
 
   //   En los modales
   const fields = [
+    {
+      key: "dni_usr",
+      label: "Cedula",
+      type: "text",
+      showCreate: true,
+      showUpdate: false,
+    },
     {
       key: "role",
       label: "Rol",
@@ -55,6 +75,7 @@ const UserManager = () => {
 
   //   En la tabla
   const columns = [
+    { key: "dni_usr", label: "Cedula" },
     { key: "name", label: "Nombre" },
     { key: "email", label: "Correo" },
     { key: "role", label: "Rol" },
@@ -62,7 +83,7 @@ const UserManager = () => {
 
   const message = "name";
 
-  const searchBy = "correo";
+  const searchBy = "cedula";
 
   return (
     <GenericManager

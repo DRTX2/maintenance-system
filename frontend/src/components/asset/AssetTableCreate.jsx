@@ -43,7 +43,7 @@ const ContentTable = ({
 
   if (data.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <div style={{ textAlign: "center", marginTop: "30px", color: "#6068A5" }}>
         No se han encontrado componentes.
       </div>
     );
@@ -86,7 +86,9 @@ const ContentTable = ({
                           }
                           error={item.error || false}
                           helperText={
-                            item.error ? "Este campo es obligatorio" : ""
+                            item.error
+                              ? "Este campo es obligatorio con mínimo 3 y máximo 50 caracteres"
+                              : ""
                           }
                           InputProps={{
                             readOnly: readOnly,
