@@ -88,6 +88,7 @@ Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
 
 //Activos
 Route::get('/assets/{rol}', [AssetController::class, 'index']);
+Route::get('/assetsForMaintances', [AssetController::class, 'indexForMaintenances']);
 Route::get('/assets/show/{id}', [AssetController::class, 'show']);
 
 //Mostrar ingresoso solo abiertos
