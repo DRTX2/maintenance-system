@@ -101,14 +101,22 @@ class IncomeController extends Controller
         if ($income->assets()->exists()) {
 
             return response()->json([
-                'message' => 'No se puede eliminar el ingreso porque tiene activos asociados.',
+                'errors' => [
+                    'reason' => ['El ingreso esta asociado a otros activos.']
+                ]
             ], 400);
-        }
-        $income->delete();
 
-        return response()->json([
-            'message' => 'Ingreso elimado con exito'
-        ], 200);
+
+
+        } else {
+
+            $income->delete();
+
+            return response()->json([
+                'message' => 'Ingreso elimado con exito'
+            ], 200);
+        }
+
     }
 
     public function search(Request $request)

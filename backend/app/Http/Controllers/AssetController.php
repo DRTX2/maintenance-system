@@ -324,9 +324,6 @@ class AssetController extends Controller
         ]);
 
 
-
-
-
     }
 
     public function update(AssetRequest $request, string $id)
