@@ -102,7 +102,7 @@ class IncomeController extends Controller
 
             return response()->json([
                 'errors' => [
-                    'reason' => ['El ingreso esta asociado a otros activos.']
+                    'reason' => ['No se puede eliminar el ingreso debido a que está asociado a al menos un activo.']
                 ]
             ], 400);
 
