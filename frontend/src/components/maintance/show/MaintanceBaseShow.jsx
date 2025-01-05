@@ -32,6 +32,7 @@ const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
   const role = getDecodedToken()?.role;
   const [maintances, setMaintances] = useState([]);
+  const [isReady, setIsReady] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
 
@@ -45,6 +46,8 @@ const MaintanceBaseShow = ({ columns }) => {
       setMaintances(response.data.results);
     } catch (error) {
       toast.error("No se ha podido obtener los mantenimientos");
+    } finally {
+      setIsReady(true);
     }
   };
 
@@ -159,106 +162,112 @@ const MaintanceBaseShow = ({ columns }) => {
       {/* Fin del box */}
 
       {/* Tabla. Esta también debe ser mandado a otro componente mucho más general */}
-      <Box className="flexColumnCenter" paddingTop="20px">
-        {formattedData.length > 0 ? (
-          <>
-            <TableContainer
-              className="table-container"
-              component={Paper}
-              sx={tableStyles.tableContainer}
-            >
-              <Table>
-                <TableHead sx={tableStyles.tableHead}>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableCell key={column.key}>{column.label}</TableCell>
-                    ))}
-                    <TableCell align="center">Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {formattedData
-                    .slice(
-                      currentPage * rowsPerPage,
-                      currentPage * rowsPerPage + rowsPerPage
-                    )
-                    // item --> un mantenimiento
-                    .map((item) => (
-                      <TableRow key={item.id}>
-                        {columns.map((column) => (
-                          <TableCell key={column.key}>
-                            {item[column.key]}
-                          </TableCell>
-                        ))}
-                        <TableCell align="center">
-                          <IconButton
-                            onClick={() => onView(item.id)}
-                            color="primary"
-                          >
-                            <Tooltip title="Ver">
-                              <VisibilityIcon />
-                            </Tooltip>
-                          </IconButton>
-
-                          <IconButton
-                            onClick={() => onEdit(item.id)}
-                            color="primary"
-                          >
-                            <Tooltip title="Editar">
-                              <EditIcon />
-                            </Tooltip>
-                          </IconButton>
-
-                          {role === "admin" ? (
+      {isReady ? (
+        <Box className="flexColumnCenter" paddingTop="20px">
+          {formattedData.length > 0 ? (
+            <>
+              <TableContainer
+                className="table-container"
+                component={Paper}
+                sx={tableStyles.tableContainer}
+              >
+                <Table>
+                  <TableHead sx={tableStyles.tableHead}>
+                    <TableRow>
+                      {columns.map((column) => (
+                        <TableCell key={column.key}>{column.label}</TableCell>
+                      ))}
+                      <TableCell align="center">Acciones</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {formattedData
+                      .slice(
+                        currentPage * rowsPerPage,
+                        currentPage * rowsPerPage + rowsPerPage
+                      )
+                      // item --> un mantenimiento
+                      .map((item) => (
+                        <TableRow key={item.id}>
+                          {columns.map((column) => (
+                            <TableCell key={column.key}>
+                              {item[column.key]}
+                            </TableCell>
+                          ))}
+                          <TableCell align="center">
                             <IconButton
-                              onClick={() => onDelete(item.id, item.vis_main)}
-                              color={
-                                item.vis_main === "V" ? "secondary" : "sucess"
-                              }
+                              onClick={() => onView(item.id)}
+                              color="primary"
                             >
-                              {item.vis_main === "V" ? (
-                                <Tooltip title="Ocultar">
-                                  <VisibilityOffIcon />
-                                </Tooltip>
-                              ) : (
-                                <Tooltip title="Mostrar">
-                                  <VisibilityIcon />
-                                </Tooltip>
-                              )}
+                              <Tooltip title="Ver">
+                                <VisibilityIcon />
+                              </Tooltip>
                             </IconButton>
-                          ) : null}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              count={formattedData.length}
-              page={currentPage}
-              rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={[3, 5]}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              labelRowsPerPage={
-                <span style={tableStyles.labelRowsPerPage}>
-                  Filas por página
-                </span>
-              }
-              labelDisplayedRows={() => ""}
-              ActionsComponent={(props) => (
-                <CustomTablePaginationActions {...props} />
-              )}
-              sx={tableStyles.pagination}
-            />
-          </>
-        ) : (
-          <div style={{ textAlign: "center", marginTop: "20px" }}>
-            <CircularProgress />
-          </div>
-        )}
-      </Box>
+
+                            <IconButton
+                              onClick={() => onEdit(item.id)}
+                              color="primary"
+                            >
+                              <Tooltip title="Editar">
+                                <EditIcon />
+                              </Tooltip>
+                            </IconButton>
+
+                            {role === "admin" ? (
+                              <IconButton
+                                onClick={() => onDelete(item.id, item.vis_main)}
+                                color={
+                                  item.vis_main === "V" ? "secondary" : "sucess"
+                                }
+                              >
+                                {item.vis_main === "V" ? (
+                                  <Tooltip title="Ocultar">
+                                    <VisibilityOffIcon />
+                                  </Tooltip>
+                                ) : (
+                                  <Tooltip title="Mostrar">
+                                    <VisibilityIcon />
+                                  </Tooltip>
+                                )}
+                              </IconButton>
+                            ) : null}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                component="div"
+                count={formattedData.length}
+                page={currentPage}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[3, 5]}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                labelRowsPerPage={
+                  <span style={tableStyles.labelRowsPerPage}>
+                    Filas por página
+                  </span>
+                }
+                labelDisplayedRows={() => ""}
+                ActionsComponent={(props) => (
+                  <CustomTablePaginationActions {...props} />
+                )}
+                sx={tableStyles.pagination}
+              />
+            </>
+          ) : (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              No hay mantenimientos registrados.
+            </div>
+          )}
+        </Box>
+      ) : (
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <CircularProgress />
+        </div>
+      )}
 
       {/* Fin table */}
     </div>
