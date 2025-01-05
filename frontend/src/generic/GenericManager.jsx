@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
+import { handleErrors } from "../utils/validations";
 
 import GenericStyles from "./styles/GenericStyles";
 import CreateModal from "./CreateModal";
@@ -98,13 +99,13 @@ const GenericManager = ({
 
   const handleUpdate = async (item) => {
     try {
-      console.log("Que envio", item);
       await axiosInstance.put(`${apiConfig.update}/${item.id}`, item);
       await fetchEntities();
       toast.success(`Registro actualizado correctamente.`);
       setIsEditing(false);
       setModalViewOpen(false);
     } catch (error) {
+      console.log("Error");
       handleError(
         error,
         `Error inesperado al actualizar ${entityNameSingular}`
@@ -132,6 +133,7 @@ const GenericManager = ({
       toast.success(`Registro eliminado con éxito.`);
       setModalDeleteOpen(false);
     } catch (error) {
+      console.log(error);
       handleError(error, `Error inesperado al eliminar ${entityNameSingular}`);
     }
   };
@@ -148,7 +150,7 @@ const GenericManager = ({
   const handleError = (error, defaultMessage) => {
     if (error.response && error.response.data.errors) {
       const errors = error.response.data.errors;
-      const errorMessage = generateErrorMessage(errors, fields);
+      const errorMessage = generateErrorMessage(errors);
       toast.error(errorMessage);
     } else {
       toast.error(defaultMessage);
