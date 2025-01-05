@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MaintenanceDetailRequest;
+use App\Models\Asset;
 use App\Models\Maintenance;
 use App\Models\MaintenanceDetail;
 use App\Models\Observation;
@@ -202,13 +203,24 @@ class MaintenanceDetailController extends Controller
                 'created_at' => $validatedData['created_at'] ?? null,
             ]);
 
-            // Eliminar registros antiguos de mantenimiento
-            $maintenanceDetail = MaintenanceDetail::where('id_main_bel', $maintenance->id)->firstOrFail();
-            $this->deleteOldRecords($maintenanceDetail->id);
+            MaintenanceDetail::where('id_main_bel', $maintenance->id)->each(function ($maintenanceDetail) {
+                $this->deleteOldRecords($maintenanceDetail->id);
+                $maintenanceDetail->delete();
+            });
 
-            // Re-crear los nuevos registros
-            $this->createNewRecords($maintenanceDetail->id, $validatedData["assets"]);
+            foreach ($validatedData['assets'] as $asset) {
+                $maintenanceDetail = new MaintenanceDetail();
+                $maintenanceDetail->id_main_bel = $maintenance->id;
+                $maintenanceDetail->id_ass_bel = $asset['id'];
+                $maintenanceDetail->save();
 
+                if (!$maintenanceDetail->id) {
+                    throw new Exception("Error al crear el detalle de mantenimiento para un activo.");
+                }
+
+                // Crear registros relacionados con el detalle
+                $this->createNewRecords($maintenanceDetail->id, [$asset]);
+            }
             DB::commit();
 
             return response()->json([
@@ -241,7 +253,7 @@ class MaintenanceDetailController extends Controller
     protected function createNewRecords($maintenanceDetailId, $assets)
     {
         foreach ($assets as $asset) {
-            // Insertar nuevas observaciones solo para el activo actual
+            // Insertar nuevas observaciones
             if (!empty($asset['observations'])) {
                 $observations = array_map(function ($observation) use ($maintenanceDetailId) {
                     return [
@@ -251,10 +263,10 @@ class MaintenanceDetailController extends Controller
                         'updated_at' => now(),
                     ];
                 }, $asset['observations']);
-                Observation::insert($observations); 
+                Observation::insert($observations);
             }
-    
-            // Insertar nuevos componentes reemplazados solo para el activo actual
+
+            // Insertar nuevos componentes reemplazados
             if (!empty($asset['replaced_components'])) {
                 $components = array_map(function ($component) use ($maintenanceDetailId) {
                     return [
@@ -265,10 +277,10 @@ class MaintenanceDetailController extends Controller
                         'updated_at' => now(),
                     ];
                 }, $asset['replaced_components']);
-                ReplacedComponent::insert($components); // Inserta solo los componentes del activo actual
+                ReplacedComponent::insert($components);
             }
-    
-            // Insertar nuevas actividades solo para el activo actual
+
+            // Insertar nuevas actividades
             if (!empty($asset['activities'])) {
                 $activities = array_map(function ($activityId) use ($maintenanceDetailId) {
                     return [
@@ -278,7 +290,7 @@ class MaintenanceDetailController extends Controller
                         'updated_at' => now(),
                     ];
                 }, $asset['activities']);
-                DB::table('activity_maintenance_details')->insert($activities); // Inserta solo las actividades del activo actual
+                DB::table('activity_maintenance_details')->insert($activities);
             }
         }
     }
