@@ -233,15 +233,20 @@ export const validateField = (key, value) => {
   return ""; // Sin error
 };
 
-export const generateErrorMessage = (errors, fields) => {
+export const generateErrorMessage = (errors) => {
   let message = "";
 
-  fields.forEach((field) => {
-    if (errors[field.key]) {
-      message += errors[field.key] + " ";
+  console.log("Los errores son", errors);
+  console.log(Object.entries(errors));
+  Object.entries(errors).forEach(([key, errorMessages]) => {
+    if (Array.isArray(errorMessages)) {
+      message += errorMessages.join(" ") + " ";
+    } else if (typeof errorMessages === "string") {
+      message += errorMessages + " ";
     }
   });
-  return message.trim();
+
+  return message.trim(); // Eliminar espacios innecesarios al final
 };
 
 export const handleErrors = (errors) => {

@@ -152,7 +152,9 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const onOpenComponents = async (id) => {
     // Cargar los datos del catalogo de activo seleccionado.
     try {
-      const response = await axiosInstance.get(`/assets/show/${id}`);
+      const response = await axiosInstance.get(
+        `/assets/showForMaintances/${id}`
+      );
       setComponentsCatalog(response.data.components);
       console.log("Compnnes", response.data.components);
       const asset = assetsTable.find((item) => item.id === id);
@@ -202,18 +204,18 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       setHelperTextAsset("Debe agregar al menos un activo.");
     }
 
-    const hasMissingActivities = assetsTable.some(
-      (asset) => asset.activities.length === 0
-    );
-
-    if (hasMissingActivities) {
-      toast.error(
-        "Todos los activos deben tener al menos una actividad asignada."
-      );
-      return;
-    }
-
     if (validateAll()) {
+      const hasMissingActivities = assetsTable.some(
+        (asset) => asset.activities.length === 0
+      );
+
+      if (hasMissingActivities) {
+        toast.error(
+          "Todos los activos deben tener al menos una actividad asignada."
+        );
+        return;
+      }
+
       try {
         const formatted = assetsTable.map((item) => ({
           ...item,
@@ -313,8 +315,13 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                         <TableRow key={row.id}>
                           <TableCell>{row.cod_ass}</TableCell>
                           <TableCell>{row.ser_num_ass}</TableCell>
-                          <TableCell>
-                            {row.activities.length} {" Actividades"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.activities.length}{" "}
+                            {row.activities.length === 1
+                              ? "Actividad"
+                              : "Actividades"}
                             <IconButton
                               onClick={() => onOpenActivities(row.id)}
                               arial-label="abrir"
@@ -322,8 +329,13 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
-                            {row.observations.length} {" Observaciones"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.observations.length}{" "}
+                            {row.observations.length === 1
+                              ? "Observación"
+                              : "Observaciones"}
                             <IconButton
                               onClick={() => onOpenObservations(row.id)}
                               arial-label="abrir"
@@ -331,8 +343,13 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
                               <PlaylistAddIcon />
                             </IconButton>
                           </TableCell>
-                          <TableCell>
-                            {row.replaced_components.length} {" Componentes"}
+                          <TableCell
+                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                          >
+                            {row.replaced_components.length}{" "}
+                            {row.replaced_components.length === 1
+                              ? "Componente"
+                              : "Componentes"}
                             <IconButton
                               onClick={() => onOpenComponents(row.id)}
                               arial-label="abrir"
