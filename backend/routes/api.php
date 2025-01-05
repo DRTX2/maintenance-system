@@ -53,10 +53,6 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     // Coloca aqui las rutas que estarán protegidas.
 });
 
-Route::get('/categories/names', [CategoryController::class, 'getNames']);
-
-
-
 //Rutas para las ubicaciones 
 
 Route::get('/locations', [LocationController::class, 'index']);
@@ -92,6 +88,7 @@ Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
 
 //Activos
 Route::get('/assets/{rol}', [AssetController::class, 'index']);
+Route::get('/assetsForMaintances', [AssetController::class, 'indexForMaintenances']);
 Route::get('/assets/show/{id}', [AssetController::class, 'show']);
 
 //Mostrar ingresoso solo abiertos
@@ -111,8 +108,8 @@ Route::post(
 Route::post('/assets/search/{rol}', [AssetController::class, 'search']);
 Route::post('/assets/filters', [AssetController::class, 'indexWithFilters']);
 Route::post('/assets/status', [AssetController::class, 'getStatus']);
-Route::post('/assets/validate', [AssetController::class, 'validateAssets']);
-Route::post('/assets/batch', [AssetController::class, 'storeBatch']);
+
+
 
 //Mantenimientos - aun no gestiono su relacion con responsables
 

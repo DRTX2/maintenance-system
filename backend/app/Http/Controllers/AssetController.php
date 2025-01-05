@@ -95,11 +95,15 @@ class AssetController extends Controller
 
             $assets = Asset::with(['income', 'category', 'location'])->get();
         }
+
+
+
         // if ($assets->isEmpty()) {
         //     return response()->json([
         //         'message' => 'No se encontraron activos'
         //     ]);
         // }
+
 
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
@@ -116,6 +120,37 @@ class AssetController extends Controller
                 'ser_num_ass' => $asset->ser_num_ass,
                 'obs_add_ass' => $asset->obs_add_ass ?? null,
                 'est_ass' => $rol === 'admin' ? $asset->est_ass : null,
+
+            ];
+        });
+        return response()->json($transformedAssets, 200);
+    }
+
+
+    public function indexForMaintenances()
+    {
+
+
+        $assets = Asset::where('est_ass', 'V')
+            ->with(['income', 'category', 'location'])
+            ->get();
+
+
+
+        $transformedAssets = $assets->map(function ($asset) {
+            return [
+                'id' => $asset->id,
+                'id_inc_ass' => $asset->income->id,
+                'id_cat_ass' => $asset->category->id,
+                'id_loc_ass' => $asset->location->id,
+                'income_code' => $asset->income->cod_inc,
+                'category_code' => $asset->category->cod_dis,
+                'category_name' => $asset->category->nom_dis,
+                'location_code' => $asset->location->cod_loc,
+                'location_name' => $asset->location->nam_loc,
+                'cod_ass' => $asset->cod_ass,
+                'ser_num_ass' => $asset->ser_num_ass,
+                'obs_add_ass' => $asset->obs_add_ass ?? null,
 
             ];
         });
@@ -183,6 +218,8 @@ class AssetController extends Controller
 
         return response()->json($response);
     }
+
+
 
     public function store(AssetRequest $request)
     {
