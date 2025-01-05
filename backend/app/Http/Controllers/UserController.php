@@ -28,7 +28,7 @@ class UserController extends Controller
                 "email" => "required|string|max:255|unique:users,email",
                 "password" => "required|string|max:255",
                 "role" => "nullable|string",
-                "dni_usr" => "required|string|size:10|unique:responsibles,dni_usr", 
+                "dni_usr" => "required|string|size:10|unique:responsibles,dni_res",
             ], [
                 "email.unique" => "Correo electronico duplicado",
                 "dni_usr.unique" => "Cédula duplicada"
@@ -124,7 +124,7 @@ class UserController extends Controller
             "term" => "required|string|min:1|max:50",
         ]);
         $term = $request["term"] ?? "";
-        $users = User::where("email", "LIKE", "%$term%")->get();
+        $users = User::where("dni_usr", "LIKE", "%$term%")->get();
 
         return response()->json([
             "results" => $users,
