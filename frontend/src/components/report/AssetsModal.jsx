@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import BaseModal from "./BaseModal";
 import GeneralWrapper from "./GeneralWrapper";
 import ModalWrapper from "./ModalWrapper";
+import generateAssetsPDF from "./generateAssetsPDF";
 
 const AssetsModal = (props) => {
   const [assets, setAssets] = useState([]);
@@ -56,6 +57,7 @@ const AssetsModal = (props) => {
       return;
     }
 
+    generateAssetsPDF();
     console.log("Sending", assetSelected);
   };
 

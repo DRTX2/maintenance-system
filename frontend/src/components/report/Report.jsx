@@ -9,6 +9,7 @@ import Wrapper from "./Wrapper";
 import ReportItem from "./ReportItem";
 import ResponsiblesModal from "./ResponsiblesModal";
 import AssetsModal from "./AssetsModal";
+import generateMaintenancesPDF from "./generateMaintenancesPDF";
 
 const Report = () => {
   const role = getDecodedToken()?.role;
@@ -24,7 +25,7 @@ const Report = () => {
   const [isOpenAssets, setIsOpenAssets] = useState(false);
 
   const handleReportMaintenaces = () => {
-    console.log("Mnatenimientos");
+    generateMaintenancesPDF();
   };
 
   return (

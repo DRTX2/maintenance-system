@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import ReusableDatePicker from "./ReusableDatePicker";
 import BaseModal from "./BaseModal";
+import generateResponsiblesPDF from "./generateResponsiblesPDF";
 
 dayjs.extend(utc);
 
@@ -107,14 +108,15 @@ const ResponsiblesModal = (props) => {
     const newErrors = validateForm(formData);
     setErrors(newErrors);
 
-    const hasErrors = Object.values(formData).length > 0;
+    const hasErrors = Object.values(newErrors).length > 0;
 
     if (hasErrors) {
       toast.error("Hay errores pendientes");
       return;
     }
 
-    console.log("Para enviar", formData);
+    // Aqui el back me debe devolver un data y ese data lo debo enviar a mi funcion.
+    generateResponsiblesPDF();
   };
 
   return (
