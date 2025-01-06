@@ -127,6 +127,22 @@ class AssetController extends Controller
     }
 
 
+    public function all()
+    {
+
+        $assets = Asset::all();
+
+        $transformedAssets = $assets->map(function ($asset) {
+            return [
+                'id' => $asset->id,
+                'cod_ass' => $asset->cod_ass,
+                'ser_num_ass' => $asset->ser_num_ass,
+                'est_ass' => $asset->est_ass ?? null,
+            ];
+        });
+        return response()->json($transformedAssets, 200);
+    }
+
     public function indexForMaintenances()
     {
 
