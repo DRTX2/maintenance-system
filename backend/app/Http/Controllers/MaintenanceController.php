@@ -29,6 +29,103 @@ class MaintenanceController extends Controller
         ], 200);
     }
 
+    public function indexWithFilters(Request $request)
+    {
+        $maintenances = Maintenance::query();
+
+        // Filtro por código de mantenimiento (búsqueda exacta o parcial), controlar q el front solo permita 1
+        if ($request->has('cod_main') && count($request->input('cod_main')) > 0) {
+            foreach ($request->input('cod_main') as $cod) {
+                $maintenances->orWhere('cod_main', 'LIKE', '%' . $cod . '%');
+            }
+        }
+        // Filtro por tipos de mantenimiento (búsqueda exacta en array)
+        if ($request->has('types') && count($request->input('types')) > 0) {
+            $maintenances->whereIn('id_typ_main', $request->input('types'));
+        }
+
+        // Filtro por responsables (búsqueda exacta en array)
+        if ($request->has('responsibles') && count($request->input('responsibles')) > 0) {
+            $maintenances->whereIn('dni_res_main', $request->input('responsibles'));
+        }
+
+        // Filtro por activos involucrados (búsqueda exacta o parcial)
+        if ($request->has('assets') && count($request->input('assets')) > 0) {
+            foreach ($request->input('assets') as $asset) {
+                $maintenances->orWhereHas('maintenanceDetails.asset', function ($query) use ($asset) {
+                    $query->where('id', 'LIKE', '%' . $asset . '%');
+                });
+            }
+        }
+
+        // Filtro por fecha de creación (created_at / fecha_inicio)
+        if ($request->has('created_at') && count($request->input('created_at')) > 0) {
+            foreach ($request->input('created_at') as $created_at) {
+                if (strpos($created_at, ',') === false) {
+                    $maintenances->orWhereDate('created_at', '=', $created_at);
+                } else {
+                    list($start_date, $end_date) = explode(',', $created_at);
+                    $maintenances->orWhereBetween('created_at', [$start_date, $end_date]);
+                }
+            }
+        }
+
+        // Filtro por fecha de finalización (ended_at / fecha_fin)
+        if ($request->has('ended_at') && count($request->input('ended_at')) > 0) {
+            foreach ($request->input('ended_at') as $ended_at) {
+                if (strpos($ended_at, ',') === false) {
+                    $maintenances->orWhereDate('ended_at', '=', $ended_at);
+                } else {
+                    list($start_date, $end_date) = explode(',', $ended_at);
+                    $maintenances->orWhereBetween('ended_at', [$start_date, $end_date]);
+                }
+            }
+        }
+
+        // Verificación de que la fecha de creación no sea posterior a la fecha de finalización
+        if ($request->has('created_at') && $request->has('ended_at')) {
+            $created_at = $request->input('created_at')[0]; // Tomamos el primer valor del array
+            $ended_at = $request->input('ended_at')[0]; // Tomamos el primer valor del array
+
+            if (strtotime($created_at) > strtotime($ended_at)) {
+                return response()->json([
+                    'error' => 'La fecha de creación no puede ser posterior a la fecha de finalización.'
+                ], 400);
+            }
+        }
+
+
+        // Cargar relaciones necesarias
+        $maintenances = $maintenances->with([
+            'maintenanceType:id,typ_main',
+            'responsible:id,dni_res,nam_res,las_res,is_ext',
+            'maintenanceDetails.asset',
+            'maintenanceDetails.observations',
+            'maintenanceDetails.replacedComponents',
+            'maintenanceDetails.activities'
+        ])->get();
+
+        // Transformar los resultados para la respuesta
+        $transformedMaintenances = $maintenances->map(function ($maintenance) {
+            return [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'vis_main' => $maintenance->vis_main,
+                // 'responsable_ced' => $maintenance->responsible->dni_res,
+                // 'responsable_isExt' => $maintenance->responsible->is_ext,
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
+                'type' => $maintenance->maintenanceType->typ_main,
+            ];
+        });
+
+        // Retornar respuesta estructurada
+        return response()->json([
+            'results' => $transformedMaintenances
+        ], 200);
+    }
+
+
+
     public function show($id)
     {
         $maintenance = Maintenance::with([

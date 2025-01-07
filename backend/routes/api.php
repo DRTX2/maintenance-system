@@ -88,6 +88,7 @@ Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
 
 //Activos
 Route::get('/assets/{rol}', [AssetController::class, 'index']);
+Route::get('/assets/all', [AssetController::class, 'all']);
 Route::get('/assetsForMaintances', [AssetController::class, 'indexForMaintenances']);
 Route::get('/assets/showForMaintances/{id}', [AssetController::class, 'showForManteinces']);
 Route::get('/assets/show/{id}', [AssetController::class, 'show']);
@@ -120,6 +121,7 @@ Route::post('/maintenances/search', [MaintenanceController::class, 'search']);
 Route::get('/maintenances/{id}', [MaintenanceController::class, 'show']);
 Route::put('/maintenances/{id}', [MaintenanceController::class, 'update']);
 Route::post('/maintenances/{id}', [MaintenanceController::class, 'hide'])->where('id', '[0-9]+');
+Route::post('/maintenances/filters', [MaintenanceController::class, 'indexWithFilters']);
 
 // Observations
 

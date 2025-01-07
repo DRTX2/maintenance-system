@@ -9,8 +9,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // User::factory(10)->create();
-
         $this->call([
             SupplierSeeder::class,
             LocationSeeder::class,
@@ -22,6 +20,7 @@ class DatabaseSeeder extends Seeder
             TypeMaintenanceSeeder::class,
             ResponsibleSeeder::class,
             AssetsSeeder::class,
+            MaintenanceSeeder::class,
         ]);
 
 

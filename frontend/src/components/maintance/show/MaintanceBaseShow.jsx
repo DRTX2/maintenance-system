@@ -27,6 +27,7 @@ import tableStyles from "../../../generic/styles/TableStyles";
 import { getDecodedToken } from "../../../utils/authService";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/api";
+import MaintanceFilters from "../../../generic/filters/MaintanceFilters";
 
 const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ const MaintanceBaseShow = ({ columns }) => {
     try {
       const response = await axiosInstance.get("/maintenances");
       setMaintances(response.data.results);
+      console.log(response.data.results);
     } catch (error) {
       toast.error("No se ha podido obtener los mantenimientos");
     } finally {
@@ -92,6 +94,43 @@ const MaintanceBaseShow = ({ columns }) => {
     } catch (error) {
       toast.error("No se ha podido ocultar el mantenimiento");
     }
+  };
+
+  const fetchAssetsFilter = async (filters = {}) => {
+    setIsReady(false);
+    try {
+      const response = await axiosInstance.post(
+        "/maintenances/filters",
+        filters
+      );
+      console.log(response.data);
+      setMaintances(response.data);
+      setIsReady(true);
+    } catch (error) {
+      toast.error("No se ha podido filtrar.");
+    }
+  };
+
+  const handleFilterChange = async (updatedFilters) => {
+    console.log("Updated", updatedFilters);
+    if (!updatedFilters) {
+      toast.error("Filtros no definidos");
+      return;
+    }
+
+    const isFilterEmpty = Object.values(updatedFilters).every(
+      (filter) => !filter || Object.values(filter).every((value) => !value)
+    );
+
+    if (isFilterEmpty) {
+      toast.info(
+        "No se han encontrado filtros aplicados, recargando activos..."
+      );
+      await fetchData();
+      return;
+    }
+
+    await fetchAssetsFilter(updatedFilters);
   };
 
   const formattedData = maintances.map((maintance) => {
@@ -156,6 +195,10 @@ const MaintanceBaseShow = ({ columns }) => {
             }}
           >
             <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} />
+            <MaintanceFilters
+              onFilterChange={handleFilterChange}
+              onClear={fetchData}
+            />
           </Box>
         </Box>
       </Box>
