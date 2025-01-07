@@ -17,7 +17,6 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
       setTypeMaintance(typeMaintances.data.results);
       setResponsible(responsibles.data.results);
       setAssets(assets.data.results);
-      console.log(assets.data.results);
     };
 
     fetchAll();
