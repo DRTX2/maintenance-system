@@ -96,7 +96,7 @@ const MaintanceBaseShow = ({ columns }) => {
     }
   };
 
-  const fetchAssetsFilter = async (filters = {}) => {
+  const fetchMaintenancesFilters = async (filters = {}) => {
     setIsReady(false);
     try {
       const response = await axiosInstance.post(
@@ -107,6 +107,7 @@ const MaintanceBaseShow = ({ columns }) => {
       setMaintances(response.data);
       setIsReady(true);
     } catch (error) {
+      console.log(error.response);
       toast.error("No se ha podido filtrar.");
     }
   };
@@ -130,7 +131,7 @@ const MaintanceBaseShow = ({ columns }) => {
       return;
     }
 
-    await fetchAssetsFilter(updatedFilters);
+    await fetchMaintenancesFilters(updatedFilters);
   };
 
   const formattedData = maintances.map((maintance) => {

@@ -33,25 +33,25 @@ class MaintenanceController extends Controller
     {
         $maintenances = Maintenance::query();
 
-        // Filtro por código de mantenimiento
-        if ($request->has('cod_main') && !empty($request->input('cod_main'))) {
-            $maintenances->where('cod_main', $request->input('cod_main'));
-        }
+        // // Filtro por código de mantenimiento
+        // if ($request->has('cod_main') && !empty($request->input('cod_main'))) {
+        //     $maintenances->where('cod_main', $request->input('cod_main'));
+        // }
 
         // Filtro por tipo de mantenimiento
-        if ($request->has('id_typ_main') && !empty($request->input('id_typ_main'))) {
-            $maintenances->where('id_typ_main', $request->input('id_typ_main'));
+        if ($request->has('types') && !empty($request->input('types'))) {
+            $maintenances->whereIn('id_typ_main', $request->input('types'));
         }
 
         // Filtro por responsable
-        if ($request->has('dni_res_main') && !empty($request->input('dni_res_main'))) {
-            $maintenances->where('id', $request->input('dni_res_main'));
+        if ($request->has('responsibles') && !empty($request->input('responsibles'))) {
+            $maintenances->whereIn('id', $request->input('responsibles'));
         }
 
         // Filtro por activos involucrados
-        if ($request->has('id_ass_bel')) {
+        if ($request->has('assets' && !empty($request->input('assets')))) {
             $maintenances->whereHas('maintenanceDetails.asset', function ($query) use ($request) {
-                $query->where('id', $request->input('id_ass_bel'));
+                $query->whereIn('id', $request->input('assets'));
             });
         }
 
