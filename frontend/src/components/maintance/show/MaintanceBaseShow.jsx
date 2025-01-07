@@ -123,9 +123,6 @@ const MaintanceBaseShow = ({ columns }) => {
     );
 
     if (isFilterEmpty) {
-      toast.info(
-        "No se han encontrado filtros aplicados, recargando activos..."
-      );
       await fetchData();
       return;
     }
@@ -285,11 +282,11 @@ const MaintanceBaseShow = ({ columns }) => {
                               >
                                 {item.vis_main === "V" ? (
                                   <Tooltip title="Ocultar">
-                                    <VisibilityOffIcon />
+                                    <VisibilityIcon />
                                   </Tooltip>
                                 ) : (
                                   <Tooltip title="Mostrar">
-                                    <VisibilityIcon />
+                                    <VisibilityOffIcon />
                                   </Tooltip>
                                 )}
                               </IconButton>

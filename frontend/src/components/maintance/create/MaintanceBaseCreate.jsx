@@ -156,7 +156,6 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
         `/assets/showForMaintances/${id}`
       );
       setComponentsCatalog(response.data.components);
-      console.log("Compnnes", response.data.components);
       const asset = assetsTable.find((item) => item.id === id);
       setCurrentAsset(asset);
       setOpenComponents(true);

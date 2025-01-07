@@ -37,8 +37,8 @@ const ObservationsModal = ({ open, onClose, onSave, currentObservations }) => {
       return;
     }
 
-    if (selectedObservation.length > 30 || selectedObservation.length < 5) {
-      toast.warning("La observación debe tener entre 5 y 30 caracteres.");
+    if (selectedObservation.length > 100 || selectedObservation.length < 5) {
+      toast.warning("La observación debe tener entre 5 y 100 caracteres.");
       return;
     }
 
