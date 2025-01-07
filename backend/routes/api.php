@@ -113,8 +113,13 @@ Route::post('/assets/status', [AssetController::class, 'getStatus']);
 
 
 //Mantenimientos - aun no gestiono su relacion con responsables
+// Route::middleware([JwtMiddleware::class])->group(function () {
+    Route::get('/maintenances', [MaintenanceController::class, 'index']);
+   
+// });
 
-Route::get('/maintenances', [MaintenanceController::class, 'index']);
+
+
 Route::post('/maintenances', [MaintenanceController::class, 'store']);
 Route::post('/maintenances/search', [MaintenanceController::class, 'search']);
 Route::get('/maintenances/{id}', [MaintenanceController::class, 'show']);
