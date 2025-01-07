@@ -44,11 +44,11 @@ const generateResponsiblesPDF = () => {
   }
 
   doc.text("En proceso", 10, doc.lastAutoTable.finalY + 10);
-  //   doc.autoTable({
-  //     head: [columns],
-  //     body: rows2,
-  //     startY: doc.lastAutoTable.finalY + 15,
-  //   });
+  doc.autoTable({
+    head: [columns],
+    body: rows2,
+    startY: doc.lastAutoTable.finalY + 15,
+  });
 
   doc.save("reporte.pdf");
 };
