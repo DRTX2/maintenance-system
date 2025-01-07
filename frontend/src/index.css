@@ -1,0 +1,61 @@
+:root {
+  --primary-color: #424874;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+button {
+  margin: 10px;
+  padding: 5px 10px;
+  background-color: #6a71a5;
+  border: none;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease; /* Animación suave */
+}
+
+button:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+.table-container {
+  width: 90%;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+.flexRowCenterStart {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+.flexRowCenterEnd {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.flewColumnCenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: column;
+  align-items: column;
+  width: 100%;
+}

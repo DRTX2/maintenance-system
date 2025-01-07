@@ -32,7 +32,6 @@ class JWTAuthController extends Controller
             ]);
 
             $token = JWTAuth::fromUser($user);
-
             return response()->json(compact('user', 'token'), 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Could not create user', 'message' => $e->getMessage()], 500);
@@ -49,17 +48,27 @@ class JWTAuthController extends Controller
                 return response()->json(['error' => 'Invalid credentials'], 401);
             }
 
-            // Get the authenticated user.
-            $user = auth()->user();
+            $user = JWTAuth::user(); // Obtén el usuario autenticado
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
 
-            // (optional) Attach the role to the token.
-            $token = JWTAuth::claims(['role' => $user->role])->fromUser($user);
+            // Si el usuario tiene un rol, agrégalo al token
+            $token = JWTAuth::claims([
+                'role' => $user->role ?? 'user',
+                'name' => $user->name,
+                'email' => $user->email
+            ])->fromUser($user);
 
-            return response()->json(compact('token'));
+            return response()->json([
+                'token' => $token
+            ], 200);
         } catch (JWTException $e) {
-            return response()->json(['error' => 'Could not create token'], 500);
+            // Mostrar el mensaje de error completo
+            return response()->json(['error' => 'Could not create token', 'details' => $e->getMessage()], 500);
         }
     }
+
 
     // Get authenticated user
     public function getUser()
