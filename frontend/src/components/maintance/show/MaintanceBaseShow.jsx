@@ -282,11 +282,11 @@ const MaintanceBaseShow = ({ columns }) => {
                               >
                                 {item.vis_main === "V" ? (
                                   <Tooltip title="Ocultar">
-                                    <VisibilityOffIcon />
+                                    <VisibilityIcon />
                                   </Tooltip>
                                 ) : (
                                   <Tooltip title="Mostrar">
-                                    <VisibilityIcon />
+                                    <VisibilityOffIcon />
                                   </Tooltip>
                                 )}
                               </IconButton>
