@@ -156,7 +156,7 @@ const AssetView = () => {
     const updatedRelatedData = relatedData.map((component) => {
       const description = component.pivot?.description?.trim();
 
-      // Validar descripción: Obligatorio, entre 3 y 50 caracteres
+      // Validar descripción: Obligatorio, entre 3 y 200 caracteres
       if (!description || description.length < 3 || description.length > 200) {
         hasErrors = true;
         return { ...component, error: true };

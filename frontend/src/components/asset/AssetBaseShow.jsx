@@ -105,9 +105,6 @@ const AssetShow = ({ columns, role }) => {
     );
 
     if (isFilterEmpty) {
-      toast.info(
-        "No se han encontrado filtros aplicados, recargando activos..."
-      );
       await fetchAssets();
       return;
     }
