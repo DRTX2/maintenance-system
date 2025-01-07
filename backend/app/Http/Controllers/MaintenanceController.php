@@ -29,6 +29,84 @@ class MaintenanceController extends Controller
         ], 200);
     }
 
+    public function indexWithFilters(Request $request)
+    {
+        $maintenances = Maintenance::query();
+
+        // Filtro por código de mantenimiento
+        if ($request->has('cod_main') && !empty($request->input('cod_main'))) {
+            $maintenances->where('cod_main', $request->input('cod_main'));
+        }
+
+        // Filtro por tipo de mantenimiento
+        if ($request->has('id_typ_main') && !empty($request->input('id_typ_main'))) {
+            $maintenances->where('id_typ_main', $request->input('id_typ_main'));
+        }
+
+        // Filtro por responsable
+        if ($request->has('dni_res_main') && !empty($request->input('dni_res_main'))) {
+            $maintenances->where('dni_res_main', $request->input('dni_res_main'));
+        }
+
+        // Filtro por activos involucrados
+        if ($request->has('id_ass_bel')) {
+            $maintenances->whereHas('maintenanceDetails.asset', function ($query) use ($request) {
+                $query->where('id', $request->input('id_ass_bel'));
+            });
+        }
+
+        // Relacionar con detalles y otras entidades necesarias
+        $maintenances = $maintenances->with([
+            'maintenanceDetails.asset',
+            'maintenanceDetails.observations',
+            'maintenanceDetails.replacedComponents',
+            'maintenanceDetails.activities'
+        ])->get();
+
+
+        // Transformar datos para la respuesta
+        $transformedMaintenances = $maintenances->map(function ($maintenance) {
+            return [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'id_typ_main' => $maintenance->id_typ_main,
+                'dni_res_main' => $maintenance->dni_res_main,
+                'vis_main' => $maintenance->vis_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
+                'details' => $maintenance->maintenanceDetails->map(function ($detail) {
+                    return [
+                        'id' => $detail->id,
+                        'id_ass_bel' => $detail->id_ass_bel,
+                        'observations' => $detail->observations->map(function ($observation) {
+                            return [
+                                'id' => $observation->id,
+                                'des_obs' => $observation->des_obs,
+                            ];
+                        }),
+                        'replaced_components' => $detail->replacedComponents->map(function ($component) {
+                            return [
+                                'id' => $component->id,
+                                'id_com_bel' => $component->id_com_bel,
+                                'des_rep_com' => $component->des_rep_com,
+                            ];
+                        }),
+                        'activities' => $detail->activities->map(function ($activity) {
+                            return [
+                                'id' => $activity->id,
+                                'typ_main_id' => $activity->typ_main_id,
+                                'act_main' => $activity->act_main,
+                            ];
+                        }),
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json($transformedMaintenances, 200);
+    }
+
+
     public function show($id)
     {
         $maintenance = Maintenance::with([
