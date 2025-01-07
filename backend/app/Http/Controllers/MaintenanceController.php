@@ -45,7 +45,7 @@ class MaintenanceController extends Controller
 
         // Filtro por responsable
         if ($request->has('dni_res_main') && !empty($request->input('dni_res_main'))) {
-            $maintenances->where('dni_res_main', $request->input('dni_res_main'));
+            $maintenances->where('id', $request->input('dni_res_main'));
         }
 
         // Filtro por activos involucrados

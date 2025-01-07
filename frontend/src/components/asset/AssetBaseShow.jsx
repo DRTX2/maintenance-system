@@ -39,6 +39,7 @@ const AssetShow = ({ columns, role }) => {
   };
 
   const fetchAssetsFilter = async (filters = {}) => {
+    console.log(filters);
     setIsLoading(true);
     try {
       const response = await axiosInstance.post("/assets/filters", filters);
