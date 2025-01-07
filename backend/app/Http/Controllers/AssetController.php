@@ -102,6 +102,7 @@ class AssetController extends Controller
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
                 'id' => $asset->id,
+                'income_code' => $asset->income->cod_inc,
                 'category_name' => $asset->category->nom_dis,
                 'location_name' => $asset->location->nam_loc,
                 'cod_ass' => $asset->cod_ass,
@@ -159,7 +160,7 @@ class AssetController extends Controller
             ], 422));
         }
 
-        // Mapear los componentes para incluir solo los atributos deseados
+
         $components = $asset->components->map(function ($component) {
             return [
                 'id' => $component->id,
@@ -357,6 +358,7 @@ class AssetController extends Controller
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
                 'id' => $asset->id,
+                'income_code' => $asset->income->cod_inc,
                 'category_name' => $asset->category->nom_dis,
                 'location_name' => $asset->location->nam_loc,
                 'cod_ass' => $asset->cod_ass,
@@ -416,6 +418,7 @@ class AssetController extends Controller
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
                 'id' => $asset->id,
+                'income_code' => $asset->income->cod_inc,
                 'category_name' => $asset->category->nom_dis,
                 'location_name' => $asset->location->nam_loc,
                 'cod_ass' => $asset->cod_ass,
