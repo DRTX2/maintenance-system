@@ -33,8 +33,9 @@ class AssetController extends Controller
     public function showOpenIncomesCreate()
     {
 
-
-        $incomes = Income::where('est_inc', 'O')->get();
+        $incomes = Income::select('id', 'cod_inc')
+            ->where('est_inc', 'O')
+            ->get();
 
         if ($incomes->isEmpty()) {
             return response()->json([
@@ -44,6 +45,7 @@ class AssetController extends Controller
 
         return response()->json($incomes, 200);
     }
+
 
     public function hideAsset($id)
     {
@@ -97,24 +99,11 @@ class AssetController extends Controller
         }
 
 
-
-        // if ($assets->isEmpty()) {
-        //     return response()->json([
-        //         'message' => 'No se encontraron activos'
-        //     ]);
-        // }
-
-
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
                 'id' => $asset->id,
-                'id_inc_ass' => $asset->income->id,
-                'id_cat_ass' => $asset->category->id,
-                'id_loc_ass' => $asset->location->id,
                 'income_code' => $asset->income->cod_inc,
-                'category_code' => $asset->category->cod_dis,
                 'category_name' => $asset->category->nom_dis,
-                'location_code' => $asset->location->cod_loc,
                 'location_name' => $asset->location->nam_loc,
                 'cod_ass' => $asset->cod_ass,
                 'ser_num_ass' => $asset->ser_num_ass,
@@ -156,17 +145,8 @@ class AssetController extends Controller
         $transformedAssets = $assets->map(function ($asset) {
             return [
                 'id' => $asset->id,
-                'id_inc_ass' => $asset->income->id,
-                'id_cat_ass' => $asset->category->id,
-                'id_loc_ass' => $asset->location->id,
-                'income_code' => $asset->income->cod_inc,
-                'category_code' => $asset->category->cod_dis,
-                'category_name' => $asset->category->nom_dis,
-                'location_code' => $asset->location->cod_loc,
-                'location_name' => $asset->location->nam_loc,
                 'cod_ass' => $asset->cod_ass,
                 'ser_num_ass' => $asset->ser_num_ass,
-                'obs_add_ass' => $asset->obs_add_ass ?? null,
 
             ];
         });
@@ -192,7 +172,7 @@ class AssetController extends Controller
             'income:id,cod_inc',
             'category:id,cod_dis,nom_dis',
             'location:id,cod_loc,nam_loc',
-            'components:id,cod_com,nam_com'
+            'components:id,nam_com'
         ])->findOrFail($id);
 
         if ($asset->est_ass === 'H' && $userRole !== "admin") {
@@ -483,13 +463,8 @@ class AssetController extends Controller
         $transformedAssets = $assets->map(function ($asset) use ($rol) {
             return [
                 'id' => $asset->id,
-                'id_inc_ass' => $asset->income->id,
-                'id_cat_ass' => $asset->category->id,
-                'id_loc_ass' => $asset->location->id,
                 'income_code' => $asset->income->cod_inc,
-                'category_code' => $asset->category->cod_dis,
                 'category_name' => $asset->category->nom_dis,
-                'location_code' => $asset->location->cod_loc,
                 'location_name' => $asset->location->nam_loc,
                 'cod_ass' => $asset->cod_ass,
                 'ser_num_ass' => $asset->ser_num_ass,

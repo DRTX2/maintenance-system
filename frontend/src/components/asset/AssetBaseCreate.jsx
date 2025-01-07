@@ -132,7 +132,7 @@ const Entry = ({ fields, columns, defaultState }) => {
       const description = component.pivot?.description?.trim();
 
       // Validar que la descripción exista y tenga entre 3 y 30 caracteres
-      if (!description || description.length < 3 || description.length > 50) {
+      if (!description || description.length < 3 || description.length > 200) {
         hasErrors = true;
         return { ...component, error: true };
       }
