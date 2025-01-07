@@ -45,7 +45,7 @@ const MaintanceBaseShow = ({ columns }) => {
     try {
       const response = await axiosInstance.get("/maintenances");
       setMaintances(response.data.results);
-      console.log(response.data.results);
+      console.log("RESPUTEA ORIGINAL", response.data.results);
     } catch (error) {
       toast.error("No se ha podido obtener los mantenimientos");
     } finally {
@@ -96,15 +96,15 @@ const MaintanceBaseShow = ({ columns }) => {
     }
   };
 
-  const fetchAssetsFilter = async (filters = {}) => {
+  const fetchMaintenancesFilters = async (filters = {}) => {
     setIsReady(false);
     try {
+      console.log("Filtros a enviarse", filters);
       const response = await axiosInstance.post(
         "/maintenances/filters",
         filters
       );
-      console.log(response.data);
-      setMaintances(response.data);
+      setMaintances(response.data.results);
       setIsReady(true);
     } catch (error) {
       toast.error("No se ha podido filtrar.");
@@ -130,7 +130,27 @@ const MaintanceBaseShow = ({ columns }) => {
       return;
     }
 
-    await fetchAssetsFilter(updatedFilters);
+    const cleanedData = buildFilterPayload(updatedFilters);
+    await fetchMaintenancesFilters(cleanedData);
+  };
+
+  const processFilter = (filter) => {
+    if (!filter) return [];
+
+    return Object.keys(filter)
+      .filter((key) => filter[key])
+      .map((key) => (isNaN(key) ? key : parseInt(key, 10)));
+  };
+
+  const buildFilterPayload = (selectedValues) => {
+    const payload = {
+      types: processFilter(selectedValues.types),
+      responsibles: processFilter(selectedValues.responsibles).map((value) => {
+        return typeof value === "number" ? String(value) : value;
+      }),
+      assets: processFilter(selectedValues.assets),
+    };
+    return payload;
   };
 
   const formattedData = maintances.map((maintance) => {
