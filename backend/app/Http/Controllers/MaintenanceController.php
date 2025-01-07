@@ -16,6 +16,7 @@ class MaintenanceController extends Controller
         $maintenances = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res'])
             ->get()
             ->map(function ($maintenance) {
+
                 return [
                     'id' => $maintenance->id,
                     'cod_main' => $maintenance->cod_main,

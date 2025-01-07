@@ -17,7 +17,6 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
       setTypeMaintance(typeMaintances.data.results);
       setResponsible(responsibles.data.results);
       setAssets(assets.data.results);
-      console.log(assets.data.results);
     };
 
     fetchAll();
@@ -34,7 +33,7 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
   const resultsResponsibles =
     responsibles.length > 0
       ? responsibles.map((responsible) => ({
-          key: responsible.id,
+          key: `${responsible.dni_res}`,
           label: `${responsible.dni_res} - ${responsible.nam_res}`,
         }))
       : [{ key: "", label: "No se han encontrado responsables" }];
@@ -49,17 +48,17 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
 
   const data = [
     {
-      key: "id_typ_main",
+      key: "types",
       label: "Tipos de mantenimiento",
       options: resultsTypeMaintances,
     },
     {
-      key: "dni_res_main",
+      key: "responsibles",
       label: "Responsables",
       options: resultsResponsibles,
     },
     {
-      key: "id_ass_bel",
+      key: "assets",
       label: "Activos en mantenimientos",
       options: resultsAssets,
     },
