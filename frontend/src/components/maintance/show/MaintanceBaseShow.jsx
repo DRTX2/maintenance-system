@@ -123,9 +123,6 @@ const MaintanceBaseShow = ({ columns }) => {
     );
 
     if (isFilterEmpty) {
-      toast.info(
-        "No se han encontrado filtros aplicados, recargando activos..."
-      );
       await fetchData();
       return;
     }

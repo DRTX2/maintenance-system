@@ -249,18 +249,6 @@ class AssetController extends Controller
 
 
         $response = [
-            'id' => $asset->id,
-            'id_inc_ass' => $asset->income->id,
-            'id_cat_ass' => $asset->category->id,
-            'id_loc_ass' => $asset->location->id,
-            'income_code' => $asset->income->cod_inc,
-            'category_code' => $asset->category->cod_dis,
-            'category_name' => $asset->category->nom_dis,
-            'location_code' => $asset->location->cod_loc,
-            'location_name' => $asset->location->nam_loc,
-            'cod_ass' => $asset->cod_ass,
-            'ser_num_ass' => $asset->ser_num_ass,
-            'obs_add_ass' => $asset->obs_add_ass ?? null,
             'components' => $components,
         ];
 
