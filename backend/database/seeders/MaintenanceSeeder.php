@@ -20,7 +20,7 @@ class MaintenanceSeeder extends Seeder
 
             $maintenances = [
                 [
-                    'dni_res_main' => '1850656075',
+                    'dni_res_main' => '1724567890',
                     'cod_main' => 'MA-101',
                     'id_typ_main' => 1,
                     'vis_main' => 'V',
@@ -42,7 +42,7 @@ class MaintenanceSeeder extends Seeder
                     ],
                 ],
                 [
-                    'dni_res_main' => '1850656076',
+                    'dni_res_main' => '1721234567',
                     'cod_main' => 'MA-102',
                     'id_typ_main' => 2,
                     'vis_main' => 'H',
