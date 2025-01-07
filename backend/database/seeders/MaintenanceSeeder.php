@@ -17,48 +17,51 @@ class MaintenanceSeeder extends Seeder
     {
         DB::transaction(function () {
 
-            $maintenances = [
-                [
-                    'dni_res_main' => '1850656075',
-                    'cod_main'     => 'MA-001',
-                    'id_typ_main'  => 1,
-                    'vis_main'     => 'V',
-                    'created_at'   => Carbon::now(),
-                    'ended_at'     => null,
-                    'details'      => [
-                        [
-                            'id_ass_bel' => 1, // ID del activo relacionado
-                            'observations' => [
-                                ['des_obs' => 'Primera observación del activo 1'],
-                                ['des_obs' => 'Segunda observación del activo 1'],
+            
+                $maintenances = [
+                    [
+                        'dni_res_main' => '1850656075',
+                        'cod_main'     => 'MA-101',
+                        'id_typ_main'  => 1,
+                        'vis_main'     => 'V',
+                        'created_at'   => Carbon::now()->subDays(5), // Creado hace 5 días
+                        'ended_at'     => null, // Mantenimiento aún en progreso
+                        'details'      => [
+                            [
+                                'id_ass_bel' => 1, // ID del activo relacionado
+                                'observations' => [
+                                    ['des_obs' => 'El ventilador no funciona correctamente.'],
+                                    ['des_obs' => 'Se observan piezas desgastadas.'],
+                                ],
+                                'replaced_components' => [
+                                    ['id_com_bel' => 5, 'des_rep_com' => 'Ventilador reemplazado por modelo X.'],
+                                    ['id_com_bel' => 6, 'des_rep_com' => 'Cableado interno actualizado.'],
+                                ],
+                                'activities' => [1, 4], // IDs de las actividades realizadas
                             ],
-                            'replaced_components' => [
-                                ['id_com_bel' => 1, 'des_rep_com' => 'Componente A reemplazado'],
-                                ['id_com_bel' => 2, 'des_rep_com' => 'Componente B reemplazado'],
-                            ],
-                            'activities' => [1, 2],
                         ],
                     ],
-                ],
-                [
-                    'dni_res_main' => '1850656075',
-                    'cod_main'     => 'MA-002',
-                    'id_typ_main'  => 2,
-                    'vis_main'     => 'H',
-                    'created_at'   => Carbon::now(),
-                    'ended_at'     => Carbon::now()->addDays(10),
-                    'details'      => [
-                        [
-                            'id_ass_bel' => 2,
-                            'observations' => [
-                                ['des_obs' => 'Observación del activo 2'],
+                    [
+                        'dni_res_main' => '1850656076',
+                        'cod_main'     => 'MA-102',
+                        'id_typ_main'  => 2,
+                        'vis_main'     => 'H',
+                        'created_at'   => Carbon::now()->subDays(15), // Creado hace 15 días
+                        'ended_at'     => Carbon::now()->subDays(10), // Finalizado hace 10 días
+                        'details'      => [
+                            [
+                                'id_ass_bel' => 2, // ID del activo relacionado
+                                'observations' => [
+                                    ['des_obs' => 'Fallas detectadas en el software de control.'],
+                                ],
+                                'replaced_components' => [
+                                    ['id_com_bel' => 7, 'des_rep_com' => 'Tarjeta madre sustituida.'],
+                                ],
+                                'activities' => [2, 5], // IDs de las actividades realizadas
                             ],
-                            'replaced_components' => [],
-                            'activities' => [3],
                         ],
-                    ],
-                ],
-            ];
+                    ]
+                ];
 
             foreach ($maintenances as $maintenanceData) {
                 $maintenance = Maintenance::create([
