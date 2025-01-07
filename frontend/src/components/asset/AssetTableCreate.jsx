@@ -87,7 +87,7 @@ const ContentTable = ({
                           error={item.error || false}
                           helperText={
                             item.error
-                              ? "Este campo es obligatorio con mínimo 3 y máximo 50 caracteres"
+                              ? "Este campo es obligatorio con mínimo 3 y máximo 200 caracteres"
                               : ""
                           }
                           InputProps={{

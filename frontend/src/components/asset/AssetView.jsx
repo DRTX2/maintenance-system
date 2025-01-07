@@ -115,7 +115,7 @@ const AssetView = () => {
 
   const validateSingleField = (id, description) => {
     const hasError =
-      !description.trim() || description.length < 3 || description.length > 50;
+      !description.trim() || description.length < 3 || description.length > 200;
 
     console.log("¿Tiene error?", hasError);
     setRelatedData((prevData) =>
@@ -156,8 +156,8 @@ const AssetView = () => {
     const updatedRelatedData = relatedData.map((component) => {
       const description = component.pivot?.description?.trim();
 
-      // Validar descripción: Obligatorio, entre 3 y 50 caracteres
-      if (!description || description.length < 3 || description.length > 50) {
+      // Validar descripción: Obligatorio, entre 3 y 200 caracteres
+      if (!description || description.length < 3 || description.length > 200) {
         hasErrors = true;
         return { ...component, error: true };
       }
