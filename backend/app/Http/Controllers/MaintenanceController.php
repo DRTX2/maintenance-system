@@ -33,67 +33,58 @@ class MaintenanceController extends Controller
     {
         $maintenances = Maintenance::query();
 
-        // Filtro por código de mantenimiento (búsqueda exacta o parcial), controlar q el front solo permita 1
+        // Filtro por código de mantenimiento
         if ($request->has('cod_main') && count($request->input('cod_main')) > 0) {
-            foreach ($request->input('cod_main') as $cod) {
-                $maintenances->orWhere('cod_main', 'LIKE', '%' . $cod . '%');
-            }
+            $maintenances->whereIn('cod_main', $request->input('cod_main'));
         }
-        // Filtro por tipos de mantenimiento (búsqueda exacta en array)
+
+        // Filtro por tipos de mantenimiento
         if ($request->has('types') && count($request->input('types')) > 0) {
             $maintenances->whereIn('id_typ_main', $request->input('types'));
         }
 
-        // Filtro por responsables (búsqueda exacta en array)
+        // Filtro por responsables
         if ($request->has('responsibles') && count($request->input('responsibles')) > 0) {
             $maintenances->whereIn('dni_res_main', $request->input('responsibles'));
         }
 
-        // Filtro por activos involucrados (búsqueda exacta o parcial)
+        // Filtro por activos involucrados
         if ($request->has('assets') && count($request->input('assets')) > 0) {
-            foreach ($request->input('assets') as $asset) {
-                $maintenances->orWhereHas('maintenanceDetails.asset', function ($query) use ($asset) {
-                    $query->where('id', 'LIKE', '%' . $asset . '%');
-                });
-            }
+            $maintenances->whereHas('maintenanceDetails.asset', function ($query) use ($request) {
+                $query->whereIn('id', $request->input('assets'));
+            });
         }
 
-        // Filtro por fecha de creación (created_at / fecha_inicio)
-        if ($request->has('created_at') && count($request->input('created_at')) > 0) {
-            foreach ($request->input('created_at') as $created_at) {
-                if (strpos($created_at, ',') === false) {
-                    $maintenances->orWhereDate('created_at', '=', $created_at);
-                } else {
-                    list($start_date, $end_date) = explode(',', $created_at);
-                    $maintenances->orWhereBetween('created_at', [$start_date, $end_date]);
-                }
-            }
-        }
+        $creation_timestamp_exist = $request->has('created_at') && count($request->input('created_at')) > 0;
+        $ended_timestamp_exist = $request->has('ended_at') && count($request->input('ended_at')) > 0;
 
-        // Filtro por fecha de finalización (ended_at / fecha_fin)
-        if ($request->has('ended_at') && count($request->input('ended_at')) > 0) {
-            foreach ($request->input('ended_at') as $ended_at) {
-                if (strpos($ended_at, ',') === false) {
-                    $maintenances->orWhereDate('ended_at', '=', $ended_at);
-                } else {
-                    list($start_date, $end_date) = explode(',', $ended_at);
-                    $maintenances->orWhereBetween('ended_at', [$start_date, $end_date]);
-                }
-            }
-        }
-
-        // Verificación de que la fecha de creación no sea posterior a la fecha de finalización
-        if ($request->has('created_at') && $request->has('ended_at')) {
+        if ($creation_timestamp_exist && $ended_timestamp_exist) {
             $created_at = $request->input('created_at')[0]; // Tomamos el primer valor del array
             $ended_at = $request->input('ended_at')[0]; // Tomamos el primer valor del array
 
+            // Comparar las fechas sin importar las horas
             if (strtotime($created_at) > strtotime($ended_at)) {
                 return response()->json([
                     'error' => 'La fecha de creación no puede ser posterior a la fecha de finalización.'
                 ], 400);
             }
-        }
+            $maintenances->whereBetween('created_at', [$created_at, $ended_at]);
+        }else{
+            if ($creation_timestamp_exist) {
+                $created_at = $request->input('created_at')[0];
+                // Filtrar por fecha exacta (sin hora)
+                $maintenances->whereDate('created_at', '=', $created_at);
+            }
+            if ($ended_timestamp_exist) {
+                $ended_at = $request->input('ended_at')[0];
+                $maintenances->whereDate('ended_at', '=', $ended_at);
+            }
 
+        }
+        
+
+        // Verificación de que la fecha de creación no sea posterior a la fecha de finalización
+        
 
         // Cargar relaciones necesarias
         $maintenances = $maintenances->with([
@@ -111,8 +102,6 @@ class MaintenanceController extends Controller
                 'id' => $maintenance->id,
                 'cod_main' => $maintenance->cod_main,
                 'vis_main' => $maintenance->vis_main,
-                // 'responsable_ced' => $maintenance->responsible->dni_res,
-                // 'responsable_isExt' => $maintenance->responsible->is_ext,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
             ];
