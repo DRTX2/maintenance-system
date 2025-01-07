@@ -8,23 +8,35 @@ use App\Models\MaintenanceDetail;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class MaintenanceController extends Controller
 {
     public function index()
     {
-        $maintenances = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res'])
-            ->get()
-            ->map(function ($maintenance) {
+        //$user = JWTAuth::parseToken()->authenticate();
+        // Obtener datos adicionales del payload si es necesario
+        $payload = JWTAuth::parseToken()->getPayload();
+        $role = $payload->get('role');
 
-                return [
-                    'id' => $maintenance->id,
-                    'cod_main' => $maintenance->cod_main,
-                    'vis_main' => $maintenance->vis_main,
-                    'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
-                    'type' => $maintenance->maintenanceType->typ_main,
-                ];
-            });
+        // Inicializar la consulta base
+        $query = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res']);
+
+        if ($role === "user") {
+            $query->where('vis_main', 'V');
+        }
+
+        $maintenances = $query->get()->map(function ($maintenance) {
+            return [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'vis_main' => $maintenance->vis_main,
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
+                'type' => $maintenance->maintenanceType->typ_main,
+            ];
+        });
+
         return response()->json([
             "results" => $maintenances
         ], 200);
@@ -70,7 +82,7 @@ class MaintenanceController extends Controller
                 ], 400);
             }
             $maintenances->whereBetween('created_at', [$created_at, $ended_at]);
-        }else{
+        } else {
             if ($creation_timestamp_exist) {
                 $created_at = $request->input('created_at')[0];
                 // Filtrar por fecha exacta (sin hora)
@@ -80,12 +92,11 @@ class MaintenanceController extends Controller
                 $ended_at = $request->input('ended_at')[0];
                 $maintenances->whereDate('ended_at', '=', $ended_at);
             }
-
         }
-        
+
 
         // Verificación de que la fecha de creación no sea posterior a la fecha de finalización
-        
+
 
         // Cargar relaciones necesarias
         $maintenances = $maintenances->with([
