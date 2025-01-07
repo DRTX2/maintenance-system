@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             TypeMaintenanceSeeder::class,
             ResponsibleSeeder::class,
             AssetsSeeder::class,
+            MaintenanceSeeder::class,
         ]);
 
 
