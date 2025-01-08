@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MaintenanceRequest;
 use App\Models\Maintenance;
 use App\Models\MaintenanceDetail;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -34,8 +35,8 @@ class MaintenanceController extends Controller
                 'vis_main' => $maintenance->vis_main,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
-                'created_at'=>$maintenance->created_at,
-                'ended_at'=>$maintenance->ended_at,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
             ];
         });
 
@@ -47,7 +48,7 @@ class MaintenanceController extends Controller
     public function filteringMaintenances(Request $request)
     {
         $maintenances = Maintenance::query();
-        
+
         $payload = JWTAuth::parseToken()->getPayload();
         $role = $payload->get('role');
         if ($role === "user") {
@@ -93,8 +94,8 @@ class MaintenanceController extends Controller
                 'vis_main' => $maintenance->vis_main,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
-                'created_at'=>$maintenance->created_at,
-                'ended_at'=>$maintenance->ended_at,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
             ];
         });
 
@@ -107,7 +108,7 @@ class MaintenanceController extends Controller
     public function maintenancesByTime(Request $request)
     {
         $maintenances = Maintenance::query();
-        
+
         $payload = JWTAuth::parseToken()->getPayload();
         $role = $payload->get('role');
         if ($role === "user") {
@@ -118,26 +119,43 @@ class MaintenanceController extends Controller
         $ended_timestamp_exist = $request->has('ended_at') && count($request->input('ended_at')) > 0;
 
         if ($creation_timestamp_exist && $ended_timestamp_exist) {
-            $created_at = $request->input('created_at')[0]; 
-            $ended_at = $request->input('ended_at')[0]; 
-
+            $created_at = $request->input('created_at')[0];
+            $ended_at = $request->input('ended_at')[0];
+        
             if (strtotime($created_at) > strtotime($ended_at)) {
                 return response()->json([
                     'error' => 'La fecha de creación no puede ser posterior a la fecha de finalización.'
                 ], 400);
             }
-            $maintenances->whereBetween('created_at', [$created_at, $ended_at]);
+        
+            // Normaliza las fechas al inicio y fin del día
+            $created_at_start = Carbon::parse($created_at)->startOfDay();
+            $ended_at_end = Carbon::parse($ended_at)->endOfDay();
+        
+            // Aplica ambas condiciones combinadas
+            $maintenances->where(function ($query) use ($created_at_start, $ended_at_end) {
+                $query->whereBetween('created_at', [$created_at_start, $ended_at_end])
+                      ->whereBetween('ended_at', [$created_at_start, $ended_at_end]);
+            });
         } else {
             if ($creation_timestamp_exist) {
                 $created_at = $request->input('created_at')[0];
-                // Filtrar por fecha exacta (sin hora)
-                $maintenances->whereDate('created_at', '=', $created_at);
+                $created_at_start = Carbon::parse($created_at)->startOfDay();
+                $created_at_end = Carbon::parse($created_at)->endOfDay();
+        
+                // Filtrar por día exacto
+                $maintenances->whereBetween('created_at', [$created_at_start, $created_at_end]);
             }
+        
             if ($ended_timestamp_exist) {
                 $ended_at = $request->input('ended_at')[0];
-                $maintenances->whereDate('ended_at', '=', $ended_at);
+                $ended_at_start = Carbon::parse($ended_at)->startOfDay();
+                $ended_at_end = Carbon::parse($ended_at)->endOfDay();
+        
+                $maintenances->whereBetween('ended_at', [$ended_at_start, $ended_at_end]);
             }
         }
+
         // Cargar relaciones necesarias
         $maintenances = $maintenances->with([
             'maintenanceType:id,typ_main',
@@ -156,8 +174,8 @@ class MaintenanceController extends Controller
                 'vis_main' => $maintenance->vis_main,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
-                'created_at'=>$maintenance->created_at,
-                'ended_at'=>$maintenance->ended_at,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
             ];
         });
 
