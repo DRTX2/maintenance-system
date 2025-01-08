@@ -350,10 +350,33 @@ class MaintenanceController extends Controller
     public function search(Request $request)
     {
         $request->validate([
-            "term" => 'required|max:10'
+            "term" => 'required|max:10',
         ]);
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $role = $payload->get('role');
+
+        $query = Maintenance::with(['maintenanceType:id,typ_main', 'responsible:id,dni_res,nam_res,las_res']);
+
+        if ($role === "user") {
+            $query->where('vis_main', 'V');
+        }
+
         $term = $request->input('term');
-        $maintenances = Maintenance::where('cod_main', 'LIKE', "%{$term}%")->get();
+
+        $query->where('cod_main', 'LIKE', "%{$term}%");
+
+        $maintenances = $query->get()->map(function ($maintenance) {
+            return [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'vis_main' => $maintenance->vis_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
+                'type' => $maintenance->maintenanceType->typ_main,
+            ];
+        });
 
         return response()->json([
             'results' => $maintenances,
