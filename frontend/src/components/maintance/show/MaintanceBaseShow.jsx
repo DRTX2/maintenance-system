@@ -73,7 +73,22 @@ const MaintanceBaseShow = ({ columns }) => {
     navigate("/dashboard/maintance/create");
   };
 
-  const onFetch = (param) => {};
+  const onFetch = async (param) => {
+    if (param === "") {
+      await fetchData();
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(
+        "maintenances/search?term=" + param
+      );
+      setMaintances(response.data.results);
+      console.log("Filtro", response.data.results);
+    } catch (error) {
+      toast.error("No se ha podido filtrar por busqueda.");
+    }
+  };
 
   const onView = (id) => {
     navigate(`/dashboard/maintance/view/${id}`);
