@@ -6,6 +6,7 @@ import GenericStyles from "../../../generic/styles/GenericStyles";
 import dayjs from "dayjs";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ReusableDatePicker from "../../report/ReusableDatePicker";
 import {
   Table,
   TableBody,
@@ -37,6 +38,15 @@ const MaintanceBaseShow = ({ columns }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
 
+  const [formData, setFormData] = useState({
+    startDate: null,
+    endDate: null,
+  });
+  const [errors, setErrors] = useState({
+    startDate: false,
+    endDate: false,
+  });
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -45,7 +55,6 @@ const MaintanceBaseShow = ({ columns }) => {
     try {
       const response = await axiosInstance.get("/maintenances");
       setMaintances(response.data.results);
-      console.log("RESPUTEA ORIGINAL", response.data.results);
     } catch (error) {
       toast.error("No se ha podido obtener los mantenimientos");
     } finally {
@@ -99,7 +108,6 @@ const MaintanceBaseShow = ({ columns }) => {
   const fetchMaintenancesFilters = async (filters = {}) => {
     setIsReady(false);
     try {
-      console.log("Filtros a enviarse", filters);
       const response = await axiosInstance.post(
         "/maintenances/filters",
         filters
@@ -112,7 +120,6 @@ const MaintanceBaseShow = ({ columns }) => {
   };
 
   const handleFilterChange = async (updatedFilters) => {
-    console.log("Updated", updatedFilters);
     if (!updatedFilters) {
       toast.error("Filtros no definidos");
       return;
@@ -148,6 +155,47 @@ const MaintanceBaseShow = ({ columns }) => {
       assets: processFilter(selectedValues.assets),
     };
     return payload;
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.idResponsible) {
+      newErrors.idResponsible = "Ingrese un responsable";
+    }
+
+    if (!formData.startDate) {
+      newErrors.startDate = "Ingrese una fecha válida";
+    }
+
+    if (!formData.endDate) {
+      newErrors.endDate = "Ingrese una fecha válida";
+    }
+
+    return newErrors;
+  };
+
+  const handleFilterDate = () => {
+    console.log(formData);
+  };
+
+  const handleStartDate = (date) => {
+    const transformedDate = transformDate(date);
+    setFormData((prev) => ({ ...prev, startDate: transformedDate }));
+    setErrors((prev) => ({ ...prev, startDate: "" }));
+  };
+  const handleEndDate = (date) => {
+    const transformedDate = transformDate(date);
+    setFormData((prev) => ({ ...prev, endDate: transformedDate }));
+    setErrors((prev) => ({ ...prev, endDate: "" }));
+  };
+
+  const transformDate = (date) => {
+    try {
+      return date ? dayjs(date).utc().format("YYYY-MM-DDTHH:mm:ss[Z]") : null;
+    } catch (error) {
+      return null;
+    }
   };
 
   const formattedData = maintances.map((maintance) => {
@@ -216,6 +264,37 @@ const MaintanceBaseShow = ({ columns }) => {
               onFilterChange={handleFilterChange}
               onClear={fetchData}
             />
+          </Box>
+
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              gap: "16px",
+              marginTop: "1rem",
+            }}
+          >
+            <ReusableDatePicker
+              label="Fecha de inicio"
+              value={formData["startDate"]}
+              onChange={(date) => handleStartDate(date)}
+              error={!!errors.startDate}
+              helperText={errors.startDate}
+            />
+            <ReusableDatePicker
+              label="Fecha fin"
+              value={formData["endDate"]}
+              onChange={(date) => handleEndDate(date)}
+              error={!!errors.endDate}
+              helperText={errors.endDate}
+            />
+            <Button variant="contained" onClick={handleFilterDate}>
+              Aplicar filtro
+            </Button>{" "}
+            <Button variant="contained" onClick={fetchData}>
+              Resetear filtros
+            </Button>
           </Box>
         </Box>
       </Box>
