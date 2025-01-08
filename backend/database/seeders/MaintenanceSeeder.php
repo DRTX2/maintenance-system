@@ -25,7 +25,7 @@ class MaintenanceSeeder extends Seeder
                     'id_typ_main' => 1,
                     'vis_main' => 'V',
                     'created_at' => Carbon::now()->subDays(5), // Creado hace 5 días
-                    'ended_at' => null, // Mantenimiento aún en progreso
+                    'ended_at' => Carbon::now()->subDays(1),
                     'details' => [
                         [
                             'id_ass_bel' => 1, // ID del activo relacionado
