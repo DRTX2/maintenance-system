@@ -115,7 +115,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       },
     ]);
 
-    console.log("Como se añadió", assetsTable);
     setErrorAsset(false);
     setHelperTextAsset("");
   };
@@ -169,7 +168,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       const response = await axiosInstance.get(
         `/assets/showForMaintances/${assetId}`
       );
-      console.log(response.data);
       setComponentsCatalog(response.data.components);
       setOpenComponents(assetId);
     } catch (error) {

@@ -3,8 +3,14 @@ import axiosInstance from "../../utils/api";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CircularProgress, Typography } from "@mui/material";
+import { useData } from "../../provider/DataProvider";
 
 const AssetCreate = () => {
+  // const { locationsX, categoriesX } = useData();
+
+  // console.log("DataProviderLoc", locationsX);
+  // console.log("DatProviderCat", categoriesX);
+
   const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [categories, setCategories] = useState([]);

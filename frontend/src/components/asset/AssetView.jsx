@@ -28,10 +28,12 @@ const AssetView = () => {
           axiosInstance.get(`/assets/incomes/${id}`),
         ]);
 
-        console.log(incomesData.data);
         setLocations(locationsData.data.results);
         setIncomes(incomesData.data);
         setAsset(asset.data);
+
+        console.log("Asset", asset);
+        console.log("Incomes", incomesData);
 
         setIsReady(true);
       } catch (error) {
@@ -70,6 +72,22 @@ const AssetView = () => {
         }))
       : [{ value: "", label: "No se han encontrado ingresos..." }];
 
+  const income =
+    asset?.income_est === "C"
+      ? {
+          key: "income_code",
+          label: "Ingreso",
+          type: "text",
+          editable: false,
+        }
+      : {
+          key: "id_inc_ass",
+          label: "Ingreso",
+          type: "select",
+          options: resultsIncomes,
+          editable: true,
+        };
+
   const fields = [
     { key: "cod_ass", label: "Código", type: "text", editable: true },
     {
@@ -85,13 +103,7 @@ const AssetView = () => {
       options: resultsLocations,
       editable: true,
     },
-    {
-      key: "id_inc_ass",
-      label: "Ingreso",
-      type: "select",
-      options: resultsIncomes,
-      editable: true,
-    },
+    income,
     {
       key: "category_name",
       label: "Dispositivo",
