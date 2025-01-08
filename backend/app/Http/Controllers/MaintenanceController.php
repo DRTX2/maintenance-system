@@ -36,6 +36,8 @@ class MaintenanceController extends Controller
                 'ended_at' => $maintenance->ended_at,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
             ];
         });
 
@@ -47,6 +49,12 @@ class MaintenanceController extends Controller
     public function filteringMaintenances(Request $request)
     {
         $maintenances = Maintenance::query();
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $role = $payload->get('role');
+        if ($role === "user") {
+            $maintenances->where('vis_main', 'V');
+        }
 
         // Filtro por código de mantenimiento
         if ($request->has('cod_main') && count($request->input('cod_main')) > 0) {
@@ -87,6 +95,8 @@ class MaintenanceController extends Controller
                 'vis_main' => $maintenance->vis_main,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
             ];
         });
 
@@ -99,6 +109,12 @@ class MaintenanceController extends Controller
     public function maintenancesByTime(Request $request)
     {
         $maintenances = Maintenance::query();
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $role = $payload->get('role');
+        if ($role === "user") {
+            $maintenances->where('vis_main', 'V');
+        }
 
         $creation_timestamp_exist = $request->has('created_at') && count($request->input('created_at')) > 0;
         $ended_timestamp_exist = $request->has('ended_at') && count($request->input('ended_at')) > 0;
@@ -144,6 +160,8 @@ class MaintenanceController extends Controller
                 'ended_at' => $maintenance->ended_at,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
             ];
         });
 

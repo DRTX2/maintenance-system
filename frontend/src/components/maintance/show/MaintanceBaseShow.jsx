@@ -194,8 +194,14 @@ const MaintanceBaseShow = ({ columns }) => {
     }
 
     const transformedObject = {
-      created_at: [formData.startDate],
-      ended_at: [formData.endDate],
+      created_at: [
+        formData.startDate
+          ? dayjs(formData.startDate).format("YYYY-MM-DD")
+          : null,
+      ],
+      ended_at: [
+        formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD") : null,
+      ],
     };
 
     console.log("Fecha enviandose", transformedObject);
@@ -209,16 +215,15 @@ const MaintanceBaseShow = ({ columns }) => {
       setMaintances(response.data.results);
     } catch (error) {
       toast.error("No se ha podido filtrar por fecha.");
-    } finally {
-      setFormData({
-        startDate: null,
-        endDate: null,
-      });
     }
   };
 
   const handleReset = () => {
     setErrors("");
+    setFormData({
+      startDate: null,
+      endDate: null,
+    });
     fetchData();
   };
 
