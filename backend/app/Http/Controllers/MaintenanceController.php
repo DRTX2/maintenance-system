@@ -32,6 +32,8 @@ class MaintenanceController extends Controller
                 'id' => $maintenance->id,
                 'cod_main' => $maintenance->cod_main,
                 'vis_main' => $maintenance->vis_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
             ];
@@ -97,13 +99,13 @@ class MaintenanceController extends Controller
     public function maintenancesByTime(Request $request)
     {
         $maintenances = Maintenance::query();
-        
+
         $creation_timestamp_exist = $request->has('created_at') && count($request->input('created_at')) > 0;
         $ended_timestamp_exist = $request->has('ended_at') && count($request->input('ended_at')) > 0;
 
         if ($creation_timestamp_exist && $ended_timestamp_exist) {
-            $created_at = $request->input('created_at')[0]; 
-            $ended_at = $request->input('ended_at')[0]; 
+            $created_at = $request->input('created_at')[0];
+            $ended_at = $request->input('ended_at')[0];
 
             if (strtotime($created_at) > strtotime($ended_at)) {
                 return response()->json([
@@ -138,6 +140,8 @@ class MaintenanceController extends Controller
                 'id' => $maintenance->id,
                 'cod_main' => $maintenance->cod_main,
                 'vis_main' => $maintenance->vis_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
             ];

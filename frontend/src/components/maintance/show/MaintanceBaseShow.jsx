@@ -54,6 +54,7 @@ const MaintanceBaseShow = ({ columns }) => {
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get("/maintenances");
+      console.log(response.data.results);
       setMaintances(response.data.results);
     } catch (error) {
       toast.error("No se ha podido obtener los mantenimientos");
@@ -160,23 +161,65 @@ const MaintanceBaseShow = ({ columns }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.idResponsible) {
-      newErrors.idResponsible = "Ingrese un responsable";
+    if (!formData.startDate || formData.startDate.trim() === "") {
+      newErrors.startDate = "Ingrese una fecha de inicio válida";
     }
 
-    if (!formData.startDate) {
-      newErrors.startDate = "Ingrese una fecha válida";
+    if (!formData.endDate || formData.endDate.trim() === "") {
+      newErrors.endDate = "Ingrese una fecha de fin válida";
     }
 
-    if (!formData.endDate) {
-      newErrors.endDate = "Ingrese una fecha válida";
+    if (formData.startDate && formData.endDate) {
+      const start = dayjs(formData.startDate);
+      const end = dayjs(formData.endDate);
+
+      if (start.isAfter(end)) {
+        newErrors.startDate =
+          "La fecha de inicio no puede ser mayor que la fecha de fin";
+        newErrors.endDate =
+          "La fecha de fin no puede ser menor que la fecha de inicio";
+      }
     }
 
     return newErrors;
   };
 
-  const handleFilterDate = () => {
-    console.log(formData);
+  const handleFilterDate = async () => {
+    const newErrors = validateForm();
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      console.log("Errores detectados:", newErrors);
+      return;
+    }
+
+    const transformedObject = {
+      created_at: [formData.startDate],
+      ended_at: [formData.endDate],
+    };
+
+    console.log("Fecha enviandose", transformedObject);
+
+    try {
+      const response = await axiosInstance.post(
+        "/maintenances/filters-by-date",
+        transformedObject
+      );
+
+      setMaintances(response.data.results);
+    } catch (error) {
+      toast.error("No se ha podido filtrar por fecha.");
+    } finally {
+      setFormData({
+        startDate: null,
+        endDate: null,
+      });
+    }
+  };
+
+  const handleReset = () => {
+    setErrors("");
+    fetchData();
   };
 
   const handleStartDate = (date) => {
@@ -292,7 +335,7 @@ const MaintanceBaseShow = ({ columns }) => {
             <Button variant="contained" onClick={handleFilterDate}>
               Aplicar filtro
             </Button>{" "}
-            <Button variant="contained" onClick={fetchData}>
+            <Button variant="contained" onClick={handleReset}>
               Resetear filtros
             </Button>
           </Box>
