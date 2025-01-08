@@ -146,7 +146,7 @@ class AssetController extends Controller
         }
 
         $asset = Asset::with([
-            'income:id,cod_inc',
+            'income:id,cod_inc,est_inc',
             'category:id,cod_dis,nom_dis',
             'location:id,cod_loc,nam_loc',
             'components:id,nam_com'
