@@ -42,7 +42,7 @@ class MaintenanceController extends Controller
         ], 200);
     }
 
-    public function indexWithFilters(Request $request)
+    public function filteringMaintenances(Request $request)
     {
         $maintenances = Maintenance::query();
 
@@ -67,37 +67,6 @@ class MaintenanceController extends Controller
                 $query->whereIn('id', $request->input('assets'));
             });
         }
-
-        $creation_timestamp_exist = $request->has('created_at') && count($request->input('created_at')) > 0;
-        $ended_timestamp_exist = $request->has('ended_at') && count($request->input('ended_at')) > 0;
-
-        if ($creation_timestamp_exist && $ended_timestamp_exist) {
-            $created_at = $request->input('created_at')[0]; // Tomamos el primer valor del array
-            $ended_at = $request->input('ended_at')[0]; // Tomamos el primer valor del array
-
-            // Comparar las fechas sin importar las horas
-            if (strtotime($created_at) > strtotime($ended_at)) {
-                return response()->json([
-                    'error' => 'La fecha de creación no puede ser posterior a la fecha de finalización.'
-                ], 400);
-            }
-            $maintenances->whereBetween('created_at', [$created_at, $ended_at]);
-        } else {
-            if ($creation_timestamp_exist) {
-                $created_at = $request->input('created_at')[0];
-                // Filtrar por fecha exacta (sin hora)
-                $maintenances->whereDate('created_at', '=', $created_at);
-            }
-            if ($ended_timestamp_exist) {
-                $ended_at = $request->input('ended_at')[0];
-                $maintenances->whereDate('ended_at', '=', $ended_at);
-            }
-        }
-
-
-        // Verificación de que la fecha de creación no sea posterior a la fecha de finalización
-
-
         // Cargar relaciones necesarias
         $maintenances = $maintenances->with([
             'maintenanceType:id,typ_main',
@@ -120,6 +89,60 @@ class MaintenanceController extends Controller
         });
 
         // Retornar respuesta estructurada
+        return response()->json([
+            'results' => $transformedMaintenances
+        ], 200);
+    }
+
+    public function maintenancesByTime(Request $request)
+    {
+        $maintenances = Maintenance::query();
+        
+        $creation_timestamp_exist = $request->has('created_at') && count($request->input('created_at')) > 0;
+        $ended_timestamp_exist = $request->has('ended_at') && count($request->input('ended_at')) > 0;
+
+        if ($creation_timestamp_exist && $ended_timestamp_exist) {
+            $created_at = $request->input('created_at')[0]; 
+            $ended_at = $request->input('ended_at')[0]; 
+
+            if (strtotime($created_at) > strtotime($ended_at)) {
+                return response()->json([
+                    'error' => 'La fecha de creación no puede ser posterior a la fecha de finalización.'
+                ], 400);
+            }
+            $maintenances->whereBetween('created_at', [$created_at, $ended_at]);
+        } else {
+            if ($creation_timestamp_exist) {
+                $created_at = $request->input('created_at')[0];
+                // Filtrar por fecha exacta (sin hora)
+                $maintenances->whereDate('created_at', '=', $created_at);
+            }
+            if ($ended_timestamp_exist) {
+                $ended_at = $request->input('ended_at')[0];
+                $maintenances->whereDate('ended_at', '=', $ended_at);
+            }
+        }
+        // Cargar relaciones necesarias
+        $maintenances = $maintenances->with([
+            'maintenanceType:id,typ_main',
+            'responsible:id,dni_res,nam_res,las_res,is_ext',
+            'maintenanceDetails.asset',
+            'maintenanceDetails.observations',
+            'maintenanceDetails.replacedComponents',
+            'maintenanceDetails.activities'
+        ])->get();
+
+        // Transformar los resultados para la respuesta
+        $transformedMaintenances = $maintenances->map(function ($maintenance) {
+            return [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'vis_main' => $maintenance->vis_main,
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
+                'type' => $maintenance->maintenanceType->typ_main,
+            ];
+        });
+
         return response()->json([
             'results' => $transformedMaintenances
         ], 200);

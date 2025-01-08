@@ -125,7 +125,8 @@ Route::post('/maintenances/search', [MaintenanceController::class, 'search']);
 Route::get('/maintenances/{id}', [MaintenanceController::class, 'show']);
 Route::put('/maintenances/{id}', [MaintenanceController::class, 'update']);
 Route::post('/maintenances/{id}', [MaintenanceController::class, 'hide'])->where('id', '[0-9]+');
-Route::post('/maintenances/filters', [MaintenanceController::class, 'indexWithFilters']);
+Route::post('/maintenances/filters', [MaintenanceController::class, 'filteringMaintenances']);
+Route::post('/maintenances/filters-by-date', [MaintenanceController::class, 'maintenancesByTime']);
 
 // Observations
 
