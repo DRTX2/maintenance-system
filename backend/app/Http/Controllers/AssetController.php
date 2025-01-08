@@ -164,7 +164,6 @@ class AssetController extends Controller
         $components = $asset->components->map(function ($component) {
             return [
                 'id' => $component->id,
-                'cod_com' => $component->cod_com,
                 'nam_com' => $component->nam_com,
                 'pivot' => [
                     'description' => $component->pivot->description,
@@ -280,10 +279,8 @@ class AssetController extends Controller
 
 
     }
-
     public function update(AssetRequest $request, string $id)
     {
-
         $validatedData = $request->validated();
 
         $asset = Asset::findOrFail($id);
@@ -294,14 +291,17 @@ class AssetController extends Controller
         $incomeId = $service['id_inc_ass'];
 
 
-        $income = Income::findOrFail($incomeId);
+        if ($incomeId != $asset->id_inc_ass) {
+            $income = Income::findOrFail($incomeId);
 
-        if ($income->est_inc === 'C') {
-            throw new HttpResponseException(response()->json([
-                'errors' => [
-                    'income' => ['No se pudo actualizar el activo, debido a que el ingreso asociado se encuentra actualmente cerrado.']
-                ]
-            ], 422));
+
+            if ($income->est_inc === 'C') {
+                throw new HttpResponseException(response()->json([
+                    'errors' => [
+                        'income' => ['No se pudo actualizar el activo, debido a que el ingreso asociado se encuentra actualmente cerrado.']
+                    ]
+                ], 422));
+            }
         }
 
 
@@ -313,7 +313,7 @@ class AssetController extends Controller
             'obs_add_ass' => $service['obs_add_ass'] ?? $asset->obs_add_ass,
         ]);
 
-        // Actualizar la relación con los componentes
+
         if (isset($service['components'])) {
             $components = collect($service['components'])->mapWithKeys(function ($component) {
                 return [
@@ -326,14 +326,12 @@ class AssetController extends Controller
             $asset->components()->sync($components);
         }
 
-
         return response()->json([
             'message' => 'Activo actualizado exitosamente.',
             'asset' => $asset->fresh(),
         ]);
-
-
     }
+
     public function search(Request $request, $rol)
     {
         $request->validate([
