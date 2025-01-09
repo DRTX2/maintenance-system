@@ -172,10 +172,28 @@ class MaintenanceDetailController extends Controller
             }
 
             DB::commit();
+            $formattedData = [
+                'id' => $maintenance->id,
+                'cod_main' => $maintenance->cod_main,
+                'vis_main' => $maintenance->vis_main,
+                'created_at' => $maintenance->created_at,
+                'ended_at' => $maintenance->ended_at,
+                'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
+                'type' => $maintenance->maintenanceType->typ_main,
+                'details' => $maintenance->details->map(function ($detail) {
+                    return [
+                        'id' => $detail->id,
+                        'asset_id' => $detail->id_ass_bel,
+                        'observations' => $detail->observations,
+                        'replaced_components' => $detail->replacedComponents,
+                        'activities' => $detail->activities,
+                    ];
+                }),
+            ];
 
             return response()->json([
                 'message' => 'Mantenimiento creado exitosamente.',
-                'results' => $maintenance,
+                'results' => $formattedData,
             ], 201);
         } catch (Exception $e) {
             DB::rollBack();
