@@ -10,6 +10,7 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 class AssetController extends Controller
 {
     //Crear, Actualizar,Eliminar,Ver, Filtrar   
@@ -85,8 +86,12 @@ class AssetController extends Controller
         ]);
     }
 
-    public function index($rol)
+    public function index()
     {
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
+
 
         if ($rol == 'user') {
             $assets = Asset::where('est_ass', 'V')
@@ -273,8 +278,11 @@ class AssetController extends Controller
         $asset->components()->attach($components);
 
         return response()->json([
-            'message' => 'Activo creado exitosamente.',
-            'asset' => $asset,
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+            ],
         ]);
 
 
@@ -327,8 +335,11 @@ class AssetController extends Controller
         }
 
         return response()->json([
-            'message' => 'Activo actualizado exitosamente.',
-            'asset' => $asset->fresh(),
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+            ],
         ]);
     }
 
