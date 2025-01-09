@@ -26,16 +26,13 @@ const GenericManager = ({
   searchBy,
 }) => {
   const [entities, setEntities] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDelete, setIsDelete] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [modalCreateOpen, setModalCreateOpen] = useState(false);
   const [modalViewOpen, setModalViewOpen] = useState(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [entity, setEntity] = useState(defaultEntityState);
-
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
-
   const navigate = useNavigate();
   const decodedToken = getDecodedToken();
 
@@ -48,13 +45,6 @@ const GenericManager = ({
     return null;
   }
 
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-  };
-
   const fetchSearch = async (param) => {
     if (param === "") {
       await fetchEntities();
@@ -65,9 +55,6 @@ const GenericManager = ({
       const response = await axiosInstance.post(
         `${apiConfig.fetchSearch}${param}`
       );
-
-      console.log("data", response);
-
       setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
@@ -77,12 +64,11 @@ const GenericManager = ({
   const fetchEntities = async () => {
     try {
       const response = await axiosInstance.get(apiConfig.fetchAll);
-      console.log("informacion", response);
       setEntities(response?.data?.results);
     } catch (error) {
       handleError(error, `Error inesperado al obtener ${entityNamePlural}`);
     } finally {
-      setIsLoading(false);
+      setIsReady(true);
     }
   };
 
@@ -105,13 +91,14 @@ const GenericManager = ({
       setIsEditing(false);
       setModalViewOpen(false);
     } catch (error) {
-      console.log("Error");
       handleError(
         error,
         `Error inesperado al actualizar ${entityNameSingular}`
       );
     }
   };
+
+  console.log(isDelete);
 
   const handleDelete = async (id) => {
     try {
@@ -120,20 +107,12 @@ const GenericManager = ({
 
       // Validar la página actual
       setEntities((prevEntities) => {
-        const totalItems = prevEntities.length;
-        const totalPages = Math.ceil(totalItems / rowsPerPage);
-
-        if (currentPage >= totalPages) {
-          setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
-        }
-
         return prevEntities;
       });
-
+      setIsDelete(true);
       toast.success(`Registro eliminado con éxito.`);
       setModalDeleteOpen(false);
     } catch (error) {
-      console.log(error);
       handleError(error, `Error inesperado al eliminar ${entityNameSingular}`);
     }
   };
@@ -215,16 +194,13 @@ const GenericManager = ({
 
         <Box className="flexColumnCenter" paddingTop="20px">
           <ContentGenericTable
-            isLoading={isLoading}
+            isReady={isReady}
+            setIsDelete={setIsDelete}
+            isDelete={isDelete}
             data={entities}
             columns={columns}
             onView={openViewModal}
             onDelete={openDeleteModal}
-            currentPage={currentPage}
-            rowsPerPage={rowsPerPage}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-            entityName={entityNamePlural}
           />
         </Box>
       </Box>

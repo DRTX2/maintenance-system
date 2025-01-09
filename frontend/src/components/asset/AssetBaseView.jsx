@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Box from "@mui/material/Box";
+import React, { useState } from "react";
 import { Button, Typography } from "@mui/material";
-import CreateStyles from "../../generic/styles/CreateStyles";
-import axiosInstance from "../../utils/api";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FormControlLabel, Switch } from "@mui/material";
+import { Grid2 } from "@mui/material";
+import { generateErrorMessage } from "../../utils/validations";
+import Box from "@mui/material/Box";
+import CreateStyles from "../../generic/styles/CreateStyles";
+import axiosInstance from "../../utils/api";
 import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
-import { Grid2 } from "@mui/material";
-import { handleErrors, generateErrorMessage } from "../../utils/validations";
 
 const AssetBaseView = ({
   asset,

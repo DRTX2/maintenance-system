@@ -1,40 +1,22 @@
 import React from "react";
 import {
-  Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
-  Paper,
   IconButton,
-  TablePagination,
 } from "@mui/material";
-import { CircularProgress } from "@mui/material";
 import tableStyles from "../../generic/styles/TableStyles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import CustomTablePaginationActions from "../../generic/CustomTablePaginationActions";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { getDecodedToken } from "../../utils/authService";
 import Tooltip from "@mui/material/Tooltip";
+import Loader from "../Loader";
+import GenericTable from "../GenericTable";
 
-const AssetTableShow = ({
-  isLoading,
-  data,
-  columns,
-  onView,
-  onDelete,
-  currentPage,
-  rowsPerPage,
-  handleChangePage,
-  handleChangeRowsPerPage,
-}) => {
-  if (isLoading) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-      </div>
-    );
+const AssetTableShow = ({ isReady, data, columns, onView, onDelete }) => {
+  if (!isReady) {
+    return <Loader />;
   }
 
   console.log("The data is", data);
@@ -59,13 +41,9 @@ const AssetTableShow = ({
   const role = decodedToken?.role;
 
   return (
-    <>
-      <TableContainer
-        className="table-container"
-        component={Paper}
-        sx={tableStyles.tableContainer}
-      >
-        <Table>
+    <GenericTable dataCount={data.length}>
+      {(currentPage, rowsPerPage) => (
+        <>
           <TableHead sx={tableStyles.tableHead}>
             <TableRow>
               {columns.map((column) => (
@@ -109,26 +87,9 @@ const AssetTableShow = ({
                 </TableRow>
               ))}
           </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        component="div"
-        count={data.length}
-        page={currentPage}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[3, 5]}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage={
-          <span style={tableStyles.labelRowsPerPage}>Filas por página</span>
-        }
-        labelDisplayedRows={() => ""}
-        ActionsComponent={(props) => (
-          <CustomTablePaginationActions {...props} />
-        )}
-        sx={tableStyles.pagination}
-      />
-    </>
+        </>
+      )}
+    </GenericTable>
   );
 };
 

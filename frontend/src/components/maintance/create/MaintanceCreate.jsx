@@ -3,7 +3,7 @@ import axiosInstance from "../../../utils/api";
 import MaintanceBaseCreate from "./MaintanceBaseCreate";
 import { getDecodedToken } from "../../../utils/authService";
 import { toast } from "react-toastify";
-import { CircularProgress, Typography } from "@mui/material";
+import Loader from "../../Loader";
 
 const MaintanceCreate = () => {
   const [types, setTypes] = useState([]);
@@ -91,14 +91,7 @@ const MaintanceCreate = () => {
   };
 
   if (!isReady) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
-          Cargando datos, por favor espera...
-        </Typography>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

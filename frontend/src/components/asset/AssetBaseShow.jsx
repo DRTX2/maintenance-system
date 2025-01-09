@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,12 +9,11 @@ import SearchBar from "../../generic/SearchBar";
 import AssetTableShow from "./AssetTableShow";
 import AssetFilters from "../../generic/filters/AssetFilters";
 import axiosInstance from "../../utils/api";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useDataContext } from "../../provider/DataProvider";
 
 const AssetShow = ({ columns, role }) => {
-  const [assets, setAssets] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isReady } = useDataContext();
+
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
   const navigate = useNavigate();
@@ -23,37 +24,22 @@ const AssetShow = ({ columns, role }) => {
     setCurrentPage(0);
   };
 
-  useEffect(() => {
-    fetchAssets();
-  }, []);
-
-  const fetchAssets = async () => {
-    try {
-      const response = await axiosInstance.get(`/assets/${role}`);
-      setAssets(response.data);
-    } catch (error) {
-      toast.error("No se ha podido obtener los activos.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const fetchAssetsFilter = async (filters = {}) => {
     console.log(filters);
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axiosInstance.post("/assets/filters", filters);
-      setAssets(response.data);
+      // setAssets(response.data);
     } catch (error) {
       toast.error("No se ha podido filtrar.");
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
   const onFetch = async (param) => {
     if (param === "") {
-      await fetchAssets();
+      // await fetchAssets();
       return;
     }
 
@@ -61,36 +47,36 @@ const AssetShow = ({ columns, role }) => {
       const response = await axiosInstance.post(`/assets/search/${role}`, {
         term: param,
       });
-      setAssets(response.data);
+      // setAssets(response.data);
     } catch (error) {
       toast.error("Ha ocurrido un error con la busqueda");
     }
   };
 
-  const toggleVisibility = async (id, currentState) => {
-    try {
-      const route =
-        currentState === "V" ? `/assets/hide/${id}` : `/assets/visible/${id}`;
+  // const toggleVisibility = async (id, currentState) => {
+  //   try {
+  //     const route =
+  //       currentState === "V" ? `/assets/hide/${id}` : `/assets/visible/${id}`;
 
-      await axiosInstance.put(route);
+  //     await axiosInstance.put(route);
 
-      setAssets((prevAssets) =>
-        prevAssets.map((asset) =>
-          asset.id === id
-            ? { ...asset, est_ass: currentState === "V" ? "H" : "V" }
-            : asset
-        )
-      );
+  //     setAssets((prevAssets) =>
+  //       prevAssets.map((asset) =>
+  //         asset.id === id
+  //           ? { ...asset, est_ass: currentState === "V" ? "H" : "V" }
+  //           : asset
+  //       )
+  //     );
 
-      toast.success(
-        currentState === "V"
-          ? "Activo ocultado con éxito."
-          : "Activo mostrado con éxito."
-      );
-    } catch (error) {
-      toast.error("Ha ocurrido un error al cambiar la visibilidad");
-    }
-  };
+  //     toast.success(
+  //       currentState === "V"
+  //         ? "Activo ocultado con éxito."
+  //         : "Activo mostrado con éxito."
+  //     );
+  //   } catch (error) {
+  //     toast.error("Ha ocurrido un error al cambiar la visibilidad");
+  //   }
+  // };
 
   // 2. El padre es notifiacdo.
   const handleFilterChange = async (updatedFilters) => {
@@ -105,7 +91,7 @@ const AssetShow = ({ columns, role }) => {
     );
 
     if (isFilterEmpty) {
-      await fetchAssets();
+      // await fetchAssets();
       return;
     }
 
@@ -197,7 +183,7 @@ const AssetShow = ({ columns, role }) => {
             {/* Filtros */}
             <AssetFilters
               onFilterChange={handleFilterChange}
-              onClear={fetchAssets}
+              onClear={data.fetchAssets}
             />
           </Box>
         </Box>
@@ -205,15 +191,11 @@ const AssetShow = ({ columns, role }) => {
 
       <Box className="flexColumnCenter" paddingTop="20px">
         <AssetTableShow
-          isLoading={isLoading}
-          data={assets}
+          isReady={isReady}
+          data={data.assets}
           columns={columns}
           onView={onView}
-          onDelete={toggleVisibility}
-          currentPage={currentPage}
-          rowsPerPage={rowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
+          // onDelete={toggleVisibility}
         />
       </Box>
     </div>

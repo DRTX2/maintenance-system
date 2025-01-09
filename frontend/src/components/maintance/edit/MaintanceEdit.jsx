@@ -5,6 +5,7 @@ import { CircularProgress, Typography } from "@mui/material";
 import { getDecodedToken } from "../../../utils/authService";
 import MaintanceBaseEdit from "./MaintanceBaseEdit";
 import axiosInstance from "../../../utils/api";
+import Loader from "../../Loader";
 
 const MaintanceEdit = () => {
   const { id } = useParams();
@@ -81,14 +82,7 @@ const MaintanceEdit = () => {
   ];
 
   if (!isReady) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
-          Cargando datos, por favor espera...
-        </Typography>
-      </div>
-    );
+    return <Loader />;
   }
 
   const formattedMaintance = {

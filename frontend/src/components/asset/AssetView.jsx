@@ -6,6 +6,7 @@ import { CircularProgress, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { validateField, validateFields } from "../../utils/validations";
 import { getDecodedToken } from "../../utils/authService";
+import Loader from "../Loader";
 
 const AssetView = () => {
   const { id } = useParams();
@@ -191,14 +192,7 @@ const AssetView = () => {
   ];
 
   if (!isReady) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
-          Cargando datos, por favor espera...
-        </Typography>
-      </div>
-    );
+    return <Loader />;
   }
   return (
     <AssetBaseView

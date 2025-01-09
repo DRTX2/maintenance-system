@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { Box, Grid2, Typography, Button } from "@mui/material";
-import CreateStyles from "../../generic/styles/CreateStyles";
-import DynamicField from "../../generic/DynamicField";
-import AssetTableCreate from "./AssetTableCreate";
-import axiosInstance from "../../utils/api";
-import { toast } from "react-toastify";
 import {
   validateField,
   validateFields,
   handleErrors,
 } from "../../utils/validations";
+import React, { useState } from "react";
+import { Box, Grid2, Typography, Button } from "@mui/material";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import CreateStyles from "../../generic/styles/CreateStyles";
+import DynamicField from "../../generic/DynamicField";
+import AssetTableCreate from "./AssetTableCreate";
+import axiosInstance from "../../utils/api";
 
 const Entry = ({ fields, columns, defaultState }) => {
   const [entity, setEntity] = useState(defaultState);
