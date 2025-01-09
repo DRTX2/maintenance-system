@@ -1,8 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axiosInstance from "../utils/api";
-import { getDecodedToken } from "../utils/authService";
-
-const role = getDecodedToken?.role;
 
 // Crea el contexto
 const DataContext = createContext();
@@ -10,17 +7,11 @@ const DataContext = createContext();
 // Proveedor de datos (DataProvider)
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState({
-    assets: [],
     locations: [],
     incomes: [],
     categories: [],
   });
   const [isReady, setIsReady] = useState(false);
-
-  const fetchAssets = async () => {
-    const response = await axiosInstance.get(`/assets/${role}`);
-    setData((prev) => ({ ...prev, assets: response.data }));
-  };
 
   const fetchLocations = async () => {
     const response = await axiosInstance.get("/locations");
@@ -40,12 +31,7 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        await Promise.all([
-          fetchAssets(),
-          fetchLocations(),
-          fetchIncomes(),
-          fetchDevices(),
-        ]);
+        await Promise.all([fetchLocations(), fetchIncomes(), fetchDevices()]);
         setIsReady(true);
       } catch (error) {
         console.error("Error fetching initial data:", error);

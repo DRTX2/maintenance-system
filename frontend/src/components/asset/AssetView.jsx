@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { validateField, validateFields } from "../../utils/validations";
 import { getDecodedToken } from "../../utils/authService";
-import { useDataContext } from "../../provider/DataProvider";
+import { useDataContext } from "../../provider/DataContext";
 import axiosInstance from "../../utils/api";
 import AssetBaseView from "./AssetBaseView";
 import Loader from "../Loader";
@@ -68,22 +68,6 @@ const AssetView = () => {
         }))
       : [{ value: "", label: "No se han encontrado ingresos..." }];
 
-  const income =
-    asset?.income_est === "C"
-      ? {
-          key: "income_code",
-          label: "Ingreso",
-          type: "text",
-          editable: false,
-        }
-      : {
-          key: "id_inc_ass",
-          label: "Ingreso",
-          type: "select",
-          options: resultsIncomes,
-          editable: true,
-        };
-
   const fields = [
     { key: "cod_ass", label: "Código", type: "text", editable: true },
     {
@@ -99,7 +83,13 @@ const AssetView = () => {
       options: resultsLocations,
       editable: true,
     },
-    income,
+    {
+      key: "id_inc_ass",
+      label: "Ingreso",
+      type: "select",
+      options: resultsIncomes,
+      editable: true,
+    },
     {
       key: "category_name",
       label: "Dispositivo",

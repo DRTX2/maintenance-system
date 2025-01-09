@@ -4,12 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FormControlLabel, Switch } from "@mui/material";
 import { Grid2 } from "@mui/material";
-import { generateErrorMessage } from "../../utils/validations";
 import Box from "@mui/material/Box";
 import CreateStyles from "../../generic/styles/CreateStyles";
-import axiosInstance from "../../utils/api";
 import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
+import { useAssetsContext } from "../../provider/AssetsContext";
 
 const AssetBaseView = ({
   asset,
@@ -24,6 +23,7 @@ const AssetBaseView = ({
   handleFieldChange,
 }) => {
   const navigate = useNavigate();
+  const { updateAsset } = useAssetsContext();
   const [isEditing, setIsEditing] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
 
@@ -38,21 +38,10 @@ const AssetBaseView = ({
     const isTableValid = validateTableFields();
 
     if (isEntityValid && isTableValid) {
-      try {
-        await axiosInstance.put(`/assets/${asset.id}`, {
-          asset: asset,
-        });
-        toast.success("Activo actualizado con éxito.");
-        setIsEditing(false);
-        navigate("/dashboard/assets");
-      } catch (error) {
-        if (error.response.data.errors) {
-          const message = generateErrorMessage(error.response.data.errors);
-          toast.error(message);
-        } else {
-          toast.error("No se ha podido editar el activo.");
-        }
-      }
+      updateAsset(asset);
+      toast.success("Activo actualizado con éxito.");
+      setIsEditing(false);
+      navigate("/dashboard/assets");
     }
   };
 

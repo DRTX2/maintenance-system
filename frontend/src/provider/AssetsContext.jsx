@@ -45,17 +45,21 @@ export const AssetsProvider = ({ children }) => {
 
   const updateAsset = async (updatedAsset) => {
     try {
-      const response = await axiosInstance.put(
-        `/assets/${updatedAsset.id}`,
-        updatedAsset
-      );
+      const response = await axiosInstance.put(`/assets/${updatedAsset.id}`, {
+        asset: updatedAsset,
+      });
       setAssets((prev) =>
         prev.map((asset) =>
-          asset.id === updatedAsset.id ? response.data : asset
+          asset.id === updatedAsset.id ? response.data.asset : asset
         )
       );
     } catch (error) {
-      console.error("Error updating asset:", error);
+      if (error.response.data.errors) {
+        const message = handleErrors(error.response.data.errors).join("\n");
+        toast.error(message);
+      } else {
+        toast.error("No se ha podido crear el activo.");
+      }
     }
   };
 

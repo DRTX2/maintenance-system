@@ -1,6 +1,6 @@
 import AssetBaseCreate from "./AssetBaseCreate";
 import Loader from "../Loader";
-import { useDataContext } from "../../provider/DataProvider";
+import { useDataContext } from "../../provider/DataContext";
 
 const AssetCreate = () => {
   const { data, isReady } = useDataContext();
