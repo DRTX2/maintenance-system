@@ -87,7 +87,7 @@ Route::post('/responsibles/search', [ResponsibleController::class, 'search']);
 
 
 //Activos
-Route::get('/assets/{rol}', [AssetController::class, 'index']);
+Route::get('/assets', [AssetController::class, 'index']);
 Route::get('/assetsForMaintances', [AssetController::class, 'indexForMaintenances']);
 Route::get('/assets/showForMaintances/{id}', [AssetController::class, 'showForManteinces']);
 Route::get('/assets/show/{id}', [AssetController::class, 'show']);
@@ -114,8 +114,8 @@ Route::post('/assets/status', [AssetController::class, 'getStatus']);
 
 //Mantenimientos - aun no gestiono su relacion con responsables
 // Route::middleware([JwtMiddleware::class])->group(function () {
-    Route::get('/maintenances', [MaintenanceController::class, 'index']);
-   
+Route::get('/maintenances', [MaintenanceController::class, 'index']);
+
 // });
 
 

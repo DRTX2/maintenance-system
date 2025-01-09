@@ -20,6 +20,7 @@ const AssetTableShow = ({
   isDelete,
   data,
   columns,
+  onDelete,
   onView,
 }) => {
   if (!isReady) {
@@ -73,6 +74,22 @@ const AssetTableShow = ({
                   <IconButton onClick={() => onView(item.id)} color="primary">
                     <VisibilityIcon />
                   </IconButton>
+                  {role === "admin" ? (
+                    <IconButton
+                      onClick={() => onDelete(item.id, item.est_ass)}
+                      color={item.est_ass === "V" ? "secondary" : "sucess"}
+                    >
+                      {item.est_ass === "V" ? (
+                        <Tooltip title="Ocultar">
+                          <VisibilityIcon />
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="Mostrar">
+                          <VisibilityOffIcon />
+                        </Tooltip>
+                      )}
+                    </IconButton>
+                  ) : null}
                 </TableCell>
               </TableRow>
             ))}

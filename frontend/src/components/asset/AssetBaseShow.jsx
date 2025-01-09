@@ -94,6 +94,10 @@ const AssetShow = ({ columns, role }) => {
     navigate(`/dashboard/assets/show/${id}?role=${role}`);
   };
 
+  const onDelete = (id, currentState) => {
+    //
+  };
+
   return (
     <div
       className="flexColumnCenter"
@@ -163,6 +167,7 @@ const AssetShow = ({ columns, role }) => {
           isDelete={isDelete}
           data={assets}
           columns={columns}
+          onDelete={onDelete}
           onView={onView}
         />
       </Box>

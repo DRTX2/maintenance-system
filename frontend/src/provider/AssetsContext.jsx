@@ -20,7 +20,8 @@ export const AssetsProvider = ({ children }) => {
 
   const fetchAssets = async () => {
     try {
-      const response = await axiosInstance.get(`/assets/${role}`);
+      const response = await axiosInstance.get(`/assets`);
+      console.log("Hizo un fetch");
       setAssets(response.data);
     } catch (error) {
       console.error("Error fetching assets:", error);
