@@ -25,7 +25,6 @@ const GenericTable = ({ children, data, dataCount, setIsDelete, isDelete }) => {
 
   // Calcular las entidades para la página actual
   const currentPageData = useMemo(() => {
-    console.log("entro aca");
     const startIndex = currentPage * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     return data.slice(startIndex, endIndex);

@@ -1,42 +1,37 @@
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  IconButton,
+  Button,
+} from "@mui/material";
 import { useState, useEffect } from "react";
+import { CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { getDecodedToken } from "../../../utils/authService";
+import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
 import SearchBar from "../../../generic/SearchBar";
 import AddIcon from "@mui/icons-material/Add";
 import GenericStyles from "../../../generic/styles/GenericStyles";
 import dayjs from "dayjs";
-import { CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import ReusableDatePicker from "../../report/ReusableDatePicker";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  TablePagination,
-  Button,
-} from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
-import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
 import tableStyles from "../../../generic/styles/TableStyles";
-import { getDecodedToken } from "../../../utils/authService";
-import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/api";
 import MaintanceFilters from "../../../generic/filters/MaintanceFilters";
+import GenericTable from "../../GenericTable";
 
 const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
   const role = getDecodedToken()?.role;
   const [maintances, setMaintances] = useState([]);
   const [isReady, setIsReady] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
+  const [isDelete, setIsDelete] = useState(false);
 
   const [formData, setFormData] = useState({
     startDate: null,
@@ -61,12 +56,6 @@ const MaintanceBaseShow = ({ columns }) => {
     } finally {
       setIsReady(true);
     }
-  };
-
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
   };
 
   const onCreate = () => {
@@ -204,7 +193,6 @@ const MaintanceBaseShow = ({ columns }) => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
-      console.log("Errores detectados:", newErrors);
       return;
     }
 
@@ -218,8 +206,6 @@ const MaintanceBaseShow = ({ columns }) => {
         formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD") : null,
       ],
     };
-
-    console.log("Fecha enviandose", transformedObject);
 
     try {
       const response = await axiosInstance.post(
@@ -278,7 +264,6 @@ const MaintanceBaseShow = ({ columns }) => {
       className="flexColumnCenter"
       style={{ width: "90%", marginTop: "40px" }}
     >
-      {/* Este box debe ser mandado a un componente, como Head */}
       <Box className="flewColumnCenter">
         <Box
           className="flexRowCenterEnd"
@@ -363,33 +348,28 @@ const MaintanceBaseShow = ({ columns }) => {
       </Box>
       {/* Fin del box */}
 
-      {/* Tabla. Esta también debe ser mandado a otro componente mucho más general */}
       {isReady ? (
         <Box className="flexColumnCenter" paddingTop="20px">
           {formattedData.length > 0 ? (
             <>
-              <TableContainer
-                className="table-container"
-                component={Paper}
-                sx={tableStyles.tableContainer}
+              <GenericTable
+                data={formattedData}
+                dataCount={formattedData.length}
+                isDelete={isDelete}
+                setIsDelete={setIsDelete}
               >
-                <Table>
-                  <TableHead sx={tableStyles.tableHead}>
-                    <TableRow>
-                      {columns.map((column) => (
-                        <TableCell key={column.key}>{column.label}</TableCell>
-                      ))}
-                      <TableCell align="center">Acciones</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {formattedData
-                      .slice(
-                        currentPage * rowsPerPage,
-                        currentPage * rowsPerPage + rowsPerPage
-                      )
-                      // item --> un mantenimiento
-                      .map((item) => (
+                {(currentPageData) => (
+                  <>
+                    <TableHead sx={tableStyles.tableHead}>
+                      <TableRow>
+                        {columns.map((column) => (
+                          <TableCell key={column.key}>{column.label}</TableCell>
+                        ))}
+                        <TableCell align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {currentPageData.map((item) => (
                         <TableRow key={item.id}>
                           {columns.map((column) => (
                             <TableCell key={column.key}>
@@ -436,28 +416,10 @@ const MaintanceBaseShow = ({ columns }) => {
                           </TableCell>
                         </TableRow>
                       ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                component="div"
-                count={formattedData.length}
-                page={currentPage}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[3, 5]}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage={
-                  <span style={tableStyles.labelRowsPerPage}>
-                    Filas por página
-                  </span>
-                }
-                labelDisplayedRows={() => ""}
-                ActionsComponent={(props) => (
-                  <CustomTablePaginationActions {...props} />
+                    </TableBody>
+                  </>
                 )}
-                sx={tableStyles.pagination}
-              />
+              </GenericTable>
             </>
           ) : (
             <div style={{ textAlign: "center", marginTop: "20px" }}>
