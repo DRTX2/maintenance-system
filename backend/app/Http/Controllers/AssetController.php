@@ -10,6 +10,7 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 class AssetController extends Controller
 {
     //Crear, Actualizar,Eliminar,Ver, Filtrar   
@@ -85,8 +86,12 @@ class AssetController extends Controller
         ]);
     }
 
-    public function index($rol)
+    public function index()
     {
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
+
 
         if ($rol == 'user') {
             $assets = Asset::where('est_ass', 'V')
@@ -132,10 +137,12 @@ class AssetController extends Controller
 
 
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
 
-        $userRole = $request->query('role');
+        $payload = JWTAuth::parseToken()->getPayload();
+        $userRole = $payload->get('role');
+
 
         if (!$userRole) {
             return response()->json([
@@ -273,8 +280,11 @@ class AssetController extends Controller
         $asset->components()->attach($components);
 
         return response()->json([
-            'message' => 'Activo creado exitosamente.',
-            'asset' => $asset,
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+            ],
         ]);
 
 
@@ -327,13 +337,20 @@ class AssetController extends Controller
         }
 
         return response()->json([
-            'message' => 'Activo actualizado exitosamente.',
-            'asset' => $asset->fresh(),
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+            ],
         ]);
     }
 
-    public function search(Request $request, $rol)
+    public function search(Request $request)
     {
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
+
         $request->validate([
             'term' => 'required|string|max:25',
         ]);
@@ -371,6 +388,8 @@ class AssetController extends Controller
     public function indexWithFilters(Request $request)
     {
 
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
 
         $assets = Asset::query();
 
@@ -396,7 +415,6 @@ class AssetController extends Controller
             });
         }
 
-        $rol = $request->input('rol');
 
         // Lógica para usuarios (rol "user")
         if ($rol === 'user') {
