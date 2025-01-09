@@ -137,10 +137,12 @@ class AssetController extends Controller
 
 
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
 
-        $userRole = $request->query('role');
+        $payload = JWTAuth::parseToken()->getPayload();
+        $userRole = $payload->get('role');
+
 
         if (!$userRole) {
             return response()->json([
@@ -343,8 +345,12 @@ class AssetController extends Controller
         ]);
     }
 
-    public function search(Request $request, $rol)
+    public function search(Request $request)
     {
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
+
         $request->validate([
             'term' => 'required|string|max:25',
         ]);
@@ -382,6 +388,8 @@ class AssetController extends Controller
     public function indexWithFilters(Request $request)
     {
 
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
 
         $assets = Asset::query();
 
@@ -407,7 +415,6 @@ class AssetController extends Controller
             });
         }
 
-        $rol = $request->input('rol');
 
         // Lógica para usuarios (rol "user")
         if ($rol === 'user') {
