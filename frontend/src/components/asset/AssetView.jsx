@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import axiosInstance from "../../utils/api";
-import AssetBaseView from "./AssetBaseView";
-import { CircularProgress, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { validateField, validateFields } from "../../utils/validations";
 import { getDecodedToken } from "../../utils/authService";
+import { useDataContext } from "../../provider/DataProvider";
+import axiosInstance from "../../utils/api";
+import AssetBaseView from "./AssetBaseView";
 import Loader from "../Loader";
 
 const AssetView = () => {
   const { id } = useParams();
   const role = getDecodedToken()?.role;
-  const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [relatedData, setRelatedData] = useState([]);
   const [asset, setAsset] = useState({});
@@ -20,16 +19,16 @@ const AssetView = () => {
   const [isRelatedDataInitialized, setIsRelatedDataInitialized] =
     useState(false);
 
+  const { data } = useDataContext();
+
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [asset, locationsData, incomesData] = await Promise.all([
+        const [asset, incomesData] = await Promise.all([
           axiosInstance.get(`/assets/show/${id}?role=${role}`),
-          axiosInstance.get("/locations"),
           axiosInstance.get(`/assets/incomes/${id}`),
         ]);
 
-        setLocations(locationsData.data.results);
         setIncomes(incomesData.data);
         setAsset(asset.data);
         setIsReady(true);
@@ -54,8 +53,8 @@ const AssetView = () => {
   }, [asset, isRelatedDataInitialized]);
 
   const resultsLocations =
-    locations.length > 0
-      ? locations.map((location) => ({
+    data?.locations.length > 0
+      ? data?.locations.map((location) => ({
           value: location.id,
           label: location.nam_loc,
         }))

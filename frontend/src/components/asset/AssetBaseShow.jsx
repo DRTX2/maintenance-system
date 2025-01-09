@@ -9,11 +9,11 @@ import SearchBar from "../../generic/SearchBar";
 import AssetTableShow from "./AssetTableShow";
 import AssetFilters from "../../generic/filters/AssetFilters";
 import axiosInstance from "../../utils/api";
-import { useDataContext } from "../../provider/DataProvider";
+import { useAssetsContext } from "../../provider/AssetsContext";
 
 const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
-  const { data, isReady } = useDataContext();
+  const { assets, isReady } = useAssetsContext();
   const [isDelete, setIsDelete] = useState(false);
 
   const fetchAssetsFilter = async (filters = {}) => {
@@ -44,33 +44,6 @@ const AssetShow = ({ columns, role }) => {
       toast.error("Ha ocurrido un error con la busqueda");
     }
   };
-
-  const toggleVisibility = () => {};
-
-  // const toggleVisibility = async (id, currentState) => {
-  //   try {
-  //     const route =
-  //       currentState === "V" ? `/assets/hide/${id}` : `/assets/visible/${id}`;
-
-  //     await axiosInstance.put(route);
-
-  //     setAssets((prevAssets) =>
-  //       prevAssets.map((asset) =>
-  //         asset.id === id
-  //           ? { ...asset, est_ass: currentState === "V" ? "H" : "V" }
-  //           : asset
-  //       )
-  //     );
-
-  //     toast.success(
-  //       currentState === "V"
-  //         ? "Activo ocultado con éxito."
-  //         : "Activo mostrado con éxito."
-  //     );
-  //   } catch (error) {
-  //     toast.error("Ha ocurrido un error al cambiar la visibilidad");
-  //   }
-  // };
 
   // 2. El padre es notifiacdo.
   const handleFilterChange = async (updatedFilters) => {
@@ -175,10 +148,10 @@ const AssetShow = ({ columns, role }) => {
             />
 
             {/* Filtros */}
-            <AssetFilters
+            {/* <AssetFilters
               onFilterChange={handleFilterChange}
-              onClear={data.fetchAssets}
-            />
+              // onClear={data.fetchAssets}
+            /> */}
           </Box>
         </Box>
       </Box>
@@ -188,10 +161,9 @@ const AssetShow = ({ columns, role }) => {
           isReady={isReady}
           setIsDelete={setIsDelete}
           isDelete={isDelete}
-          data={data.assets}
+          data={assets}
           columns={columns}
           onView={onView}
-          onDelete={toggleVisibility}
         />
       </Box>
     </div>

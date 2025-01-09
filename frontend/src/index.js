@@ -3,15 +3,18 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { DataProvider } from "./provider/DataProvider";
+import { AssetsProvider } from "./provider/AssetsContext";
 
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <DataProvider>
-      <App />
-    </DataProvider>
+    <AssetsProvider>
+      <DataProvider>
+        <App />
+      </DataProvider>
+    </AssetsProvider>
   </React.StrictMode>
 );
 

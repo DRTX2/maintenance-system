@@ -32,7 +32,7 @@ export const DataProvider = ({ children }) => {
     setData((prev) => ({ ...prev, incomes: response.data }));
   };
 
-  const fetchCategories = async () => {
+  const fetchDevices = async () => {
     const response = await axiosInstance.get("/categories");
     setData((prev) => ({ ...prev, categories: response.data.results }));
   };
@@ -44,7 +44,7 @@ export const DataProvider = ({ children }) => {
           fetchAssets(),
           fetchLocations(),
           fetchIncomes(),
-          fetchCategories(),
+          fetchDevices(),
         ]);
         setIsReady(true);
       } catch (error) {

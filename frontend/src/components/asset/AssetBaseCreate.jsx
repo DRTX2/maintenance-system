@@ -11,8 +11,10 @@ import CreateStyles from "../../generic/styles/CreateStyles";
 import DynamicField from "../../generic/DynamicField";
 import AssetTableCreate from "./AssetTableCreate";
 import axiosInstance from "../../utils/api";
+import { useAssetsContext } from "../../provider/AssetsContext";
 
 const Entry = ({ fields, columns, defaultState }) => {
+  const { addAsset } = useAssetsContext();
   const [entity, setEntity] = useState(defaultState);
   const [relatedData, setRelatedData] = useState([]);
   const [errors, setErrors] = useState({});
@@ -155,19 +157,10 @@ const Entry = ({ fields, columns, defaultState }) => {
     const isTableValid = validateTableFields();
 
     if (isEntityValid && isTableValid) {
-      try {
-        await axiosInstance.post("/assets", { asset: entity });
-        resetFields();
-        navigate("/dashboard/assets");
-        toast.success("Activo creado con éxito.");
-      } catch (error) {
-        if (error.response.data.errors) {
-          const message = handleErrors(error.response.data.errors).join("\n");
-          toast.error(message);
-        } else {
-          toast.error("No se ha podido crear el activo.");
-        }
-      }
+      addAsset(entity);
+      resetFields();
+      navigate("/dashboard/assets");
+      toast.success("Activo creado con éxito.");
     }
   };
 
