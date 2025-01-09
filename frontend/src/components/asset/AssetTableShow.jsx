@@ -14,12 +14,19 @@ import Tooltip from "@mui/material/Tooltip";
 import Loader from "../Loader";
 import GenericTable from "../GenericTable";
 
-const AssetTableShow = ({ isReady, data, columns, onView, onDelete }) => {
+const AssetTableShow = ({
+  isReady,
+  setIsDelete,
+  isDelete,
+  data,
+  columns,
+  onView,
+  onDelete,
+}) => {
   if (!isReady) {
     return <Loader />;
   }
 
-  console.log("The data is", data);
   if (!Array.isArray(data)) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
@@ -41,8 +48,13 @@ const AssetTableShow = ({ isReady, data, columns, onView, onDelete }) => {
   const role = decodedToken?.role;
 
   return (
-    <GenericTable dataCount={data.length}>
-      {(currentPage, rowsPerPage) => (
+    <GenericTable
+      data={data}
+      dataCount={data.length}
+      setIsDelete={setIsDelete}
+      isDelete={isDelete}
+    >
+      {(currentPageData) => (
         <>
           <TableHead sx={tableStyles.tableHead}>
             <TableRow>
@@ -53,39 +65,34 @@ const AssetTableShow = ({ isReady, data, columns, onView, onDelete }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data
-              .slice(
-                currentPage * rowsPerPage,
-                currentPage * rowsPerPage + rowsPerPage
-              )
-              .map((item) => (
-                <TableRow key={item.id}>
-                  {columns.map((column) => (
-                    <TableCell key={column.key}>{item[column.key]}</TableCell>
-                  ))}
-                  <TableCell align="center">
-                    <IconButton onClick={() => onView(item.id)} color="primary">
-                      <VisibilityIcon />
+            {currentPageData.map((item) => (
+              <TableRow key={item.id}>
+                {columns.map((column) => (
+                  <TableCell key={column.key}>{item[column.key]}</TableCell>
+                ))}
+                <TableCell align="center">
+                  <IconButton onClick={() => onView(item.id)} color="primary">
+                    <VisibilityIcon />
+                  </IconButton>
+                  {role === "admin" ? (
+                    <IconButton
+                      onClick={() => onDelete(item.id, item.est_ass)}
+                      color={item.est_ass === "V" ? "secondary" : "sucess"}
+                    >
+                      {item.est_ass === "V" ? (
+                        <Tooltip title="Ocultar">
+                          <VisibilityIcon />
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="Mostrar">
+                          <VisibilityOffIcon />
+                        </Tooltip>
+                      )}
                     </IconButton>
-                    {role === "admin" ? (
-                      <IconButton
-                        onClick={() => onDelete(item.id, item.est_ass)}
-                        color={item.est_ass === "V" ? "secondary" : "sucess"}
-                      >
-                        {item.est_ass === "V" ? (
-                          <Tooltip title="Ocultar">
-                            <VisibilityIcon />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip title="Mostrar">
-                            <VisibilityOffIcon />
-                          </Tooltip>
-                        )}
-                      </IconButton>
-                    ) : null}
-                  </TableCell>
-                </TableRow>
-              ))}
+                  ) : null}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </>
       )}

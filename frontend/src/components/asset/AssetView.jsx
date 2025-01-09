@@ -32,10 +32,6 @@ const AssetView = () => {
         setLocations(locationsData.data.results);
         setIncomes(incomesData.data);
         setAsset(asset.data);
-
-        console.log("Asset", asset);
-        console.log("Incomes", incomesData);
-
         setIsReady(true);
       } catch (error) {
         toast.error("No se han podido obtener los datos.");
@@ -130,7 +126,6 @@ const AssetView = () => {
     const hasError =
       !description.trim() || description.length < 3 || description.length > 200;
 
-    console.log("¿Tiene error?", hasError);
     setRelatedData((prevData) =>
       prevData.map((component) =>
         component.id === id
@@ -146,7 +141,6 @@ const AssetView = () => {
 
   const handleDescription = (id, description) => {
     validateSingleField(id, description);
-    console.log("Que sucedió", relatedData);
     setAsset((prevEntity) => {
       const updatedComponents = prevEntity.components.map((component) =>
         component.id === id
@@ -159,8 +153,6 @@ const AssetView = () => {
 
       return { ...prevEntity, components: updatedComponents };
     });
-
-    console.log("Related despues", relatedData);
   };
 
   const validateTableFields = () => {
@@ -197,6 +189,7 @@ const AssetView = () => {
   return (
     <AssetBaseView
       asset={asset}
+      isReady={isReady}
       relatedData={relatedData}
       fields={fields}
       columns={columns}

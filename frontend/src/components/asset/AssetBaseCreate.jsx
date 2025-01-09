@@ -16,23 +16,15 @@ const Entry = ({ fields, columns, defaultState }) => {
   const [entity, setEntity] = useState(defaultState);
   const [relatedData, setRelatedData] = useState([]);
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
   const [isCategorySelected, setIsCategorySelected] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
   const navigate = useNavigate();
 
   const resetFields = () => {
     setEntity(defaultState);
     setRelatedData([]);
     setErrors({});
-  };
-
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
   };
 
   // Basicamente valida un solo campo
@@ -92,7 +84,7 @@ const Entry = ({ fields, columns, defaultState }) => {
   const handleFetch = async (key, value) => {
     if (key === "id_cat_ass") {
       setIsCategorySelected(true);
-      setIsLoading(true);
+      setIsReady(true);
       resetComponents();
 
       try {
@@ -112,7 +104,7 @@ const Entry = ({ fields, columns, defaultState }) => {
         toast.error("No se ha podido obtener los componentes.");
         setRelatedData([]);
       } finally {
-        setIsLoading(false);
+        setIsReady(true);
       }
     }
   };
@@ -225,12 +217,10 @@ const Entry = ({ fields, columns, defaultState }) => {
             <Box marginTop="30px">
               <AssetTableCreate
                 data={relatedData}
-                isLoading={isLoading}
+                setIsDelete={setIsDelete}
+                isDelete={isDelete}
+                isReady={isReady}
                 columns={columns}
-                currentPage={currentPage}
-                rowsPerPage={rowsPerPage}
-                handleChangePage={handleChangePage}
-                handleChangeRowsPerPage={handleChangeRowsPerPage}
                 handleDescription={handleDescription}
                 readOnly={false}
               />

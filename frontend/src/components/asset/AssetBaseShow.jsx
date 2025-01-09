@@ -12,17 +12,9 @@ import axiosInstance from "../../utils/api";
 import { useDataContext } from "../../provider/DataProvider";
 
 const AssetShow = ({ columns, role }) => {
-  const { data, isReady } = useDataContext();
-
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
   const navigate = useNavigate();
-
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-  };
+  const { data, isReady } = useDataContext();
+  const [isDelete, setIsDelete] = useState(false);
 
   const fetchAssetsFilter = async (filters = {}) => {
     console.log(filters);
@@ -52,6 +44,8 @@ const AssetShow = ({ columns, role }) => {
       toast.error("Ha ocurrido un error con la busqueda");
     }
   };
+
+  const toggleVisibility = () => {};
 
   // const toggleVisibility = async (id, currentState) => {
   //   try {
@@ -192,10 +186,12 @@ const AssetShow = ({ columns, role }) => {
       <Box className="flexColumnCenter" paddingTop="20px">
         <AssetTableShow
           isReady={isReady}
+          setIsDelete={setIsDelete}
+          isDelete={isDelete}
           data={data.assets}
           columns={columns}
           onView={onView}
-          // onDelete={toggleVisibility}
+          onDelete={toggleVisibility}
         />
       </Box>
     </div>

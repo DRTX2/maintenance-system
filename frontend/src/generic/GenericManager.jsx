@@ -98,8 +98,6 @@ const GenericManager = ({
     }
   };
 
-  console.log(isDelete);
-
   const handleDelete = async (id) => {
     try {
       await axiosInstance.delete(`${apiConfig.delete}/${id}`);

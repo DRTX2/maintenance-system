@@ -3,15 +3,15 @@ import { Table, TableContainer, Paper, TablePagination } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import tableStyles from "../generic/styles/TableStyles";
 
+const START_PAGE = 5;
+const NEXT_PAGES = [5, 10];
+
 const GenericTable = ({ children, data, dataCount, setIsDelete, isDelete }) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(2);
-
-  console.log("afuera", data.length);
+  const [rowsPerPage, setRowsPerPage] = useState(START_PAGE);
 
   useEffect(() => {
     if (isDelete) {
-      console.log("cuando entra", data.length);
       const totalPages = Math.ceil(data.length / rowsPerPage);
 
       // Si la página actual es mayor o igual al total de páginas, retroceder a la página anterior
@@ -51,7 +51,7 @@ const GenericTable = ({ children, data, dataCount, setIsDelete, isDelete }) => {
         count={dataCount}
         page={currentPage}
         rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[2, 5]}
+        rowsPerPageOptions={NEXT_PAGES}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         labelRowsPerPage={

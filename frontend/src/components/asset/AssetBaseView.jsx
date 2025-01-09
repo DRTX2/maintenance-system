@@ -13,6 +13,7 @@ import AssetTableCreate from "./AssetTableCreate";
 
 const AssetBaseView = ({
   asset,
+  isReady,
   relatedData,
   fields,
   columns,
@@ -22,17 +23,9 @@ const AssetBaseView = ({
   handleDescription,
   handleFieldChange,
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
   const navigate = useNavigate();
-
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-  };
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
 
   const handleFetch = async (param) => {};
 
@@ -44,8 +37,6 @@ const AssetBaseView = ({
     const isEntityValid = validateAll();
     const isTableValid = validateTableFields();
 
-    console.log(isEntityValid);
-    console.log(isTableValid);
     if (isEntityValid && isTableValid) {
       try {
         await axiosInstance.put(`/assets/${asset.id}`, {
@@ -55,7 +46,6 @@ const AssetBaseView = ({
         setIsEditing(false);
         navigate("/dashboard/assets");
       } catch (error) {
-        console.log(error.response);
         if (error.response.data.errors) {
           const message = generateErrorMessage(error.response.data.errors);
           toast.error(message);
@@ -125,11 +115,10 @@ const AssetBaseView = ({
         <Box marginTop="30px">
           <AssetTableCreate
             data={relatedData || []}
+            isReady={isReady}
+            isDelete={isDelete}
+            setIsDelete={setIsDelete}
             columns={columns}
-            currentPage={currentPage}
-            rowsPerPage={rowsPerPage}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
             handleDescription={handleDescription}
             readOnly={!isEditing}
           />
