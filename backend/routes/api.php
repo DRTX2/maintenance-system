@@ -106,7 +106,7 @@ Route::post(
     '/assets',
     [AssetController::class, 'store']
 );
-Route::post('/assets/search/{rol}', [AssetController::class, 'search']);
+Route::post('/assets/search', [AssetController::class, 'search']);
 Route::post('/assets/filters', [AssetController::class, 'indexWithFilters']);
 Route::post('/assets/status', [AssetController::class, 'getStatus']);
 
