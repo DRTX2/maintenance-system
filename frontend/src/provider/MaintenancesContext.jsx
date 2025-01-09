@@ -26,13 +26,19 @@ export const MaintenancesProvider = ({ children }) => {
 
   // Métodos CRUD para maintenances
   const addMaintenance = async (newMaintenance) => {
+    console.log("Creandi", newMaintenance);
     try {
       const response = await axiosInstance.post(
         `/maintenance-detail`,
         newMaintenance
       );
+
+      console.log("crenao repoinse", response);
       setMaintenances((prev) => [...prev, response.data.results]);
-    } catch (error) {}
+    } catch (error) {
+      console.log("error");
+      console.log(error.response);
+    }
   };
 
   const updateMaintenance = async (updateMaintenance) => {
