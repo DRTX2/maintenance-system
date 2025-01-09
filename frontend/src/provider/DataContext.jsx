@@ -10,6 +10,9 @@ export const DataProvider = ({ children }) => {
     locations: [],
     incomes: [],
     categories: [],
+    typesMaintenances: [],
+    responsibles: [],
+    visibleAssets: [],
   });
   const [isReady, setIsReady] = useState(false);
 
@@ -28,10 +31,32 @@ export const DataProvider = ({ children }) => {
     setData((prev) => ({ ...prev, categories: response.data.results }));
   };
 
+  const fetchTypeMaintenances = async () => {
+    const response = await axiosInstance.get("/type-maintenance");
+    setData((prev) => ({ ...prev, typesMaintenances: response.data.results }));
+  };
+
+  const fetchResponsibles = async () => {
+    const response = await axiosInstance.get("/responsibles");
+    setData((prev) => ({ ...prev, responsibles: response.data.results }));
+  };
+
+  const fetchVisiblesAssets = async () => {
+    const response = await axiosInstance.get("/assetsForMaintances");
+    setData((prev) => ({ ...prev, visibleAssets: response.data }));
+  };
+
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        await Promise.all([fetchLocations(), fetchIncomes(), fetchDevices()]);
+        await Promise.all([
+          fetchLocations(),
+          fetchIncomes(),
+          fetchDevices(),
+          fetchTypeMaintenances(),
+          fetchResponsibles(),
+          fetchVisiblesAssets(),
+        ]);
         setIsReady(true);
       } catch (error) {
         console.error("Error fetching initial data:", error);

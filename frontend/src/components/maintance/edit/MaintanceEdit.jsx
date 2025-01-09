@@ -1,37 +1,21 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
-import { CircularProgress, Typography } from "@mui/material";
-import { getDecodedToken } from "../../../utils/authService";
 import MaintanceBaseEdit from "./MaintanceBaseEdit";
 import axiosInstance from "../../../utils/api";
 import Loader from "../../Loader";
+import { useDataContext } from "../../../provider/DataContext";
 
 const MaintanceEdit = () => {
   const { id } = useParams();
-  const rol = getDecodedToken()?.role;
-  const [types, setTypes] = useState([]);
-  const [responsibles, setResponsibles] = useState([]);
-  const [assets, setAssets] = useState([]);
+  const { data, isReady } = useDataContext();
   const [maintance, setMaintance] = useState();
-  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [types, responsibles, assets, maintance] = await Promise.all([
-          axiosInstance.get("/type-maintenance"),
-          axiosInstance.get("/responsibles"),
-          // Simplemente todos los activos visibles
-          axiosInstance.get(`/assetsForMaintances`),
-          axiosInstance.get(`/maintenances/${id}`),
-        ]);
-
-        setTypes(types.data.results);
-        setResponsibles(responsibles.data.results);
-        setAssets(assets.data);
-        setMaintance(maintance.data.results);
-        setIsReady(true);
+        const response = await axiosInstance.get(`/maintenances/${id}`);
+        setMaintance(response.data.results);
       } catch (error) {
         toast.error("No se ha podido obtener los datos.");
       }
@@ -40,16 +24,16 @@ const MaintanceEdit = () => {
   }, []);
 
   const resultsTypes =
-    types.length > 0
-      ? types.map((type) => ({
+    data?.typesMaintenances.length > 0
+      ? data?.typesMaintenances.map((type) => ({
           value: type.id,
           label: type.typ_main,
         }))
       : [{ key: "", label: "No se han encontrado tipos de mantenimiento..." }];
 
   const resultsResponsibles =
-    responsibles.length > 0
-      ? responsibles.map((responsible) => ({
+    data?.responsibles.length > 0
+      ? data?.responsibles.map((responsible) => ({
           value: responsible.dni_res,
           label: `${responsible.dni_res} - ${responsible.nam_res} (${responsible.is_ext === "Y" ? "Interno" : "Externo"})`,
         }))
@@ -81,7 +65,7 @@ const MaintanceEdit = () => {
     },
   ];
 
-  if (!isReady) {
+  if (!maintance) {
     return <Loader />;
   }
 
@@ -103,7 +87,7 @@ const MaintanceEdit = () => {
     <MaintanceBaseEdit
       maintance={formattedMaintance}
       fields={fields}
-      assets={assets}
+      assets={data?.visibleAssets}
     />
   );
 };

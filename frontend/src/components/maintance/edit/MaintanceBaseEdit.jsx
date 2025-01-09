@@ -32,8 +32,10 @@ import DynamicField from "../../../generic/DynamicField";
 import ActivitiesModal from "../create/ActivitiesModal";
 import ObservationsModal from "../create/ObservationsModal";
 import ComponentsModal from "../create/ComponentsModal";
+import { useMaintenancesContext } from "../../../provider/MaintenancesContext";
 
 const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
+  const { updateMaintenance } = useMaintenancesContext();
   const [maintanceEdited, setMaintanceEdited] = useState(maintance);
   const [assetsTable, setAssetsTable] = useState(maintance?.assets || []);
   const [activitiesCatalog, setActivitiesCatalog] = useState([]);
@@ -226,8 +228,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       }
 
       try {
-        const idMaintenance = maintanceEdited.id_main;
-
         const dataToSend = {
           ...maintanceEdited,
           assets: maintanceEdited.assets.map((item) => ({
@@ -241,12 +241,9 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
             activities: item.asset.activities.map((activity) => activity.id),
           })),
         };
-
-        const response = await axiosInstance.put(
-          `/maintenance-detail/${idMaintenance}`,
-          dataToSend
-        );
-        toast.success(response.data.message);
+        console.log("Envio esto", dataToSend);
+        updateMaintenance(dataToSend);
+        toast.success("Mantenimiento creado con éxito");
         navigate("/dashboard/maintance");
       } catch (error) {
         if (error.response.data.errors) {

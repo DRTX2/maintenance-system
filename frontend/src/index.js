@@ -4,17 +4,20 @@ import "./index.css";
 import App from "./App";
 import { DataProvider } from "./provider/DataContext";
 import { AssetsProvider } from "./provider/AssetsContext";
+import { MaintenancesProvider } from "./provider/MaintenancesContext";
 
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <AssetsProvider>
-      <DataProvider>
-        <App />
-      </DataProvider>
-    </AssetsProvider>
+    <MaintenancesProvider>
+      <AssetsProvider>
+        <DataProvider>
+          <App />
+        </DataProvider>
+      </AssetsProvider>
+    </MaintenancesProvider>
   </React.StrictMode>
 );
 

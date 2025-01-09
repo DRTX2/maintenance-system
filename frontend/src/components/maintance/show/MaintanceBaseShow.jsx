@@ -25,12 +25,13 @@ import tableStyles from "../../../generic/styles/TableStyles";
 import axiosInstance from "../../../utils/api";
 import MaintanceFilters from "../../../generic/filters/MaintanceFilters";
 import GenericTable from "../../GenericTable";
+import { useMaintenancesContext } from "../../../provider/MaintenancesContext";
+import Loader from "../../Loader";
 
 const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
   const role = getDecodedToken()?.role;
-  const [maintances, setMaintances] = useState([]);
-  const [isReady, setIsReady] = useState(false);
+  const { maintenances, isReady } = useMaintenancesContext();
   const [isDelete, setIsDelete] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -42,42 +43,26 @@ const MaintanceBaseShow = ({ columns }) => {
     endDate: false,
   });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axiosInstance.get("/maintenances");
-      console.log(response.data.results);
-      setMaintances(response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido obtener los mantenimientos");
-    } finally {
-      setIsReady(true);
-    }
-  };
-
   const onCreate = () => {
     navigate("/dashboard/maintance/create");
   };
 
-  const onFetch = async (param) => {
-    if (param === "") {
-      await fetchData();
-      return;
-    }
+  // const onFetch = async (param) => {
+  //   if (param === "") {
+  //     await fetchData();
+  //     return;
+  //   }
 
-    try {
-      const response = await axiosInstance.post(
-        "maintenances/search?term=" + param
-      );
-      setMaintances(response.data.results);
-      console.log("Filtro", response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido filtrar por busqueda.");
-    }
-  };
+  //   try {
+  //     const response = await axiosInstance.post(
+  //       "maintenances/search?term=" + param
+  //     );
+  //     setMaintances(response.data.results);
+  //     console.log("Filtro", response.data.results);
+  //   } catch (error) {
+  //     toast.error("No se ha podido filtrar por busqueda.");
+  //   }
+  // };
 
   const onView = (id) => {
     navigate(`/dashboard/maintance/view/${id}`);
@@ -99,30 +84,30 @@ const MaintanceBaseShow = ({ columns }) => {
     try {
       await axiosInstance.post(action);
 
-      const updatedMaintance = maintances.map((maintance) =>
+      const updatedMaintance = maintenances.map((maintance) =>
         maintance.id === id ? { ...maintance, vis_main: newStatus } : maintance
       );
 
-      setMaintances(updatedMaintance);
+      // setMaintances(updatedMaintance);
       toast.success(message);
     } catch (error) {
       toast.error("No se ha podido ocultar el mantenimiento");
     }
   };
 
-  const fetchMaintenancesFilters = async (filters = {}) => {
-    setIsReady(false);
-    try {
-      const response = await axiosInstance.post(
-        "/maintenances/filters",
-        filters
-      );
-      setMaintances(response.data.results);
-      setIsReady(true);
-    } catch (error) {
-      toast.error("No se ha podido filtrar.");
-    }
-  };
+  // const fetchMaintenancesFilters = async (filters = {}) => {
+  //   setIsReady(false);
+  //   try {
+  //     const response = await axiosInstance.post(
+  //       "/maintenances/filters",
+  //       filters
+  //     );
+  //     setMaintances(response.data.results);
+  //     setIsReady(true);
+  //   } catch (error) {
+  //     toast.error("No se ha podido filtrar.");
+  //   }
+  // };
 
   const handleFilterChange = async (updatedFilters) => {
     if (!updatedFilters) {
@@ -135,12 +120,12 @@ const MaintanceBaseShow = ({ columns }) => {
     );
 
     if (isFilterEmpty) {
-      await fetchData();
+      // await fetchData();
       return;
     }
 
     const cleanedData = buildFilterPayload(updatedFilters);
-    await fetchMaintenancesFilters(cleanedData);
+    // await fetchMaintenancesFilters(cleanedData);
   };
 
   const processFilter = (filter) => {
@@ -213,7 +198,7 @@ const MaintanceBaseShow = ({ columns }) => {
         transformedObject
       );
 
-      setMaintances(response.data.results);
+      // setMaintances(response.data.results);
     } catch (error) {
       toast.error("No se ha podido filtrar por fecha.");
     }
@@ -225,7 +210,7 @@ const MaintanceBaseShow = ({ columns }) => {
       startDate: null,
       endDate: null,
     });
-    fetchData();
+    // fetchData();
   };
 
   const handleStartDate = (date) => {
@@ -247,7 +232,11 @@ const MaintanceBaseShow = ({ columns }) => {
     }
   };
 
-  const formattedData = maintances.map((maintance) => {
+  if (!isReady) {
+    return <Loader />;
+  }
+
+  const formattedData = maintenances.map((maintance) => {
     return {
       id: maintance.id,
       cod_main: maintance.cod_main,
@@ -307,11 +296,11 @@ const MaintanceBaseShow = ({ columns }) => {
               gap: "16px",
             }}
           >
-            <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} />
-            <MaintanceFilters
+            {/* <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} /> */}
+            {/* <MaintanceFilters
               onFilterChange={handleFilterChange}
               onClear={fetchData}
-            />
+            /> */}
           </Box>
 
           <Box
@@ -350,7 +339,7 @@ const MaintanceBaseShow = ({ columns }) => {
 
       {isReady ? (
         <Box className="flexColumnCenter" paddingTop="20px">
-          {formattedData.length > 0 ? (
+          {formattedData?.length > 0 ? (
             <>
               <GenericTable
                 data={formattedData}
@@ -394,25 +383,6 @@ const MaintanceBaseShow = ({ columns }) => {
                                 <EditIcon />
                               </Tooltip>
                             </IconButton>
-
-                            {role === "admin" ? (
-                              <IconButton
-                                onClick={() => onDelete(item.id, item.vis_main)}
-                                color={
-                                  item.vis_main === "V" ? "secondary" : "sucess"
-                                }
-                              >
-                                {item.vis_main === "V" ? (
-                                  <Tooltip title="Ocultar">
-                                    <VisibilityIcon />
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip title="Mostrar">
-                                    <VisibilityOffIcon />
-                                  </Tooltip>
-                                )}
-                              </IconButton>
-                            ) : null}
                           </TableCell>
                         </TableRow>
                       ))}
