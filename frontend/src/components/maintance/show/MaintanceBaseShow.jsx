@@ -1,42 +1,37 @@
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  IconButton,
+  Button,
+} from "@mui/material";
 import { useState, useEffect } from "react";
+import { CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { getDecodedToken } from "../../../utils/authService";
+import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
 import SearchBar from "../../../generic/SearchBar";
 import AddIcon from "@mui/icons-material/Add";
 import GenericStyles from "../../../generic/styles/GenericStyles";
 import dayjs from "dayjs";
-import { CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import ReusableDatePicker from "../../report/ReusableDatePicker";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  TablePagination,
-  Button,
-} from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
-import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
 import tableStyles from "../../../generic/styles/TableStyles";
-import { getDecodedToken } from "../../../utils/authService";
-import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/api";
 import MaintanceFilters from "../../../generic/filters/MaintanceFilters";
+import GenericTable from "../../GenericTable";
+import { useMaintenancesContext } from "../../../provider/MaintenancesContext";
+import Loader from "../../Loader";
 
 const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
-  const role = getDecodedToken()?.role;
-  const [maintances, setMaintances] = useState([]);
-  const [isReady, setIsReady] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
+  const { maintenances, isReady } = useMaintenancesContext();
+  const [isDelete, setIsDelete] = useState(false);
 
   const [formData, setFormData] = useState({
     startDate: null,
@@ -47,48 +42,26 @@ const MaintanceBaseShow = ({ columns }) => {
     endDate: false,
   });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axiosInstance.get("/maintenances");
-      console.log(response.data.results);
-      setMaintances(response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido obtener los mantenimientos");
-    } finally {
-      setIsReady(true);
-    }
-  };
-
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-  };
-
   const onCreate = () => {
     navigate("/dashboard/maintance/create");
   };
 
-  const onFetch = async (param) => {
-    if (param === "") {
-      await fetchData();
-      return;
-    }
+  // const onFetch = async (param) => {
+  //   if (param === "") {
+  //     await fetchData();
+  //     return;
+  //   }
 
-    try {
-      const response = await axiosInstance.post(
-        "maintenances/search?term=" + param
-      );
-      setMaintances(response.data.results);
-      console.log("Filtro", response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido filtrar por busqueda.");
-    }
-  };
+  //   try {
+  //     const response = await axiosInstance.post(
+  //       "maintenances/search?term=" + param
+  //     );
+  //     setMaintances(response.data.results);
+  //     console.log("Filtro", response.data.results);
+  //   } catch (error) {
+  //     toast.error("No se ha podido filtrar por busqueda.");
+  //   }
+  // };
 
   const onView = (id) => {
     navigate(`/dashboard/maintance/view/${id}`);
@@ -110,30 +83,30 @@ const MaintanceBaseShow = ({ columns }) => {
     try {
       await axiosInstance.post(action);
 
-      const updatedMaintance = maintances.map((maintance) =>
+      const updatedMaintance = maintenances.map((maintance) =>
         maintance.id === id ? { ...maintance, vis_main: newStatus } : maintance
       );
 
-      setMaintances(updatedMaintance);
+      // setMaintances(updatedMaintance);
       toast.success(message);
     } catch (error) {
       toast.error("No se ha podido ocultar el mantenimiento");
     }
   };
 
-  const fetchMaintenancesFilters = async (filters = {}) => {
-    setIsReady(false);
-    try {
-      const response = await axiosInstance.post(
-        "/maintenances/filters",
-        filters
-      );
-      setMaintances(response.data.results);
-      setIsReady(true);
-    } catch (error) {
-      toast.error("No se ha podido filtrar.");
-    }
-  };
+  // const fetchMaintenancesFilters = async (filters = {}) => {
+  //   setIsReady(false);
+  //   try {
+  //     const response = await axiosInstance.post(
+  //       "/maintenances/filters",
+  //       filters
+  //     );
+  //     setMaintances(response.data.results);
+  //     setIsReady(true);
+  //   } catch (error) {
+  //     toast.error("No se ha podido filtrar.");
+  //   }
+  // };
 
   const handleFilterChange = async (updatedFilters) => {
     if (!updatedFilters) {
@@ -146,12 +119,12 @@ const MaintanceBaseShow = ({ columns }) => {
     );
 
     if (isFilterEmpty) {
-      await fetchData();
+      // await fetchData();
       return;
     }
 
     const cleanedData = buildFilterPayload(updatedFilters);
-    await fetchMaintenancesFilters(cleanedData);
+    // await fetchMaintenancesFilters(cleanedData);
   };
 
   const processFilter = (filter) => {
@@ -204,7 +177,6 @@ const MaintanceBaseShow = ({ columns }) => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
-      console.log("Errores detectados:", newErrors);
       return;
     }
 
@@ -219,15 +191,13 @@ const MaintanceBaseShow = ({ columns }) => {
       ],
     };
 
-    console.log("Fecha enviandose", transformedObject);
-
     try {
       const response = await axiosInstance.post(
         "/maintenances/filters-by-date",
         transformedObject
       );
 
-      setMaintances(response.data.results);
+      // setMaintances(response.data.results);
     } catch (error) {
       toast.error("No se ha podido filtrar por fecha.");
     }
@@ -239,7 +209,7 @@ const MaintanceBaseShow = ({ columns }) => {
       startDate: null,
       endDate: null,
     });
-    fetchData();
+    // fetchData();
   };
 
   const handleStartDate = (date) => {
@@ -261,7 +231,11 @@ const MaintanceBaseShow = ({ columns }) => {
     }
   };
 
-  const formattedData = maintances.map((maintance) => {
+  if (!isReady) {
+    return <Loader />;
+  }
+
+  const formattedData = maintenances.map((maintance) => {
     return {
       id: maintance.id,
       cod_main: maintance.cod_main,
@@ -278,7 +252,6 @@ const MaintanceBaseShow = ({ columns }) => {
       className="flexColumnCenter"
       style={{ width: "90%", marginTop: "40px" }}
     >
-      {/* Este box debe ser mandado a un componente, como Head */}
       <Box className="flewColumnCenter">
         <Box
           className="flexRowCenterEnd"
@@ -322,11 +295,11 @@ const MaintanceBaseShow = ({ columns }) => {
               gap: "16px",
             }}
           >
-            <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} />
-            <MaintanceFilters
+            {/* <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} /> */}
+            {/* <MaintanceFilters
               onFilterChange={handleFilterChange}
               onClear={fetchData}
-            />
+            /> */}
           </Box>
 
           <Box
@@ -363,33 +336,28 @@ const MaintanceBaseShow = ({ columns }) => {
       </Box>
       {/* Fin del box */}
 
-      {/* Tabla. Esta también debe ser mandado a otro componente mucho más general */}
       {isReady ? (
         <Box className="flexColumnCenter" paddingTop="20px">
-          {formattedData.length > 0 ? (
+          {formattedData?.length > 0 ? (
             <>
-              <TableContainer
-                className="table-container"
-                component={Paper}
-                sx={tableStyles.tableContainer}
+              <GenericTable
+                data={formattedData}
+                dataCount={formattedData.length}
+                isDelete={isDelete}
+                setIsDelete={setIsDelete}
               >
-                <Table>
-                  <TableHead sx={tableStyles.tableHead}>
-                    <TableRow>
-                      {columns.map((column) => (
-                        <TableCell key={column.key}>{column.label}</TableCell>
-                      ))}
-                      <TableCell align="center">Acciones</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {formattedData
-                      .slice(
-                        currentPage * rowsPerPage,
-                        currentPage * rowsPerPage + rowsPerPage
-                      )
-                      // item --> un mantenimiento
-                      .map((item) => (
+                {(currentPageData) => (
+                  <>
+                    <TableHead sx={tableStyles.tableHead}>
+                      <TableRow>
+                        {columns.map((column) => (
+                          <TableCell key={column.key}>{column.label}</TableCell>
+                        ))}
+                        <TableCell align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {currentPageData.map((item) => (
                         <TableRow key={item.id}>
                           {columns.map((column) => (
                             <TableCell key={column.key}>
@@ -414,50 +382,13 @@ const MaintanceBaseShow = ({ columns }) => {
                                 <EditIcon />
                               </Tooltip>
                             </IconButton>
-
-                            {role === "admin" ? (
-                              <IconButton
-                                onClick={() => onDelete(item.id, item.vis_main)}
-                                color={
-                                  item.vis_main === "V" ? "secondary" : "sucess"
-                                }
-                              >
-                                {item.vis_main === "V" ? (
-                                  <Tooltip title="Ocultar">
-                                    <VisibilityIcon />
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip title="Mostrar">
-                                    <VisibilityOffIcon />
-                                  </Tooltip>
-                                )}
-                              </IconButton>
-                            ) : null}
                           </TableCell>
                         </TableRow>
                       ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                component="div"
-                count={formattedData.length}
-                page={currentPage}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[3, 5]}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage={
-                  <span style={tableStyles.labelRowsPerPage}>
-                    Filas por página
-                  </span>
-                }
-                labelDisplayedRows={() => ""}
-                ActionsComponent={(props) => (
-                  <CustomTablePaginationActions {...props} />
+                    </TableBody>
+                  </>
                 )}
-                sx={tableStyles.pagination}
-              />
+              </GenericTable>
             </>
           ) : (
             <div style={{ textAlign: "center", marginTop: "20px" }}>

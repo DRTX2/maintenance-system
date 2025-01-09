@@ -1,49 +1,23 @@
-import { useState, useEffect } from "react";
-import axiosInstance from "../../../utils/api";
 import MaintanceBaseCreate from "./MaintanceBaseCreate";
-import { getDecodedToken } from "../../../utils/authService";
-import { toast } from "react-toastify";
-import { CircularProgress, Typography } from "@mui/material";
+import Loader from "../../Loader";
+import { useDataContext } from "../../../provider/DataContext";
 
 const MaintanceCreate = () => {
-  const [types, setTypes] = useState([]);
-  const [responsibles, setResponsibles] = useState([]);
-  const [assets, setAssets] = useState([]);
-  const [isReady, setIsReady] = useState(false);
-  const rol = getDecodedToken()?.role;
+  const { data, isReady } = useDataContext();
 
-  useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        const [types, responsibles, assets] = await Promise.all([
-          axiosInstance.get("/type-maintenance"),
-          axiosInstance.get("/responsibles"),
-          axiosInstance.get(`/assetsForMaintances`),
-        ]);
-
-        setTypes(types.data.results);
-        setResponsibles(responsibles.data.results);
-        setAssets(assets.data);
-        setIsReady(true);
-      } catch (error) {
-        toast.error("No se ha podido obtener los datos.");
-      }
-    };
-
-    fetchAllData();
-  }, [rol]);
+  console.log("que hay", data);
 
   const resultsTypes =
-    types.length > 0
-      ? types.map((type) => ({
+    data?.typesMaintenances.length > 0
+      ? data?.typesMaintenances.map((type) => ({
           value: type.id,
           label: type.typ_main,
         }))
       : [{ key: "", label: "No se han encontrado tipos de mantenimiento..." }];
 
   const resultsResponsibles =
-    responsibles.length > 0
-      ? responsibles.map((responsible) => ({
+    data?.responsibles.length > 0
+      ? data?.responsibles.map((responsible) => ({
           value: responsible.dni_res,
           label: `${responsible.dni_res} - ${responsible.nam_res} (${responsible.is_ext === "Y" ? "Interno" : "Externo"})`,
         }))
@@ -91,14 +65,7 @@ const MaintanceCreate = () => {
   };
 
   if (!isReady) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
-          Cargando datos, por favor espera...
-        </Typography>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
@@ -106,7 +73,7 @@ const MaintanceCreate = () => {
       fields={fields}
       columns={columns}
       defaultState={defaultState}
-      assets={assets}
+      assets={data?.visibleAssets}
     />
   );
 };

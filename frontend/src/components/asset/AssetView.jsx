@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import axiosInstance from "../../utils/api";
-import AssetBaseView from "./AssetBaseView";
-import { CircularProgress, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { validateField, validateFields } from "../../utils/validations";
 import { getDecodedToken } from "../../utils/authService";
+import { useDataContext } from "../../provider/DataContext";
+import axiosInstance from "../../utils/api";
+import AssetBaseView from "./AssetBaseView";
+import Loader from "../Loader";
 
 const AssetView = () => {
   const { id } = useParams();
   const role = getDecodedToken()?.role;
-  const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [relatedData, setRelatedData] = useState([]);
   const [asset, setAsset] = useState({});
@@ -19,22 +19,18 @@ const AssetView = () => {
   const [isRelatedDataInitialized, setIsRelatedDataInitialized] =
     useState(false);
 
+  const { data } = useDataContext();
+
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [asset, locationsData, incomesData] = await Promise.all([
+        const [asset, incomesData] = await Promise.all([
           axiosInstance.get(`/assets/show/${id}?role=${role}`),
-          axiosInstance.get("/locations"),
           axiosInstance.get(`/assets/incomes/${id}`),
         ]);
 
-        setLocations(locationsData.data.results);
         setIncomes(incomesData.data);
         setAsset(asset.data);
-
-        console.log("Asset", asset);
-        console.log("Incomes", incomesData);
-
         setIsReady(true);
       } catch (error) {
         toast.error("No se han podido obtener los datos.");
@@ -57,8 +53,8 @@ const AssetView = () => {
   }, [asset, isRelatedDataInitialized]);
 
   const resultsLocations =
-    locations.length > 0
-      ? locations.map((location) => ({
+    data?.locations.length > 0
+      ? data?.locations.map((location) => ({
           value: location.id,
           label: location.nam_loc,
         }))
@@ -71,22 +67,6 @@ const AssetView = () => {
           label: income.cod_inc,
         }))
       : [{ value: "", label: "No se han encontrado ingresos..." }];
-
-  const income =
-    asset?.income_est === "C"
-      ? {
-          key: "income_code",
-          label: "Ingreso",
-          type: "text",
-          editable: false,
-        }
-      : {
-          key: "id_inc_ass",
-          label: "Ingreso",
-          type: "select",
-          options: resultsIncomes,
-          editable: true,
-        };
 
   const fields = [
     { key: "cod_ass", label: "Código", type: "text", editable: true },
@@ -103,7 +83,13 @@ const AssetView = () => {
       options: resultsLocations,
       editable: true,
     },
-    income,
+    {
+      key: "id_inc_ass",
+      label: "Ingreso",
+      type: "select",
+      options: resultsIncomes,
+      editable: true,
+    },
     {
       key: "category_name",
       label: "Dispositivo",
@@ -129,7 +115,6 @@ const AssetView = () => {
     const hasError =
       !description.trim() || description.length < 3 || description.length > 200;
 
-    console.log("¿Tiene error?", hasError);
     setRelatedData((prevData) =>
       prevData.map((component) =>
         component.id === id
@@ -145,7 +130,6 @@ const AssetView = () => {
 
   const handleDescription = (id, description) => {
     validateSingleField(id, description);
-    console.log("Que sucedió", relatedData);
     setAsset((prevEntity) => {
       const updatedComponents = prevEntity.components.map((component) =>
         component.id === id
@@ -158,8 +142,6 @@ const AssetView = () => {
 
       return { ...prevEntity, components: updatedComponents };
     });
-
-    console.log("Related despues", relatedData);
   };
 
   const validateTableFields = () => {
@@ -191,18 +173,12 @@ const AssetView = () => {
   ];
 
   if (!isReady) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
-          Cargando datos, por favor espera...
-        </Typography>
-      </div>
-    );
+    return <Loader />;
   }
   return (
     <AssetBaseView
       asset={asset}
+      isReady={isReady}
       relatedData={relatedData}
       fields={fields}
       columns={columns}

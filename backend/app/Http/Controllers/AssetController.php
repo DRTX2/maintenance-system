@@ -286,8 +286,6 @@ class AssetController extends Controller
                 'income_code' => $asset->income->cod_inc,
             ],
         ]);
-
-
     }
     public function update(AssetRequest $request, string $id)
     {
