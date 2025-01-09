@@ -193,7 +193,7 @@ class MaintenanceDetailController extends Controller
 
             DB::beginTransaction();
 
-            $maintenance = Maintenance::findOrFail($id);
+            $maintenance = Maintenance::with('responsible')->findOrFail($id);
             $maintenance->update([
                 'cod_main' => $validatedData['cod_main'],
                 'id_typ_main' => $validatedData['id_typ_main'],
@@ -222,6 +222,8 @@ class MaintenanceDetailController extends Controller
                 $this->createNewRecords($maintenanceDetail->id, [$asset]);
             }
             DB::commit();
+
+            $maintenance->responsible = $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res;
 
             return response()->json([
                 'message' => 'Mantenimiento actualizado exitosamente.',

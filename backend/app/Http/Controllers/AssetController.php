@@ -273,11 +273,12 @@ class AssetController extends Controller
         $asset->components()->attach($components);
 
         return response()->json([
-            'message' => 'Activo creado exitosamente.',
-            'asset' => $asset,
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+            ],
         ]);
-
-
     }
     public function update(AssetRequest $request, string $id)
     {
@@ -327,8 +328,12 @@ class AssetController extends Controller
         }
 
         return response()->json([
-            'message' => 'Activo actualizado exitosamente.',
-            'asset' => $asset->fresh(),
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+
+            ],
         ]);
     }
 

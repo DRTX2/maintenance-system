@@ -30,7 +30,6 @@ import Loader from "../../Loader";
 
 const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
-  const role = getDecodedToken()?.role;
   const { maintenances, isReady } = useMaintenancesContext();
   const [isDelete, setIsDelete] = useState(false);
 

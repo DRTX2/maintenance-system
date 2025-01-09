@@ -13,6 +13,11 @@ export const AssetsProvider = ({ children }) => {
   const [assets, setAssets] = useState([]);
   const [isReady, setIsReady] = useState(false);
 
+  useEffect(() => {
+    fetchAssets();
+    setIsReady(true);
+  }, []);
+
   const fetchAssets = async () => {
     try {
       const response = await axiosInstance.get(`/assets/${role}`);
@@ -22,14 +27,8 @@ export const AssetsProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    fetchAssets();
-    setIsReady(true);
-  }, []);
-
   // Métodos CRUD para assets
   const addAsset = async (newAsset) => {
-    console.log(newAsset);
     try {
       const response = await axiosInstance.post("/assets", { asset: newAsset });
       setAssets((prev) => [...prev, response.data.asset]);
@@ -53,6 +52,8 @@ export const AssetsProvider = ({ children }) => {
           asset.id === updatedAsset.id ? response.data.asset : asset
         )
       );
+
+      console.log(response.data);
     } catch (error) {
       if (error.response.data.errors) {
         const message = handleErrors(error.response.data.errors).join("\n");

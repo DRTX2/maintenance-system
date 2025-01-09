@@ -58,6 +58,7 @@ export const DataProvider = ({ children }) => {
           fetchVisiblesAssets(),
         ]);
         setIsReady(true);
+        console.log("ya trajo todo");
       } catch (error) {
         console.error("Error fetching initial data:", error);
       }

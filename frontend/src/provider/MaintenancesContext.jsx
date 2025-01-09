@@ -10,6 +10,11 @@ export const MaintenancesProvider = ({ children }) => {
   const [maintenances, setMaintenances] = useState([]);
   const [isReady, setIsReady] = useState(false);
 
+  useEffect(() => {
+    fetchMaintenances();
+    setIsReady(true);
+  }, []);
+
   const fetchMaintenances = async () => {
     try {
       const response = await axiosInstance.get("/maintenances");
@@ -19,34 +24,27 @@ export const MaintenancesProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    fetchMaintenances();
-    setIsReady(true);
-  }, []);
-
   // Métodos CRUD para maintenances
   const addMaintenance = async (newMaintenance) => {
-    console.log("Recibo esto", newMaintenance);
     try {
       const response = await axiosInstance.post(
         `/maintenance-detail`,
         newMaintenance
       );
-      console.log("resultado nuevo", response.data);
       setMaintenances((prev) => [...prev, response.data.results]);
     } catch (error) {}
   };
 
   const updateMaintenance = async (updateMaintenance) => {
-    console.log("que recibo edit", updateMaintenance);
+    console.log("Enviando", updateMaintenance);
+
     try {
       const response = await axiosInstance.put(
         `/maintenance-detail/${updateMaintenance.id_main}`,
         updateMaintenance
       );
 
-      console.log("updating", response.data.results);
-      console.log(maintenances);
+      console.log(response.data.results);
 
       setMaintenances((prev) =>
         prev.map((maintenance) =>
