@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import dayjs from "dayjs";
 
 const calculateCenter = (doc, text) => {
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -8,10 +9,16 @@ const calculateCenter = (doc, text) => {
   return x;
 };
 
-const generateResponsiblesPDF = () => {
+const generateResponsiblesPDF = (respnsibleDNI, results, inicio, fin) => {
+  console.log("Datos para el PDF:");
+  console.log("Cédula:", respnsibleDNI);
+  console.log("Resultados:", results);
+  console.log("Fecha inicio:", inicio);
+  console.log("Fecha fin:", fin);
+
   const doc = new jsPDF();
 
-  // El titulo
+  // Título
   doc.setFont("helvetica", "bold");
   doc.text(
     "Historial de mantenimientos",
@@ -19,28 +26,28 @@ const generateResponsiblesPDF = () => {
     20
   );
 
-  // La parte del encabezado del responsable
+  // Información del encabezado
+  const responsable = results[0]?.responsable || "N/A";
+
   doc.setFontSize(10);
-  // text, x, y
   doc.setFont("helvetica", "bold");
-  doc.text("Cedula:", 10, 30);
+  doc.text("Cédula:", 10, 30);
   doc.setFont("helvetica", "normal");
-  doc.text("111111111", 25, 30);
+  doc.text(respnsibleDNI, 25, 30);
   doc.setFont("helvetica", "bold");
   doc.text("Nombre y apellidos:", 10, 40);
   doc.setFont("helvetica", "normal");
-  doc.text("David Manjarres", 48, 40);
+  doc.text(responsable, 48, 40);
   doc.setFont("helvetica", "bold");
   doc.text("Mantenimientos desde", 10, 50);
   doc.setFont("helvetica", "normal");
-  doc.text("05/05/2018", 50, 50);
+  doc.text(inicio, 50, 50);
   doc.setFont("helvetica", "bold");
   doc.text("hasta", 70, 50);
   doc.setFont("helvetica", "normal");
-  doc.text("05/05/2022", 83, 50);
-  doc.setFont("helvetica", "bold");
-  doc.text("3", 105, 50);
+  doc.text(fin, 83, 50);
 
+  // Columnas de la tabla
   const columns = [
     "Fecha",
     "Código",
@@ -51,43 +58,47 @@ const generateResponsiblesPDF = () => {
     "Componentes reemplazados",
   ];
 
-  const rows = [
-    [
-      "6/1/2025",
-      "MAT-01",
-      "Preventivo",
-      "ACT-01",
-      [["Limpieza", "Reparación"].join(", ")],
-      [["No hubo", "Mas o menos"].join(", ")],
-      [["Tarjeta gráfica", "Procesador"].join(", ")],
-    ],
-  ];
+  // Filas de la tabla
 
-  // En caso de que estuviese vacio.
-  // doc.setFont("helvetica", "normal");
-  // doc.text(
-  //   "No se encontraron registros de mantenimientos realizados por este responsable en el período seleccionado.",
-  //   calculateCenter(
-  //     doc,
-  //     "No se encontraron registros de mantenimientos realizados por este responsable en el período seleccionado."
-  //   ),
-  //   60
-  // );
+  const rows = results.map((result) => [
+    dayjs(result.created_at).format("YYYY-MM-DD HH:mm:ss") || "N/A",
+    result.cod_main || "N/A",
+    result.type || "N/A",
+    result.details?.[0]?.asset?.cod_ass || "N/A",
+    (result.details?.[0]?.asset?.activities || [])
+      .map((a) => a.act_main)
+      .join("\n"),
+    (result.details?.[0]?.asset?.observations || [])
+      .map((o) => o.des_obs)
+      .join("\n"),
+    (result.details?.[0]?.asset?.replaced_components || [])
+      .map((c) => `${c.nam_com}: ${c.des_rep_com}`)
+      .join("\n."),
+  ]);
 
-  doc.autoTable({
-    head: [columns],
-    headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0] },
-    body: rows,
-    bodyStyles: { fillColor: [255, 255, 255], textColor: [20, 24, 20] },
-    tableWidth: "auto",
-    startY: 60,
-    theme: "grid",
-    styles: {
-      lineColor: [200, 200, 200],
-      lineWidth: 0.1,
-    },
-  });
+  if (rows.length === 0) {
+    // Si no hay datos
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      "No se encontraron registros de mantenimientos realizados por este responsable en el período seleccionado.",
+      calculateCenter(
+        doc,
+        "No se encontraron registros de mantenimientos realizados por este responsable en el período seleccionado."
+      ),
+      60
+    );
+  } else {
+    // Generar la tabla
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+      startY: 70,
+      theme: "grid",
+      headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0] },
+    });
+  }
 
+  // Guardar el archivo PDF
   doc.save("reporte.pdf");
 };
 
