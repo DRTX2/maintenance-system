@@ -14,9 +14,8 @@ export const MaintenancesProvider = ({ children }) => {
     types: [],
     responsibles: [],
     assets: [],
+    dates: { startDate: null, endDate: null },
   });
-
-  console.log("mantenimientos", maintenances);
 
   useEffect(() => {
     fetchMaintenances();
@@ -73,6 +72,28 @@ export const MaintenancesProvider = ({ children }) => {
       );
     }
 
+    // filtrar por fecha
+    if (filters.dates.startDate && filters.dates.endDate) {
+      const startDate = new Date(filters.dates.startDate);
+      const endDate = new Date(filters.dates.endDate);
+
+      console.log("Fecha de inicio", startDate);
+      console.log("Fecha fin", endDate);
+
+      filtered = filtered.filter((maintenance) => {
+        const createdAt = new Date(maintenance.created_at);
+        const endedAt = new Date(maintenance.ended_at);
+
+        console.log("Creado", createdAt);
+        console.log("Terminado", endedAt);
+
+        // Compara si las fechas de creación o fin están dentro del rango
+        return (
+          (createdAt >= startDate && createdAt <= endDate) ||
+          (endedAt >= startDate && endedAt <= endDate)
+        );
+      });
+    }
     return filtered;
   }, [maintenances, term, filters]);
 
@@ -96,8 +117,7 @@ export const MaintenancesProvider = ({ children }) => {
 
       setMaintenances((prev) => [...prev, response.data.results]);
     } catch (error) {
-      console.log("error");
-      console.log(error.response);
+      toast.error("Ocurrio un error al crear el mantenimiento.");
     }
   };
 
@@ -109,9 +129,6 @@ export const MaintenancesProvider = ({ children }) => {
         `/maintenance-detail/${updateMaintenance.id_main}`,
         updateMaintenance
       );
-
-      console.log(response.data.results);
-
       setMaintenances((prev) =>
         prev.map((maintenance) =>
           maintenance.id === updateMaintenance.id_main
@@ -135,6 +152,7 @@ export const MaintenancesProvider = ({ children }) => {
     <MaintenancesContext.Provider
       value={{
         maintenances,
+        filters,
         filterMaintenancesByTerm,
         updateFilters,
         filteredMaintenances,

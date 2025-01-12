@@ -3,7 +3,11 @@ import Filters from "./Filters";
 import axiosInstance from "../../utils/api";
 import { useDataContext } from "../../provider/DataContext";
 
-const MaintanceFilters = ({ onFilterChange, onClear }) => {
+const MaintanceFilters = ({
+  onFilterChange,
+  clearFilters,
+  setClearFilters,
+}) => {
   const { data } = useDataContext();
   const [responsibles, setResponsible] = useState([]);
   const [assets, setAssets] = useState([]);
@@ -67,6 +71,8 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
     <Filters
       data={formattedData}
       onFilterChange={onFilterChange}
+      clearFilters={clearFilters}
+      setClearFilters={setClearFilters}
       // onClear={onClear}
     />
   );
