@@ -60,7 +60,45 @@ class MaintenanceSeeder extends Seeder
                             'activities' => [2, 5], // IDs de las actividades realizadas
                         ],
                     ],
-                ]
+                ],
+                [
+                    'dni_res_main' => '1724567890',
+                    'cod_main' => 'MA-003',
+                    'id_typ_main' => 1,
+                    'vis_main' => 'V',
+                    'created_at' => Carbon::now()->subYears(3)->addMonths(3), // Hace 3 años y 3 meses
+                    'ended_at' => Carbon::now()->subYears(3)->addMonths(3)->addDays(5), // Finalizado en 5 días
+                    'details' => [
+                        [
+                            'id_ass_bel' => 5, // Relación con ASSET001
+                            'observations' => [
+                                ['des_obs' => 'Cambio de ventilador necesario.'],
+                            ],
+                            'replaced_components' => [
+                                ['id_com_bel' => 5, 'des_rep_com' => 'Ventilador reemplazado.'],
+                            ],
+                            'activities' => [1], // IDs de actividades realizadas
+                        ],
+                    ],
+                ],
+                [
+                    'dni_res_main' => '1721234567',
+                    'cod_main' => 'MA-004',
+                    'id_typ_main' => 2,
+                    'vis_main' => 'H',
+                    'created_at' => Carbon::now()->subYears(2), // Hace 2 años
+                    'ended_at' => Carbon::now()->subYears(2)->addDays(7), // Finalizado en 7 días
+                    'details' => [
+                        [
+                            'id_ass_bel' => 6, // Relación con ASSET002
+                            'observations' => [
+                                ['des_obs' => 'Falla en el sistema eléctrico.'],
+                            ],
+                            'replaced_components' => [],
+                            'activities' => [3], // IDs de actividades realizadas
+                        ],
+                    ],
+                ],
             ];
 
             foreach ($maintenances as $maintenanceData) {
