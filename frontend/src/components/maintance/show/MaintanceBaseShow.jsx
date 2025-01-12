@@ -31,14 +31,13 @@ import Loader from "../../Loader";
 const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
   const {
-    maintenances,
     filterMaintenancesByTerm,
+    filters,
     updateFilters,
     filteredMaintenances,
     isReady,
   } = useMaintenancesContext();
   const [isDelete, setIsDelete] = useState(false);
-
   const [formData, setFormData] = useState({
     startDate: null,
     endDate: null,
@@ -47,6 +46,7 @@ const MaintanceBaseShow = ({ columns }) => {
     startDate: false,
     endDate: false,
   });
+  const [clearFilters, setClearFilters] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -73,15 +73,35 @@ const MaintanceBaseShow = ({ columns }) => {
   const handleFilterChange = async (updatedFilters) => {
     if (!updatedFilters || Object.keys(updatedFilters).length === 0) {
       updateFilters({
-        typeMaintenances: [],
+        types: [],
         responsibles: [],
         assets: [],
+        dates: { startDate: null, endDate: null },
       });
+      setFormData({ startDate: null, endDate: null });
       return;
     }
 
+    // Procesar otros filtros (tipos, responsables, activos)
     const formattedData = buildFilterPayload(updatedFilters);
-    updateFilters(formattedData);
+
+    if (!formData.startDate || !formData.endDate) {
+      setFormData({ startDate: null, endDate: null });
+    }
+
+    // Si ambas fechas están definidas, agregar a los filtros
+    if (formData.startDate && formData.endDate) {
+      updateFilters({
+        ...formattedData,
+        dates: { startDate: formData.startDate, endDate: formData.endDate },
+      });
+    } else {
+      // Si alguna fecha no está definida, incluir las fechas como null
+      updateFilters({
+        ...formattedData,
+        dates: { startDate: null, endDate: null },
+      });
+    }
   };
 
   const buildFilterPayload = (updatedFilters) => {
@@ -96,7 +116,54 @@ const MaintanceBaseShow = ({ columns }) => {
       types: processFilter(updatedFilters.types),
       responsibles: processFilter(updatedFilters.responsibles),
       assets: processFilter(updatedFilters.assets),
+      dates: { startDate: null, endDate: null },
     };
+  };
+
+  const handleFilterDate = async () => {
+    const newErrors = validateForm();
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    // Obtener los filtros actuales
+    const currentFilters = { ...filters };
+
+    // Actualizar solo el filtro de fechas sin sobrescribir otros filtros
+    const updatedFilters = {
+      ...currentFilters,
+      dates: formData, // solo actualizar las fechas
+    };
+
+    console.log("La fecha es", updatedFilters);
+
+    updateFilters(updatedFilters);
+  };
+
+  const handleReset = () => {
+    handleFilterChange({});
+    setClearFilters(true);
+    return;
+  };
+  const handleStartDate = (date) => {
+    const transformedDate = transformDate(date);
+    setFormData((prev) => ({ ...prev, startDate: transformedDate }));
+    setErrors((prev) => ({ ...prev, startDate: "" }));
+  };
+  const handleEndDate = (date) => {
+    const transformedDate = transformDate(date);
+    setFormData((prev) => ({ ...prev, endDate: transformedDate }));
+    setErrors((prev) => ({ ...prev, endDate: "" }));
+  };
+
+  const transformDate = (date) => {
+    try {
+      return date ? dayjs(date).utc().format("YYYY-MM-DDTHH:mm:ss[Z]") : null;
+    } catch (error) {
+      return null;
+    }
   };
 
   const validateForm = () => {
@@ -123,65 +190,6 @@ const MaintanceBaseShow = ({ columns }) => {
     }
 
     return newErrors;
-  };
-
-  const handleFilterDate = async () => {
-    const newErrors = validateForm();
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
-
-    const transformedObject = {
-      created_at: [
-        formData.startDate
-          ? dayjs(formData.startDate).format("YYYY-MM-DD")
-          : null,
-      ],
-      ended_at: [
-        formData.endDate ? dayjs(formData.endDate).format("YYYY-MM-DD") : null,
-      ],
-    };
-
-    try {
-      const response = await axiosInstance.post(
-        "/maintenances/filters-by-date",
-        transformedObject
-      );
-
-      // setMaintances(response.data.results);
-    } catch (error) {
-      toast.error("No se ha podido filtrar por fecha.");
-    }
-  };
-
-  const handleReset = () => {
-    setErrors("");
-    setFormData({
-      startDate: null,
-      endDate: null,
-    });
-    // fetchData();
-  };
-
-  const handleStartDate = (date) => {
-    const transformedDate = transformDate(date);
-    setFormData((prev) => ({ ...prev, startDate: transformedDate }));
-    setErrors((prev) => ({ ...prev, startDate: "" }));
-  };
-  const handleEndDate = (date) => {
-    const transformedDate = transformDate(date);
-    setFormData((prev) => ({ ...prev, endDate: transformedDate }));
-    setErrors((prev) => ({ ...prev, endDate: "" }));
-  };
-
-  const transformDate = (date) => {
-    try {
-      return date ? dayjs(date).utc().format("YYYY-MM-DDTHH:mm:ss[Z]") : null;
-    } catch (error) {
-      return null;
-    }
   };
 
   if (!isReady) {
@@ -251,6 +259,8 @@ const MaintanceBaseShow = ({ columns }) => {
             <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} />
             <MaintanceFilters
               onFilterChange={handleFilterChange}
+              clearFilters={clearFilters}
+              setClearFilters={setClearFilters}
               // onClear={fetchData}
             />
           </Box>
