@@ -12,7 +12,6 @@ export const DataProvider = ({ children }) => {
     categories: [],
     typesMaintenances: [],
     responsibles: [],
-    visibleAssets: [],
   });
   const [isReady, setIsReady] = useState(false);
 
@@ -21,6 +20,7 @@ export const DataProvider = ({ children }) => {
     setData((prev) => ({ ...prev, locations: response.data.results }));
   };
 
+  // Este fetch solo trae los incomes abiertos
   const fetchIncomes = async () => {
     const response = await axiosInstance.get("/assets/incomes/create");
     setData((prev) => ({ ...prev, incomes: response.data }));
@@ -41,11 +41,6 @@ export const DataProvider = ({ children }) => {
     setData((prev) => ({ ...prev, responsibles: response.data.results }));
   };
 
-  const fetchVisiblesAssets = async () => {
-    const response = await axiosInstance.get("/assetsForMaintances");
-    setData((prev) => ({ ...prev, visibleAssets: response.data }));
-  };
-
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -55,7 +50,6 @@ export const DataProvider = ({ children }) => {
           fetchDevices(),
           fetchTypeMaintenances(),
           fetchResponsibles(),
-          fetchVisiblesAssets(),
         ]);
         setIsReady(true);
         console.log("ya trajo todo");

@@ -1,11 +1,11 @@
 import MaintanceBaseCreate from "./MaintanceBaseCreate";
 import Loader from "../../Loader";
 import { useDataContext } from "../../../provider/DataContext";
+import { useAssetsContext } from "../../../provider/AssetsContext";
 
 const MaintanceCreate = () => {
   const { data, isReady } = useDataContext();
-
-  console.log("que hay", data);
+  const { visibleAssets } = useAssetsContext();
 
   const resultsTypes =
     data?.typesMaintenances.length > 0
@@ -73,7 +73,7 @@ const MaintanceCreate = () => {
       fields={fields}
       columns={columns}
       defaultState={defaultState}
-      assets={data?.visibleAssets}
+      assets={visibleAssets}
     />
   );
 };

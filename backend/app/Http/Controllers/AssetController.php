@@ -47,23 +47,36 @@ class AssetController extends Controller
         return response()->json($incomes, 200);
     }
 
-
     public function hideAsset($id)
     {
         $asset = Asset::findOrFail($id);
 
         if ($asset->est_ass === 'H') {
             return response()->json([
+                'error' => true,
                 'message' => 'El activo ya está oculto.',
-            ]);
+            ], 400);
         }
 
         $asset->update([
             'est_ass' => 'H',
         ]);
 
-        return response()->json([
-            'message' => 'Activo oculto.',
+        return response()->json($asset->only([
+            'id_inc_ass',
+            'id_cat_ass',
+            'id_loc_ass',
+            'cod_ass',
+            'est_ass',
+            'ser_num_ass',
+            'obs_add_ass',
+            'updated_at',
+            'created_at',
+            'id',
+        ]) + [
+            'category_name' => $asset->category->nom_dis,
+            'location_name' => $asset->location->nam_loc,
+            'income_code' => $asset->income->cod_inc,
         ]);
     }
 
@@ -73,16 +86,30 @@ class AssetController extends Controller
 
         if ($asset->est_ass === 'V') {
             return response()->json([
+                'error' => true,
                 'message' => 'El activo ya está visible.',
-            ]);
+            ], 400);
         }
 
         $asset->update([
             'est_ass' => 'V',
         ]);
 
-        return response()->json([
-            'message' => 'Activo visible.',
+        return response()->json($asset->only([
+            'id_inc_ass',
+            'id_cat_ass',
+            'id_loc_ass',
+            'cod_ass',
+            'est_ass',
+            'ser_num_ass',
+            'obs_add_ass',
+            'updated_at',
+            'created_at',
+            'id',
+        ]) + [
+            'category_name' => $asset->category->nom_dis,
+            'location_name' => $asset->location->nam_loc,
+            'income_code' => $asset->income->cod_inc,
         ]);
     }
 
@@ -110,6 +137,9 @@ class AssetController extends Controller
                 'income_code' => $asset->income->cod_inc,
                 'category_name' => $asset->category->nom_dis,
                 'location_name' => $asset->location->nam_loc,
+                'location_data' => $asset->location,
+                'income_data' => $asset->income,
+                'category_data' => $asset->category,
                 'cod_ass' => $asset->cod_ass,
                 'ser_num_ass' => $asset->ser_num_ass,
                 'obs_add_ass' => $asset->obs_add_ass ?? null,

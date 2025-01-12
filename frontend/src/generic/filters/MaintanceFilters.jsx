@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 import Filters from "./Filters";
 import axiosInstance from "../../utils/api";
+import { useDataContext } from "../../provider/DataContext";
 
 const MaintanceFilters = ({ onFilterChange, onClear }) => {
-  const [typeMaintance, setTypeMaintance] = useState([]);
+  const { data } = useDataContext();
   const [responsibles, setResponsible] = useState([]);
   const [assets, setAssets] = useState([]);
 
   useEffect(() => {
     const fetchAll = async () => {
-      const [typeMaintances, responsibles, assets] = await Promise.all([
-        axiosInstance.get("/type-maintenance"),
+      const [responsibles, assets] = await Promise.all([
         axiosInstance.get("/responsibles"),
         axiosInstance.get("/maintenance-detail"),
       ]);
-      setTypeMaintance(typeMaintances.data.results);
       setResponsible(responsibles.data.results);
       setAssets(assets.data.results);
     };
@@ -23,8 +22,8 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
   }, []);
 
   const resultsTypeMaintances =
-    typeMaintance.length > 0
-      ? typeMaintance.map((type) => ({
+    data?.typesMaintenances.length > 0
+      ? data?.typesMaintenances.map((type) => ({
           key: type.id,
           label: type.typ_main,
         }))
@@ -46,7 +45,7 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
         }))
       : [{ key: "", label: "No se han encontrado activos en mantenimientos." }];
 
-  const data = [
+  const formattedData = [
     {
       key: "types",
       label: "Tipos de mantenimiento",
@@ -65,7 +64,11 @@ const MaintanceFilters = ({ onFilterChange, onClear }) => {
   ];
 
   return (
-    <Filters data={data} onFilterChange={onFilterChange} onClear={onClear} />
+    <Filters
+      data={formattedData}
+      onFilterChange={onFilterChange}
+      // onClear={onClear}
+    />
   );
 };
 
