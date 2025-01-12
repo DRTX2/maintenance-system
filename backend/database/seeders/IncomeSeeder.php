@@ -47,5 +47,35 @@ class IncomeSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+
+
+        $incomes = [
+            [
+                'cod_inc' => 'INC005',
+                'date_inc' => Carbon::now()->subYears(3)->format('Y-m-d'), 
+                'est_inc' => 'O',
+                'supplier_id' => 1,
+            ],
+            [
+                'cod_inc' => 'INC006',
+                'date_inc' => Carbon::now()->subYears(3)->addMonths(6)->format('Y-m-d'), // Hace 2.5 años
+                'est_inc' => 'C',
+                'supplier_id' => 2,
+            ],
+            [
+                'cod_inc' => 'INC007',
+                'date_inc' => Carbon::now()->subYears(2)->format('Y-m-d'), 
+                'est_inc' => 'O',
+                'supplier_id' => 2,
+            ],
+        ];
+
+        foreach ($incomes as $income) {
+            Income::create(array_merge($income, [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]));
+        }
+
     }
 }

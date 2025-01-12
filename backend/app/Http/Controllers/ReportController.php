@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Asset;
 use App\Models\Maintenance;
 use App\Services\MaintenanceResponseService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -73,102 +74,87 @@ class ReportController extends Controller
     }
 
     public function maintenancesToAssets()
-    {
-        try {
-            $assets = Asset::with(['maintenanceDetails.maintenance' => function ($query) {
-                $query->orderBy('created_at');  // Ordenar por fecha de creación si es necesario
-            }])->get();
+{
+    try {
+        $assets = Asset::with('maintenanceDetails.maintenance', 'income')->get();
 
-            // Inicializar un array para el reporte
-            $report = [
-                'desde' => now()->format('d/m/Y'), // Fecha actual como ejemplo, tocaria poner la del menor ingreso creo
-                'assets' => []
-            ];
-
-            // Recorrer los activos y agrupar los mantenimientos por estado
-            foreach ($assets as $asset) {
-                $cumplidos = [];
-                $en_proceso = [];
-                $inconclusos = [];
-
-                // Recorrer los detalles de mantenimiento de cada activo
-                $maintenanceYears = [];
-
-                foreach ($asset->maintenanceDetails as $maintenanceDetail) {
-                    $maintenance = $maintenanceDetail->maintenance;
-                    $years = [date('Y', strtotime($maintenance->created_at))];
-
-                    $maintenanceYears[] = $years[0];
-
-                    $status = $this->determineMaintenanceStatus($asset);
-
-                    // Agrupar según el estado
-                    $maintenanceData = ['años' => $years];
-
-                    switch ($status) {
-                        case 'cumplido':
-                            $cumplidos[] = $maintenanceData;
-                            break;
-                        case 'en_proceso':
-                            $en_proceso[] = $maintenanceData;
-                            break;
-                        case 'inconcluso':
-                            $inconclusos[] = $maintenanceData;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                // Agregar el activo al reporte
-                $report['assets'][] = [
-                    'id' => $asset->id,
-                    'codigo' => $asset->cod_ass,
-                    'serie' => $asset->ser_num_ass,
-                    'mantenimientos' => [
-                        'cumplidos' => $cumplidos,
-                        'en_proceso' => $en_proceso,
-                        'inconclusos' => $inconclusos,
-                    ],
-                ];
-            }
-
-            return response()->json($report, 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Ocurrió un error al generar el reporte',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    private function determineMaintenanceStatus($asset)
-    {
-        $currentYear = now()->year;
-        $ingresoFecha = $asset->income->date_inc; // Fecha de ingreso del activo
-        $yearsRequired = [
-            $ingresoFecha->year + 1,
-            $ingresoFecha->year + 2,
-            $ingresoFecha->year + 3
+        $report = [
+            'desde' => now()->format('d/m/Y'),
+            'assets' => []
         ];
 
-        // Recopilar los años de mantenimiento realizados
-        $maintenanceYears = [];
-        foreach ($asset->maintenanceDetails as $maintenanceDetail) {
-            $maintenanceYears[] = date('Y', strtotime($maintenanceDetail->maintenance->created_at));
+        foreach ($assets as $asset) {
+            $status = $this->determineMaintenanceStatus($asset);
+
+            $cumplidos = [];
+            $en_proceso = [];
+            $inconclusos = [];
+
+            foreach ($status as $year => $state) {
+                $maintenanceData = ['años' => [$year]];
+                switch ($state) {
+                    case 'cumplido':
+                        $cumplidos[] = $maintenanceData;
+                        break;
+                    case 'en_proceso':
+                        $en_proceso[] = $maintenanceData;
+                        break;
+                    case 'inconcluso':
+                        $inconclusos[] = $maintenanceData;
+                        break;
+                }
+            }
+
+            $report['assets'][] = [
+                'id' => $asset->id,
+                'codigo' => $asset->cod_ass,
+                'serie' => $asset->ser_num_ass,
+                'mantenimientos' => [
+                    'cumplidos' => $cumplidos,
+                    'en_proceso' => $en_proceso,
+                    'inconclusos' => $inconclusos,
+                ],
+            ];
         }
 
-        // Lógica de determinación del estado como se discutió antes
-        if (count($maintenanceYears) === 3 && $maintenanceYears === $yearsRequired) {
-            return 'cumplido';
-        }
-
-        // Evaluar el estado "en proceso" o "inconcluso" basado en los años
-        if ($currentYear <= $ingresoFecha->year + 3) {
-            $pendingYears = array_diff($yearsRequired, $maintenanceYears);
-            return count($pendingYears) > 0 ? 'en_proceso' : 'inconcluso';
-        }
-
-        return 'inconcluso';
+        return response()->json($report, 200);
+    } catch (Exception $e) {
+        return response()->json([
+            'message' => 'Ocurrió un error al generar el reporte',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
+    private function determineMaintenanceStatus($asset)
+{
+    $currentYear = now()->year;
+    $ingresoFecha = Carbon::parse($asset->income->date_inc); // Convertir a Carbon para manejar fechas
+    $yearsRequired = [
+        $ingresoFecha->year + 1,
+        $ingresoFecha->year + 2,
+        $ingresoFecha->year + 3,
+    ];
+
+    // Recopilar los años de mantenimiento realizados
+    $maintenanceYears = [];
+    foreach ($asset->maintenanceDetails as $maintenanceDetail) {
+        $maintenanceYears[] = (int)date('Y', strtotime($maintenanceDetail->maintenance->created_at));
+    }
+    $maintenanceYears = array_unique($maintenanceYears); // Eliminar duplicados
+
+    // Verificar cada año requerido
+    $status = [];
+    foreach ($yearsRequired as $year) {
+        if (in_array($year, $maintenanceYears)) {
+            $status[$year] = 'cumplido'; // El mantenimiento se realizó en este año
+        } elseif ($year < $currentYear) {
+            $status[$year] = 'inconcluso'; // Este año ya pasó y no hay mantenimiento registrado
+        } else {
+            $status[$year] = 'en_proceso'; // Este año está en curso o aún no ha llegado
+        }
+    }
+
+    return $status;
+}
 }
