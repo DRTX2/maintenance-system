@@ -95,12 +95,12 @@ class ReportController extends Controller
                 $maintenanceYears = [];
 
                 foreach ($asset->maintenanceDetails as $maintenanceDetail) {
-                    $maintenance = $maintenanceDetail->maintenance; 
-                    $years = [date('Y', strtotime($maintenance->created_at))];  
+                    $maintenance = $maintenanceDetail->maintenance;
+                    $years = [date('Y', strtotime($maintenance->created_at))];
 
-                    $maintenanceYears[] = $years[0];  
+                    $maintenanceYears[] = $years[0];
 
-                    $status = $this->determineMaintenanceStatus($asset); 
+                    $status = $this->determineMaintenanceStatus($asset);
 
                     // Agrupar según el estado
                     $maintenanceData = ['años' => $years];
@@ -144,58 +144,31 @@ class ReportController extends Controller
 
     private function determineMaintenanceStatus($asset)
     {
-        $ingresoFecha = $asset->income->date_inc;
         $currentYear = now()->year;
+        $ingresoFecha = $asset->income->date_inc; // Fecha de ingreso del activo
         $yearsRequired = [
             $ingresoFecha->year + 1,
             $ingresoFecha->year + 2,
             $ingresoFecha->year + 3
         ];
 
-        // Recopilamos los años en los que se han realizado mantenimientos
+        // Recopilar los años de mantenimiento realizados
         $maintenanceYears = [];
         foreach ($asset->maintenanceDetails as $maintenanceDetail) {
-            $maintenance = $maintenanceDetail->maintenance;
-            $maintenanceYears[] = date('Y', strtotime($maintenance->created_at));
+            $maintenanceYears[] = date('Y', strtotime($maintenanceDetail->maintenance->created_at));
         }
 
-        // Aseguramos que los mantenimientos estén ordenados por año
-        sort($maintenanceYears);
-
-        // Verificamos si ya se cumplieron los 3 mantenimientos obligatorios
-        if (
-            count($maintenanceYears) === 3 &&
-            $maintenanceYears === $yearsRequired
-        ) {
-            // Si se realizaron los mantenimientos en los 3 años obligatorios
+        // Lógica de determinación del estado como se discutió antes
+        if (count($maintenanceYears) === 3 && $maintenanceYears === $yearsRequired) {
             return 'cumplido';
         }
 
-        // Si la fecha actual es posterior a 3 años después del ingreso
-        if ($currentYear > $ingresoFecha->year + 3) {
-            // Si no se ha cumplido con al menos un mantenimiento de los 3 años obligatorios
-            if (count(array_diff($yearsRequired, $maintenanceYears)) > 0) {
-                return 'inconcluso';
-            }
-        }
-
-        // Si estamos dentro del periodo de 3 años y aún se pueden hacer los mantenimientos
+        // Evaluar el estado "en proceso" o "inconcluso" basado en los años
         if ($currentYear <= $ingresoFecha->year + 3) {
-            // Verificar si ya se ha cumplido al menos un mantenimiento en cada uno de los años requeridos
             $pendingYears = array_diff($yearsRequired, $maintenanceYears);
-
-            // Si aún hay años pendientes, pero los años previos ya fueron realizados
-            if (count($pendingYears) > 0 && count($maintenanceYears) > 0) {
-                return 'en_proceso';
-            }
-
-            // Si no se han hecho mantenimientos en los años previos, se marca como inconcluso
-            if (count($pendingYears) > 0) {
-                return 'inconcluso';
-            }
+            return count($pendingYears) > 0 ? 'en_proceso' : 'inconcluso';
         }
 
-        // En caso de que todo esté bien
-        return 'cumplido';
+        return 'inconcluso';
     }
 }
