@@ -23,6 +23,7 @@ import ComponentsViewModal from "./ComponentsViewModal";
 import CreateStyles from "../../../generic/styles/CreateStyles";
 import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
 import { useNavigate } from "react-router-dom";
+import GenericTable from "../../GenericTable";
 
 const MaintanceBaseView = ({ data, fields, columns }) => {
   const [currentAsset, setCurrentAsset] = useState(null);
@@ -107,91 +108,70 @@ const MaintanceBaseView = ({ data, fields, columns }) => {
         </Grid2>
 
         <Box marginTop="30px">
-          {assetsTable.length > 0 ? (
-            <>
-              <TableContainer component={Paper} sx={tableStyles.tableContainer}>
-                <Table>
-                  <TableHead sx={tableStyles.tableHead}>
-                    <TableRow>
-                      <TableCell>Código</TableCell>
-                      <TableCell>Número de serie</TableCell>
-                      <TableCell>Actividades</TableCell>
-                      <TableCell>Observaciones</TableCell>
-                      <TableCell>Componenes a reemplazar</TableCell>
+          <GenericTable
+            data={assetsTable}
+            dataCount={assetsTable.length}
+            isDelete={false}
+            setIsDelete={() => {}}
+          >
+            {(currentPageData) => (
+              <>
+                <TableHead sx={tableStyles.tableHead}>
+                  <TableRow>
+                    <TableCell>Código</TableCell>
+                    <TableCell>Número de serie</TableCell>
+                    <TableCell>Actividades</TableCell>
+                    <TableCell>Observaciones</TableCell>
+                    <TableCell>Componenes a reemplazar</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {currentPageData.map((row) => (
+                    <TableRow key={row.asset.id}>
+                      <TableCell>{row.asset.cod_ass}</TableCell>
+                      <TableCell>{row.asset.ser_num_ass}</TableCell>
+                      <TableCell>
+                        {row.asset.activities.length}{" "}
+                        {row.asset.activities.length === 1
+                          ? "Actividad"
+                          : "Actividades"}
+                        <IconButton
+                          onClick={() => onOpenActivities(row.asset.id)}
+                          arial-label="abrir"
+                        >
+                          <PlaylistAddIcon />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        {row.asset.observations.length}{" "}
+                        {row.asset.observations.length === 1
+                          ? "Observación"
+                          : "Observaciones"}
+                        <IconButton
+                          onClick={() => onOpenObservations(row.asset.id)}
+                          arial-label="abrir"
+                        >
+                          <PlaylistAddIcon />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        {row.asset.replaced_components.length}{" "}
+                        {row.asset.replaced_components.length === 1
+                          ? "Componente"
+                          : "Componentes"}
+                        <IconButton
+                          onClick={() => onOpenComponents(row.asset.id)}
+                          arial-label="abrir"
+                        >
+                          <PlaylistAddIcon />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {assetsTable
-                      .slice(
-                        currentPage * rowsPerPage,
-                        currentPage * rowsPerPage + rowsPerPage
-                      )
-                      .map((row) => (
-                        <TableRow key={row.asset.id}>
-                          <TableCell>{row.asset.cod_ass}</TableCell>
-                          <TableCell>{row.asset.ser_num_ass}</TableCell>
-                          <TableCell>
-                            {row.asset.activities.length}{" "}
-                            {row.asset.activities.length === 1
-                              ? "Actividad"
-                              : "Actividades"}
-                            <IconButton
-                              onClick={() => onOpenActivities(row.asset.id)}
-                              arial-label="abrir"
-                            >
-                              <PlaylistAddIcon />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            {row.asset.observations.length}{" "}
-                            {row.asset.observations.length === 1
-                              ? "Observación"
-                              : "Observaciones"}
-                            <IconButton
-                              onClick={() => onOpenObservations(row.asset.id)}
-                              arial-label="abrir"
-                            >
-                              <PlaylistAddIcon />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            {row.asset.replaced_components.length}{" "}
-                            {row.asset.replaced_components.length === 1
-                              ? "Componente"
-                              : "Componentes"}
-                            <IconButton
-                              onClick={() => onOpenComponents(row.asset.id)}
-                              arial-label="abrir"
-                            >
-                              <PlaylistAddIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                component="div"
-                count={assetsTable.length}
-                page={currentPage}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[3, 5]}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage={
-                  <span style={tableStyles.labelRowsPerPage}>
-                    Filas por página
-                  </span>
-                }
-                labelDisplayedRows={() => ""}
-                ActionsComponent={(props) => (
-                  <CustomTablePaginationActions {...props} />
-                )}
-                sx={tableStyles.pagination}
-              />
-            </>
-          ) : null}
+                  ))}
+                </TableBody>
+              </>
+            )}
+          </GenericTable>
         </Box>
       </Box>
 
