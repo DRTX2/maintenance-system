@@ -8,8 +8,8 @@ const AssetsContext = createContext();
 
 export const AssetsProvider = ({ children }) => {
   const [assets, setAssets] = useState([]);
-  const [filteredAssets, setFilteredAssets] = useState([]);
   const [isReady, setIsReady] = useState(false);
+  const [term, setTerm] = useState(""); // Estado para el término de búsqueda
 
   useEffect(() => {
     fetchAssets();
@@ -25,23 +25,23 @@ export const AssetsProvider = ({ children }) => {
     try {
       const response = await axiosInstance.get(`/assets`);
       setAssets(response.data);
-      setFilteredAssets(response.data);
     } catch (error) {
       console.error("Error fetching assets:", error);
     }
   };
 
-  const filterAssets = (filters) => {
-    if (!filters.term) {
-      setFilteredAssets([]);
-    } else {
-      const filtered = assets.filter((asset) =>
-        asset.ser_num_ass.includes(filters.term)
-      );
-      console.log(filtered);
-      setFilteredAssets(filtered);
-    }
+  const filterAssets = (searchTerm) => {
+    setTerm(searchTerm); // Actualizar el término de búsqueda
   };
+
+  const filteredAssets = useMemo(() => {
+    if (!term) {
+      return assets; // Si no hay término de búsqueda, mostrar todos los activos
+    }
+    return assets.filter(
+      (asset) => asset.ser_num_ass.includes(term) // Filtrar por el número de serie
+    );
+  }, [assets, term]);
 
   // Métodos CRUD para assets
   const addAsset = async (newAsset) => {
@@ -102,8 +102,8 @@ export const AssetsProvider = ({ children }) => {
     <AssetsContext.Provider
       value={{
         assets,
-        filteredAssets,
         filterAssets,
+        filteredAssets,
         isReady,
         visibleAssets,
         addAsset,

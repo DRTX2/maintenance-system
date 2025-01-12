@@ -13,14 +13,14 @@ import { useAssetsContext } from "../../provider/AssetsContext";
 
 const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
-  const { assets, isReady, deleteAsset, filteredAssets, filterAssets } =
+  const { assets, isReady, deleteAsset, filterAssets, filteredAssets } =
     useAssetsContext();
 
   // Esto permite basicamente resetar los filtros cuando se pierda el foco en la pagina de "ver".
   // Es decir, si va a editar, crear o lo que sea y dejo a medias el search, pues este es resetado.
   useEffect(() => {
     return () => {
-      filterAssets({ term: "" });
+      filterAssets("");
     };
   }, [navigate]);
 
@@ -39,7 +39,7 @@ const AssetShow = ({ columns, role }) => {
 
   // No hacer un fetch contra la base, sino contra mis datos ya cargados.
   const onFetch = async (searchTerm) => {
-    filterAssets({ term: searchTerm });
+    filterAssets(searchTerm);
   };
 
   // 2. El padre es notifiacdo.
@@ -94,8 +94,6 @@ const AssetShow = ({ columns, role }) => {
   const onDelete = (id, currentState) => {
     deleteAsset(id, currentState);
   };
-
-  const displayAssets = filteredAssets.length > 0 ? filteredAssets : assets;
 
   return (
     <div
@@ -162,7 +160,7 @@ const AssetShow = ({ columns, role }) => {
       <Box className="flexColumnCenter" paddingTop="20px">
         <AssetTableShow
           isReady={isReady}
-          data={displayAssets}
+          data={filteredAssets}
           columns={columns}
           onDelete={onDelete}
           onView={onView}

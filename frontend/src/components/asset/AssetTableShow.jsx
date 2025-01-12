@@ -28,6 +28,7 @@ const AssetTableShow = ({
   }
 
   if (!Array.isArray(data)) {
+    console.log("no vale", data);
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
         Error: los datos no son validos.

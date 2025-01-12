@@ -23,7 +23,7 @@ const AssetBaseView = ({
   handleFieldChange,
 }) => {
   const navigate = useNavigate();
-  const { updateAsset, filteredAssets } = useAssetsContext();
+  const { updateAsset } = useAssetsContext();
   const [isEditing, setIsEditing] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
 
