@@ -12,6 +12,7 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MaintenanceDetailController;
 use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\ReplacedComponentController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\TypeMaintenanceController;
@@ -184,8 +185,8 @@ Route::prefix('maintenance-detail')->group(function () {
 });
 // Reportes
 Route::prefix('report')->group(function () {
-    Route::post('/maintenances-by-responsible', [MaintenanceController::class, 'filterByResponsibleAndTime']);
-    // Route::post('/maintenances-by-type', [MaintenanceDetailController::class, 'filterByType']);
+    Route::post('/maintenances-by-responsible', [ReportController::class, 'filterByResponsibleAndTime']);
+    Route::post('/maintenances-by-asset', [ReportController::class, 'filterByAsset']);
     // Route::post('/maintenances-by-date-range', [MaintenanceDetailController::class, 'filterByDateRange']);
 });
 
