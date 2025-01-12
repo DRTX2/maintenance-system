@@ -10,11 +10,12 @@ import utc from "dayjs/plugin/utc";
 import ReusableDatePicker from "./ReusableDatePicker";
 import BaseModal from "./BaseModal";
 import generateResponsiblesPDF from "./generateResponsiblesPDF";
+import { useDataContext } from "../../provider/DataContext";
 
 dayjs.extend(utc);
 
 const ResponsiblesModal = (props) => {
-  const [responsibles, setResponsibles] = useState([]);
+  const { data, isReady } = useDataContext();
   const [formData, setFormData] = useState({
     idResponsible: "",
     startDate: null,
@@ -25,27 +26,6 @@ const ResponsiblesModal = (props) => {
     startDate: false,
     endDate: false,
   });
-
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get("/responsibles");
-        setResponsibles(response.data.results);
-        setIsReady(true);
-      } catch (error) {
-        if (error.response.data.errors) {
-          const message = generateErrorMessage(error.response.data.errors);
-          toast.error(message);
-        } else {
-          toast.error("Error inesperado al obtener responsables.");
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
 
   if (!isReady) {
     return null;
@@ -103,7 +83,6 @@ const ResponsiblesModal = (props) => {
 
     return newErrors;
   };
- 
 
   const handleReport = async () => {
     const newErrors = validateForm(formData);
@@ -120,42 +99,37 @@ const ResponsiblesModal = (props) => {
     // Aqui el back me debe devolver un data y ese data lo debo enviar a mi funcion.
 
     try {
-      const responsible=formData.idResponsible,
-            created_at=dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"), 
-            ended_at=dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss");
-      
+      const responsible = formData.idResponsible,
+        created_at = dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
+        ended_at = dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss");
+
       const inicio = dayjs(formData.startDate).format("DD-MM-YYYY");
       const fin = dayjs(formData.endDate).format("DD-MM-YYYY");
 
-            
       const formattedData = {
         responsible,
         created_at,
-        ended_at 
+        ended_at,
       };
-  
+
       const response = await axiosInstance.post(
         "/report/maintenances-by-responsible",
         formattedData
       );
-      const results=response.data.results;
+      const results = response.data.results;
       console.log(results);
-      
-      generateResponsiblesPDF(formData.idResponsible,results, inicio, fin);
-  
+
+      generateResponsiblesPDF(formData.idResponsible, results, inicio, fin);
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {
-        toast.error('No se pudo obtener el reporte');
+        toast.error("No se pudo obtener el reporte");
       } else {
         toast.error("Error inesperado al obtener responsables.");
       }
     }
-    
   };
 
-
-  
   return (
     <BaseModal
       open={props.open}

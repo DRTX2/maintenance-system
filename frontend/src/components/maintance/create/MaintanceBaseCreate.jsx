@@ -89,10 +89,15 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       return;
     }
 
-    setAssetsTable((prev) => [
-      ...prev,
-      { ...asset, activities: [], observations: [], replaced_components: [] },
-    ]);
+    const updatedAsset = {
+      ...asset,
+      activities: [],
+      observations: [],
+      replaced_components: [],
+      isAdded: true, // Añadimos el campo isAdded al activo
+    };
+
+    setAssetsTable((prev) => [...prev, updatedAsset]);
 
     setErrorAsset(false);
     setHelperTextAsset("");

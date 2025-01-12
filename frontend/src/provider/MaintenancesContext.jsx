@@ -77,15 +77,9 @@ export const MaintenancesProvider = ({ children }) => {
       const createdAtInput = filters.dates.startDate;
       const endedAtInput = filters.dates.endDate;
 
-      console.log("Fecha de inicio enviada:", createdAtInput);
-      console.log("Fecha de fin enviada:", endedAtInput);
-
       // Extraemos únicamente la parte de la fecha en formato YYYY-MM-DD
       const startDate = new Date(createdAtInput).toISOString().split("T")[0];
       const endDate = new Date(endedAtInput).toISOString().split("T")[0];
-
-      console.log("Fecha de inicio procesada:", startDate);
-      console.log("Fecha de fin procesada:", endDate);
 
       // Filtrar los mantenimientos
       filtered = filtered.filter((maintenance) => {
@@ -98,9 +92,6 @@ export const MaintenancesProvider = ({ children }) => {
         const maintenanceEndedAt = new Date(maintenance.ended_at)
           .toISOString()
           .split("T")[0];
-
-        console.log("Creado:", maintenanceCreatedAt);
-        console.log("Terminado:", maintenanceEndedAt);
 
         return (
           maintenanceCreatedAt >= startDate && maintenanceEndedAt <= endDate

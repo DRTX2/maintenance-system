@@ -151,7 +151,23 @@ class AssetController extends Controller
     }
 
 
+    public function all()
+    {
+        // Obtener todos los activos
+        $assets = Asset::all();
 
+        // Mapear para solo devolver el 'id' de cada activo
+        $transformedAssets = $assets->map(function ($asset) {
+            return [
+                'id' => $asset->id, // Solo devolver el ID
+                'cod_ass' => $asset->cod_ass,
+                'ser_num_ass' => $asset->ser_num_ass
+            ];
+        });
+
+        // Retornar la respuesta con los IDs de los activos
+        return response()->json($transformedAssets, 200);
+    }
 
     public function indexForMaintenances()
     {

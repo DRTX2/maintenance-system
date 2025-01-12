@@ -51,14 +51,23 @@ const AssetsModal = (props) => {
     setError("");
   };
 
-  const handleReport = () => {
+  const handleReport = async () => {
     if (!assetSelected) {
       setError("Debe seleccionar un activo.");
       return;
     }
 
-    generateAssetsPDF();
-    console.log("Sending", assetSelected);
+    try {
+      const response = await axiosInstance.post(
+        `/report/maintenances-by-asset`,
+        {
+          asset: assetSelected,
+        }
+      );
+      generateAssetsPDF(response.data.results);
+    } catch (error) {
+      toast.error("No se ha podido obtener el activo");
+    }
   };
 
   return (

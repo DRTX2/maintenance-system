@@ -8,10 +8,19 @@ const calculateCenter = (doc, text) => {
   return x;
 };
 
-const generateResponsiblesPDF = () => {
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+const generateAssetPDF = (maintenances) => {
   const doc = new jsPDF();
 
-  // El titulo
+  console.log("Dentro, mantenimientos recibidos: ", maintenances);
+
   doc.setFont("helvetica", "bold");
   doc.text(
     "Historial de mantenimientos",
@@ -45,17 +54,34 @@ const generateResponsiblesPDF = () => {
     "Componentes reemplazados",
   ];
 
-  const rows = [
+  const rows = maintenances?.map((maintenance) => [
+    `${formatDate(maintenance.created_at)} - ${formatDate(maintenance.ended_at)}`,
+    maintenance.cod_main,
+    maintenance.type,
+    maintenance.responsable,
     [
-      "13/08/2024 - 18/08/2022",
-      "MAT-01",
-      "Preventivo",
-      "1800000000",
-      [["Limpieza", "Reparación"].join(", ")],
-      [["No hubo", "Mas o menos"].join(", ")],
-      [["Tarjeta gráfica", "Procesador"].join(", ")],
+      maintenance.details
+        .map((detail) =>
+          detail.asset.activities.map((activity) => activity.act_main)
+        )
+        .flat()
+        .join(", "),
     ],
-  ];
+    [],
+    [],
+  ]);
+
+  // const rows = [
+  //   [
+  //     "13/08/2024 - 18/08/2022",
+  //     "MAT-01",
+  //     "Preventivo",
+  //     "1800000000",
+  //     [["Limpieza", "Reparación"].join(", ")],
+  //     [["No hubo", "Mas o menos"].join(", ")],
+  //     [["Tarjeta gráfica", "Procesador"].join(", ")],
+  //   ],
+  // ];
 
   // En caso de que estuviese vacio.
   // doc.setFont("helvetica", "normal");
@@ -85,4 +111,4 @@ const generateResponsiblesPDF = () => {
   doc.save("reporte.pdf");
 };
 
-export default generateResponsiblesPDF;
+export default generateAssetPDF;
