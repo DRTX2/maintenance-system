@@ -33,6 +33,7 @@ import ActivitiesModal from "../create/ActivitiesModal";
 import ObservationsModal from "../create/ObservationsModal";
 import ComponentsModal from "../create/ComponentsModal";
 import { useMaintenancesContext } from "../../../provider/MaintenancesContext";
+import GenericTable from "../../GenericTable";
 
 const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const { updateMaintenance } = useMaintenancesContext();
@@ -43,8 +44,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const [openActivities, setOpenActivities] = useState(false);
   const [openObservations, setOpenObservations] = useState(false);
   const [openComponents, setOpenComponents] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   // Mensajes para el select del asset ya que es un componente separado al dynamic.
@@ -61,13 +60,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
       assets: assetsTable,
     }));
   }, [assetsTable]);
-
-  const handleChangePage = (event, newPage) => setCurrentPage(newPage);
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-  };
 
   const handleFieldChange = (key, value) => {
     setMaintanceEdited((prev) => ({ ...prev, [key]: value }));
@@ -297,7 +289,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           ))}
           <Grid2 item size={{ xs: 12, sm: 6, md: 6 }} key="assetsSelector">
             <AssetSelector
-              options={assets}
+              data={assets}
               onAdd={handleAddAsset}
               error={errorAsset}
               helperText={helperTextAsset}
@@ -311,30 +303,34 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
           {/* Aqui esto debe cambiar, en teoria debo mostrar los activos que ya existen */}
           {assetsTable.length > 0 ? (
             <>
-              <TableContainer component={Paper} sx={tableStyles.tableContainer}>
-                <Table>
-                  <TableHead sx={tableStyles.tableHead}>
-                    <TableRow>
-                      <TableCell>Código</TableCell>
-                      <TableCell>Número de serie</TableCell>
-                      <TableCell>Actividades</TableCell>
-                      <TableCell>Observaciones</TableCell>
-                      <TableCell>Componenes a reemplazar</TableCell>
-                      <TableCell>{""}</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {assetsTable
-                      .slice(
-                        currentPage * rowsPerPage,
-                        currentPage * rowsPerPage + rowsPerPage
-                      )
-                      .map((row) => (
+              <GenericTable
+                data={assetsTable}
+                dataCount={assetsTable.length}
+                isDelete={false}
+                setIsDelete={() => {}}
+              >
+                {(currentPageData) => (
+                  <>
+                    <TableHead sx={tableStyles.tableHead}>
+                      <TableRow>
+                        <TableCell>Código</TableCell>
+                        <TableCell>Número de serie</TableCell>
+                        <TableCell>Actividades</TableCell>
+                        <TableCell>Observaciones</TableCell>
+                        <TableCell>Componenes a reemplazar</TableCell>
+                        <TableCell>{""}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {currentPageData.map((row) => (
                         <TableRow key={row.asset.id}>
                           <TableCell>{row.asset.cod_ass}</TableCell>
                           <TableCell>{row.asset.ser_num_ass}</TableCell>
                           <TableCell
-                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                            sx={{
+                              whiteSpace: "nowrap",
+                              fontSize: "0.875rem",
+                            }}
                           >
                             {row.asset.activities.length}{" "}
                             {row.asset.activities.length === 1
@@ -348,7 +344,10 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                             </IconButton>
                           </TableCell>
                           <TableCell
-                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                            sx={{
+                              whiteSpace: "nowrap",
+                              fontSize: "0.875rem",
+                            }}
                           >
                             {row.asset.observations.length}{" "}
                             {row.asset.observations.length === 1
@@ -362,7 +361,10 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                             </IconButton>
                           </TableCell>
                           <TableCell
-                            sx={{ whiteSpace: "nowrap", fontSize: "0.875rem" }}
+                            sx={{
+                              whiteSpace: "nowrap",
+                              fontSize: "0.875rem",
+                            }}
                           >
                             {row.asset.replaced_components.length}{" "}
                             {row.asset.replaced_components.length === 1
@@ -382,28 +384,10 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
                           </TableCell>
                         </TableRow>
                       ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                component="div"
-                count={assetsTable.length}
-                page={currentPage}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[3, 5]}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage={
-                  <span style={tableStyles.labelRowsPerPage}>
-                    Filas por página
-                  </span>
-                }
-                labelDisplayedRows={() => ""}
-                ActionsComponent={(props) => (
-                  <CustomTablePaginationActions {...props} />
+                    </TableBody>
+                  </>
                 )}
-                sx={tableStyles.pagination}
-              />
+              </GenericTable>
             </>
           ) : null}
         </Box>

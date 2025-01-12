@@ -1,11 +1,8 @@
 // src/provider/AssetsContext.js
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
-import { getDecodedToken } from "../utils/authService";
 import { handleErrors } from "../utils/validations";
 import axiosInstance from "../utils/api";
-
-const role = getDecodedToken?.role;
 
 const AssetsContext = createContext();
 
@@ -18,10 +15,14 @@ export const AssetsProvider = ({ children }) => {
     setIsReady(true);
   }, []);
 
+  // Activos visibles derivados de `assets`
+  const visibleAssets = useMemo(() => {
+    return assets.filter((asset) => asset.est_ass !== "H");
+  }, [assets]);
+
   const fetchAssets = async () => {
     try {
       const response = await axiosInstance.get(`/assets`);
-      console.log("Hizo un fetch");
       setAssets(response.data);
     } catch (error) {
       console.error("Error fetching assets:", error);
@@ -76,7 +77,14 @@ export const AssetsProvider = ({ children }) => {
 
   return (
     <AssetsContext.Provider
-      value={{ assets, isReady, addAsset, updateAsset, deleteAsset }}
+      value={{
+        assets,
+        isReady,
+        visibleAssets,
+        addAsset,
+        updateAsset,
+        deleteAsset,
+      }}
     >
       {children}
     </AssetsContext.Provider>

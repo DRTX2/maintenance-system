@@ -5,23 +5,26 @@ import MaintanceBaseEdit from "./MaintanceBaseEdit";
 import axiosInstance from "../../../utils/api";
 import Loader from "../../Loader";
 import { useDataContext } from "../../../provider/DataContext";
+import { useAssetsContext } from "../../../provider/AssetsContext";
 
 const MaintanceEdit = () => {
   const { id } = useParams();
-  const { data, isReady } = useDataContext();
+  const { data } = useDataContext();
+  const { visibleAssets } = useAssetsContext();
   const [maintance, setMaintance] = useState();
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
         const response = await axiosInstance.get(`/maintenances/${id}`);
+        console.log("que ta", response.data);
         setMaintance(response.data.results);
       } catch (error) {
         toast.error("No se ha podido obtener los datos.");
       }
     };
     fetchAllData();
-  }, []);
+  }, [id]);
 
   const resultsTypes =
     data?.typesMaintenances.length > 0
@@ -65,7 +68,7 @@ const MaintanceEdit = () => {
     },
   ];
 
-  if (!maintance) {
+  if (!maintance || !data) {
     return <Loader />;
   }
 
@@ -87,7 +90,7 @@ const MaintanceEdit = () => {
     <MaintanceBaseEdit
       maintance={formattedMaintance}
       fields={fields}
-      assets={data?.visibleAssets}
+      assets={visibleAssets}
     />
   );
 };
