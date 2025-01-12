@@ -74,23 +74,36 @@ export const MaintenancesProvider = ({ children }) => {
 
     // filtrar por fecha
     if (filters.dates.startDate && filters.dates.endDate) {
-      const startDate = new Date(filters.dates.startDate);
-      const endDate = new Date(filters.dates.endDate);
+      const createdAtInput = filters.dates.startDate;
+      const endedAtInput = filters.dates.endDate;
 
-      console.log("Fecha de inicio", startDate);
-      console.log("Fecha fin", endDate);
+      console.log("Fecha de inicio enviada:", createdAtInput);
+      console.log("Fecha de fin enviada:", endedAtInput);
 
+      // Extraemos únicamente la parte de la fecha en formato YYYY-MM-DD
+      const startDate = new Date(createdAtInput).toISOString().split("T")[0];
+      const endDate = new Date(endedAtInput).toISOString().split("T")[0];
+
+      console.log("Fecha de inicio procesada:", startDate);
+      console.log("Fecha de fin procesada:", endDate);
+
+      // Filtrar los mantenimientos
       filtered = filtered.filter((maintenance) => {
-        const createdAt = new Date(maintenance.created_at);
-        const endedAt = new Date(maintenance.ended_at);
+        console.log("Mantenimiento", maintenance.cod_main);
 
-        console.log("Creado", createdAt);
-        console.log("Terminado", endedAt);
+        // Extraemos las fechas de los mantenimientos en el mismo formato
+        const maintenanceCreatedAt = new Date(maintenance.created_at)
+          .toISOString()
+          .split("T")[0];
+        const maintenanceEndedAt = new Date(maintenance.ended_at)
+          .toISOString()
+          .split("T")[0];
 
-        // Compara si las fechas de creación o fin están dentro del rango
+        console.log("Creado:", maintenanceCreatedAt);
+        console.log("Terminado:", maintenanceEndedAt);
+
         return (
-          (createdAt >= startDate && createdAt <= endDate) ||
-          (endedAt >= startDate && endedAt <= endDate)
+          maintenanceCreatedAt >= startDate && maintenanceEndedAt <= endDate
         );
       });
     }
