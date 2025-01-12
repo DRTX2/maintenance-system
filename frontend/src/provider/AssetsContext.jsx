@@ -8,6 +8,7 @@ const AssetsContext = createContext();
 
 export const AssetsProvider = ({ children }) => {
   const [assets, setAssets] = useState([]);
+  const [filteredAssets, setFilteredAssets] = useState([]);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -24,8 +25,21 @@ export const AssetsProvider = ({ children }) => {
     try {
       const response = await axiosInstance.get(`/assets`);
       setAssets(response.data);
+      setFilteredAssets(response.data);
     } catch (error) {
       console.error("Error fetching assets:", error);
+    }
+  };
+
+  const filterAssets = (filters) => {
+    if (!filters.term) {
+      setFilteredAssets([]);
+    } else {
+      const filtered = assets.filter((asset) =>
+        asset.ser_num_ass.includes(filters.term)
+      );
+      console.log(filtered);
+      setFilteredAssets(filtered);
     }
   };
 
@@ -88,6 +102,8 @@ export const AssetsProvider = ({ children }) => {
     <AssetsContext.Provider
       value={{
         assets,
+        filteredAssets,
+        filterAssets,
         isReady,
         visibleAssets,
         addAsset,

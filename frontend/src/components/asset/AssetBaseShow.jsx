@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
@@ -13,7 +13,16 @@ import { useAssetsContext } from "../../provider/AssetsContext";
 
 const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
-  const { assets, isReady, deleteAsset } = useAssetsContext();
+  const { assets, isReady, deleteAsset, filteredAssets, filterAssets } =
+    useAssetsContext();
+
+  // Esto permite basicamente resetar los filtros cuando se pierda el foco en la pagina de "ver".
+  // Es decir, si va a editar, crear o lo que sea y dejo a medias el search, pues este es resetado.
+  useEffect(() => {
+    return () => {
+      filterAssets({ term: "" });
+    };
+  }, [navigate]);
 
   const fetchAssetsFilter = async (filters = {}) => {
     console.log(filters);
@@ -28,20 +37,9 @@ const AssetShow = ({ columns, role }) => {
     }
   };
 
-  const onFetch = async (param) => {
-    if (param === "") {
-      // await fetchAssets();
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.post(`/assets/search/${role}`, {
-        term: param,
-      });
-      // setAssets(response.data);
-    } catch (error) {
-      toast.error("Ha ocurrido un error con la busqueda");
-    }
+  // No hacer un fetch contra la base, sino contra mis datos ya cargados.
+  const onFetch = async (searchTerm) => {
+    filterAssets({ term: searchTerm });
   };
 
   // 2. El padre es notifiacdo.
@@ -96,6 +94,8 @@ const AssetShow = ({ columns, role }) => {
   const onDelete = (id, currentState) => {
     deleteAsset(id, currentState);
   };
+
+  const displayAssets = filteredAssets.length > 0 ? filteredAssets : assets;
 
   return (
     <div
@@ -162,7 +162,7 @@ const AssetShow = ({ columns, role }) => {
       <Box className="flexColumnCenter" paddingTop="20px">
         <AssetTableShow
           isReady={isReady}
-          data={assets}
+          data={displayAssets}
           columns={columns}
           onDelete={onDelete}
           onView={onView}
