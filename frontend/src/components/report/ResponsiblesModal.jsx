@@ -32,9 +32,9 @@ const ResponsiblesModal = (props) => {
   }
 
   const renderResponsibles = () =>
-    data?.responsibles.length > 0 ? (
-      data?.responsibles.map((responsible) => (
-        <MenuItem key={responsible.id} value={responsible.id}>
+    responsibles.length > 0 ? (
+      responsibles.map((responsible) => (
+        <MenuItem key={responsible.id} value={responsible.dni_res}>
           {`${responsible.dni_res} - ${responsible.nam_res} ${responsible.las_res}`}
         </MenuItem>
       ))
@@ -84,7 +84,7 @@ const ResponsiblesModal = (props) => {
     return newErrors;
   };
 
-  const handleReport = () => {
+  const handleReport = async () => {
     const newErrors = validateForm(formData);
     setErrors(newErrors);
 
@@ -94,9 +94,40 @@ const ResponsiblesModal = (props) => {
       toast.error("Hay errores pendientes");
       return;
     }
-
+    console.log("Reporte por resposable data");
+    console.log();
     // Aqui el back me debe devolver un data y ese data lo debo enviar a mi funcion.
-    generateResponsiblesPDF();
+
+    try {
+      const responsible = formData.idResponsible,
+        created_at = dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
+        ended_at = dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss");
+
+      const inicio = dayjs(formData.startDate).format("DD-MM-YYYY");
+      const fin = dayjs(formData.endDate).format("DD-MM-YYYY");
+
+      const formattedData = {
+        responsible,
+        created_at,
+        ended_at,
+      };
+
+      const response = await axiosInstance.post(
+        "/report/maintenances-by-responsible",
+        formattedData
+      );
+      const results = response.data.results;
+      console.log(results);
+
+      generateResponsiblesPDF(formData.idResponsible, results, inicio, fin);
+    } catch (error) {
+      console.log(error);
+      if (error.response?.data?.errors) {
+        toast.error("No se pudo obtener el reporte");
+      } else {
+        toast.error("Error inesperado al obtener responsables.");
+      }
+    }
   };
 
   return (
