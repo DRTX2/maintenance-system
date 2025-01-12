@@ -37,7 +37,13 @@ const AssetShow = ({ columns, role }) => {
   const handleFilterChange = async (updatedFilters) => {
     console.log("filtrar", updatedFilters);
     if (!updatedFilters || Object.keys(updatedFilters).length === 0) {
-      updateFilters({});
+      updateFilters({
+        locations: [],
+        incomes: [],
+        categories: [],
+        devices: [],
+        status: [],
+      });
       return;
     }
 
