@@ -170,3 +170,11 @@ Route::get('/maintenance-detail', [MaintenanceDetailController::class, 'index'])
 Route::get('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'show']);
 Route::post('/maintenance-detail', [MaintenanceDetailController::class, 'store']);
 Route::put('/maintenance-detail/{id}', [MaintenanceDetailController::class, 'update']);
+
+// Reportes
+Route::prefix('report')->group(function () {
+    Route::post('/maintenances-by-responsible', [MaintenanceController::class, 'filterByResponsibleAndTime']);
+    // Route::post('/maintenances-by-type', [MaintenanceDetailController::class, 'filterByType']);
+    // Route::post('/maintenances-by-date-range', [MaintenanceDetailController::class, 'filterByDateRange']);
+});
+
