@@ -93,6 +93,7 @@ Route::prefix('responsibles')->group(function () {
 // Rutas de Activos
 Route::prefix('assets')->group(function () {
     Route::get('/', [AssetController::class, 'index']);
+    Route::get("/all", [AssetController::class, 'all']);
     Route::get('for-maintenance', [AssetController::class, 'indexForMaintenances']);
     Route::get('showForMaintenances/{id}', [AssetController::class, 'showForManteinces']);
     Route::get('show/{id}', [AssetController::class, 'show']);

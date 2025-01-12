@@ -10,11 +10,12 @@ import utc from "dayjs/plugin/utc";
 import ReusableDatePicker from "./ReusableDatePicker";
 import BaseModal from "./BaseModal";
 import generateResponsiblesPDF from "./generateResponsiblesPDF";
+import { useDataContext } from "../../provider/DataContext";
 
 dayjs.extend(utc);
 
 const ResponsiblesModal = (props) => {
-  const [responsibles, setResponsibles] = useState([]);
+  const { data, isReady } = useDataContext();
   const [formData, setFormData] = useState({
     idResponsible: "",
     startDate: null,
@@ -26,34 +27,13 @@ const ResponsiblesModal = (props) => {
     endDate: false,
   });
 
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get("/responsibles");
-        setResponsibles(response.data.results);
-        setIsReady(true);
-      } catch (error) {
-        if (error.response.data.errors) {
-          const message = generateErrorMessage(error.response.data.errors);
-          toast.error(message);
-        } else {
-          toast.error("Error inesperado al obtener responsables.");
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
-
   if (!isReady) {
     return null;
   }
 
   const renderResponsibles = () =>
-    responsibles.length > 0 ? (
-      responsibles.map((responsible) => (
+    data?.responsibles.length > 0 ? (
+      data?.responsibles.map((responsible) => (
         <MenuItem key={responsible.id} value={responsible.id}>
           {`${responsible.dni_res} - ${responsible.nam_res} ${responsible.las_res}`}
         </MenuItem>
