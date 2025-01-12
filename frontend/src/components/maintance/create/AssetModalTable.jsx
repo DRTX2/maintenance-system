@@ -15,7 +15,7 @@ const AssetModalTable = ({ open, onClose, assets, onAdd }) => {
   console.log(assets);
 
   if (!assets.length > 0) {
-    return <h1>No hay datos.</h1>;
+    return null;
   }
 
   return (

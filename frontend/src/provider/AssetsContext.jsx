@@ -10,11 +10,18 @@ export const AssetsProvider = ({ children }) => {
   const [assets, setAssets] = useState([]);
   const [isReady, setIsReady] = useState(false);
   const [term, setTerm] = useState(""); // Estado para el término de búsqueda
+  const [filters, setFilters] = useState({
+    locations: [],
+    incomes: [],
+    categories: [],
+  });
 
   useEffect(() => {
     fetchAssets();
     setIsReady(true);
   }, []);
+
+  console.log("nuevo", assets);
 
   // Activos visibles derivados de `assets`
   const visibleAssets = useMemo(() => {
@@ -30,22 +37,58 @@ export const AssetsProvider = ({ children }) => {
     }
   };
 
-  const filterAssets = (searchTerm) => {
+  // Filtrar activos por termino de busqueda
+  const filterAssetsByTerm = (searchTerm) => {
     setTerm(searchTerm); // Actualizar el término de búsqueda
   };
 
+  // Permite actualizar los filtros para buscar mas
+  const updateFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
   const filteredAssets = useMemo(() => {
-    if (!term) {
-      return assets; // Si no hay término de búsqueda, mostrar todos los activos
+    let filtered = [...assets];
+
+    // Si no hay filtros activos y no hay termino de busqueda, devolver todos los activos originales
+    if (
+      Object.keys(filters).every((key) => filters[key].length === 0) &&
+      !term
+    ) {
+      return assets;
     }
 
-    // Convertir tanto el término de búsqueda como el número de serie a minúsculas
-    const lowercasedTerm = term.toLowerCase();
+    // Filtrar por termino de busqueda
+    if (term) {
+      const lowercasedTerm = term.toLowerCase();
+      filtered = filtered.filter((asset) =>
+        asset.ser_num_ass.toLowerCase().includes(lowercasedTerm)
+      );
+    }
 
-    return assets.filter(
-      (asset) => asset.ser_num_ass.toLowerCase().includes(lowercasedTerm) // Filtrar por el número de serie
-    );
-  }, [assets, term]);
+    // Filtrar por ubicacion
+    if (filters.locations.length > 0) {
+      filtered = filtered.filter((asset) =>
+        filters.locations.includes(asset.location_data.id)
+      );
+    }
+
+    // Filtrar ingresos
+    if (filters.incomes.length > 0) {
+      filtered = filtered.filter((asset) =>
+        filters.incomes.includes(asset.income_data.id)
+      );
+    }
+
+    // Filtrar por categoria
+    if (filters.categories.length > 0) {
+      filtered = filtered.filter((asset) =>
+        filters.categories.includes(asset.category_data.tip_dis)
+      );
+    }
+
+    return filtered;
+  }, [assets, term, filters]); // depende de: assets, term, filters
 
   // Métodos CRUD para assets
   const addAsset = async (newAsset) => {
@@ -72,8 +115,6 @@ export const AssetsProvider = ({ children }) => {
           asset.id === updatedAsset.id ? response.data.asset : asset
         )
       );
-
-      console.log(response.data);
     } catch (error) {
       if (error.response.data.errors) {
         const message = handleErrors(error.response.data.errors).join("\n");
@@ -92,7 +133,6 @@ export const AssetsProvider = ({ children }) => {
 
     try {
       const response = await axiosInstance.put(apiRoute);
-      console.log(response.data);
       setAssets((prev) =>
         prev.map((asset) => (asset.id === assetId ? response.data : asset))
       );
@@ -106,7 +146,8 @@ export const AssetsProvider = ({ children }) => {
     <AssetsContext.Provider
       value={{
         assets,
-        filterAssets,
+        filterAssetsByTerm,
+        updateFilters,
         filteredAssets,
         isReady,
         visibleAssets,

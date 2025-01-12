@@ -20,6 +20,7 @@ export const DataProvider = ({ children }) => {
     setData((prev) => ({ ...prev, locations: response.data.results }));
   };
 
+  // Este fetch solo trae los incomes abiertos
   const fetchIncomes = async () => {
     const response = await axiosInstance.get("/assets/incomes/create");
     setData((prev) => ({ ...prev, incomes: response.data }));
