@@ -187,6 +187,6 @@ Route::prefix('maintenance-detail')->group(function () {
 Route::prefix('report')->group(function () {
     Route::post('/maintenances-by-responsible', [ReportController::class, 'filterByResponsibleAndTime']);
     Route::post('/maintenances-by-asset', [ReportController::class, 'filterByAsset']);
-    // Route::post('/maintenances-by-date-range', [MaintenanceDetailController::class, 'filterByDateRange']);
+    Route::post('/mandatory-maintenances', [ReportController::class, 'maintenancesToAssets']);
 });
 
