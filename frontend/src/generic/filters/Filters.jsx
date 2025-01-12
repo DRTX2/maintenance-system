@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,9 +12,17 @@ import Typography from "@mui/material/Typography";
 import { toast } from "react-toastify";
 import Chip from "@mui/material/Chip";
 
-const Filters = ({ data, onFilterChange, onClear }) => {
+const Filters = ({ data, onFilterChange, clearFilters, setClearFilters }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedValues, setSelectedValues] = useState({});
+
+  useEffect(() => {
+    if (clearFilters) {
+      setSelectedValues({});
+      onFilterChange({});
+      setClearFilters(false);
+    }
+  }, [clearFilters]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

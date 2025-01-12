@@ -14,9 +14,8 @@ export const MaintenancesProvider = ({ children }) => {
     types: [],
     responsibles: [],
     assets: [],
+    dates: { startDate: null, endDate: null },
   });
-
-  console.log("mantenimientos", maintenances);
 
   useEffect(() => {
     fetchMaintenances();
@@ -73,6 +72,41 @@ export const MaintenancesProvider = ({ children }) => {
       );
     }
 
+    // filtrar por fecha
+    if (filters.dates.startDate && filters.dates.endDate) {
+      const createdAtInput = filters.dates.startDate;
+      const endedAtInput = filters.dates.endDate;
+
+      console.log("Fecha de inicio enviada:", createdAtInput);
+      console.log("Fecha de fin enviada:", endedAtInput);
+
+      // Extraemos únicamente la parte de la fecha en formato YYYY-MM-DD
+      const startDate = new Date(createdAtInput).toISOString().split("T")[0];
+      const endDate = new Date(endedAtInput).toISOString().split("T")[0];
+
+      console.log("Fecha de inicio procesada:", startDate);
+      console.log("Fecha de fin procesada:", endDate);
+
+      // Filtrar los mantenimientos
+      filtered = filtered.filter((maintenance) => {
+        console.log("Mantenimiento", maintenance.cod_main);
+
+        // Extraemos las fechas de los mantenimientos en el mismo formato
+        const maintenanceCreatedAt = new Date(maintenance.created_at)
+          .toISOString()
+          .split("T")[0];
+        const maintenanceEndedAt = new Date(maintenance.ended_at)
+          .toISOString()
+          .split("T")[0];
+
+        console.log("Creado:", maintenanceCreatedAt);
+        console.log("Terminado:", maintenanceEndedAt);
+
+        return (
+          maintenanceCreatedAt >= startDate && maintenanceEndedAt <= endDate
+        );
+      });
+    }
     return filtered;
   }, [maintenances, term, filters]);
 
@@ -96,8 +130,7 @@ export const MaintenancesProvider = ({ children }) => {
 
       setMaintenances((prev) => [...prev, response.data.results]);
     } catch (error) {
-      console.log("error");
-      console.log(error.response);
+      toast.error("Ocurrio un error al crear el mantenimiento.");
     }
   };
 
@@ -109,9 +142,6 @@ export const MaintenancesProvider = ({ children }) => {
         `/maintenance-detail/${updateMaintenance.id_main}`,
         updateMaintenance
       );
-
-      console.log(response.data.results);
-
       setMaintenances((prev) =>
         prev.map((maintenance) =>
           maintenance.id === updateMaintenance.id_main
@@ -135,6 +165,7 @@ export const MaintenancesProvider = ({ children }) => {
     <MaintenancesContext.Provider
       value={{
         maintenances,
+        filters,
         filterMaintenancesByTerm,
         updateFilters,
         filteredMaintenances,
