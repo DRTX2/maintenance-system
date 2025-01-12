@@ -35,8 +35,10 @@ import ComponentsModal from "./ComponentsModal";
 import CreateStyles from "../../../generic/styles/CreateStyles";
 import CustomTablePaginationActions from "../../../generic/CustomTablePaginationActions";
 import { useNavigate } from "react-router-dom";
+import { useMaintenancesContext } from "../../../provider/MaintenancesContext";
 
 const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
+  const { addMaintenance } = useMaintenancesContext();
   const [entity, setEntity] = useState(defaultState);
   const [currentAsset, setCurrentAsset] = useState(null);
   const [assetsTable, setAssetsTable] = useState([]);
@@ -221,11 +223,12 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
           activities: item.activities.map((activity) => activity.id),
         }));
 
-        const response = await axiosInstance.post("/maintenance-detail", {
+        const dataToSend = {
           ...entity,
           assets: formatted,
-        });
-        toast.success(response.data.message);
+        };
+        addMaintenance(dataToSend);
+        toast.success("Mantenimiento creado con éxito, ok");
         navigate("/dashboard/maintance");
       } catch (error) {
         if (error.response.data.errors) {

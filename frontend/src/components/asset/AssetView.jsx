@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import axiosInstance from "../../utils/api";
-import AssetBaseView from "./AssetBaseView";
-import { CircularProgress, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { validateField, validateFields } from "../../utils/validations";
 import { getDecodedToken } from "../../utils/authService";
+import { useDataContext } from "../../provider/DataContext";
+import axiosInstance from "../../utils/api";
+import AssetBaseView from "./AssetBaseView";
+import Loader from "../Loader";
 
 const AssetView = () => {
   const { id } = useParams();
   const role = getDecodedToken()?.role;
-  const [locations, setLocations] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [relatedData, setRelatedData] = useState([]);
   const [asset, setAsset] = useState({});
@@ -19,20 +19,18 @@ const AssetView = () => {
   const [isRelatedDataInitialized, setIsRelatedDataInitialized] =
     useState(false);
 
+  const { data } = useDataContext();
+
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [asset, locationsData, incomesData] = await Promise.all([
+        const [asset, incomesData] = await Promise.all([
           axiosInstance.get(`/assets/show/${id}?role=${role}`),
-          axiosInstance.get("/locations"),
           axiosInstance.get(`/assets/incomes/${id}`),
         ]);
 
-        console.log(incomesData.data);
-        setLocations(locationsData.data.results);
         setIncomes(incomesData.data);
         setAsset(asset.data);
-
         setIsReady(true);
       } catch (error) {
         toast.error("No se han podido obtener los datos.");
@@ -55,8 +53,8 @@ const AssetView = () => {
   }, [asset, isRelatedDataInitialized]);
 
   const resultsLocations =
-    locations.length > 0
-      ? locations.map((location) => ({
+    data?.locations.length > 0
+      ? data?.locations.map((location) => ({
           value: location.id,
           label: location.nam_loc,
         }))
@@ -117,7 +115,6 @@ const AssetView = () => {
     const hasError =
       !description.trim() || description.length < 3 || description.length > 200;
 
-    console.log("¿Tiene error?", hasError);
     setRelatedData((prevData) =>
       prevData.map((component) =>
         component.id === id
@@ -133,7 +130,6 @@ const AssetView = () => {
 
   const handleDescription = (id, description) => {
     validateSingleField(id, description);
-    console.log("Que sucedió", relatedData);
     setAsset((prevEntity) => {
       const updatedComponents = prevEntity.components.map((component) =>
         component.id === id
@@ -146,8 +142,6 @@ const AssetView = () => {
 
       return { ...prevEntity, components: updatedComponents };
     });
-
-    console.log("Related despues", relatedData);
   };
 
   const validateTableFields = () => {
@@ -179,18 +173,12 @@ const AssetView = () => {
   ];
 
   if (!isReady) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-        <Typography variant="subtitle1" sx={{ marginTop: "10px" }}>
-          Cargando datos, por favor espera...
-        </Typography>
-      </div>
-    );
+    return <Loader />;
   }
   return (
     <AssetBaseView
       asset={asset}
+      isReady={isReady}
       relatedData={relatedData}
       fields={fields}
       columns={columns}

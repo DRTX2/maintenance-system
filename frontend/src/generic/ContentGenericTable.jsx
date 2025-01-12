@@ -1,25 +1,19 @@
 import React from "react";
-import { CircularProgress } from "@mui/material";
 import ContentTable from "./ContentTable";
+import Loader from "../components/Loader";
 
 const ContentGenericTable = ({
-  isLoading,
+  isReady,
+  isDelete,
   data,
   columns,
   onView,
+  setIsDelete,
   onDelete,
-  currentPage,
-  rowsPerPage,
-  handleChangePage,
-  handleChangeRowsPerPage,
   entityName,
 }) => {
-  if (isLoading) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <CircularProgress />
-      </div>
-    );
+  if (!isReady) {
+    return <Loader />;
   }
 
   if (!Array.isArray(data)) {
@@ -44,10 +38,8 @@ const ContentGenericTable = ({
       columns={columns}
       onView={onView}
       onDelete={onDelete}
-      currentPage={currentPage}
-      rowsPerPage={rowsPerPage}
-      handleChangePage={handleChangePage}
-      handleChangeRowsPerPage={handleChangeRowsPerPage}
+      setIsDelete={setIsDelete}
+      isDelete={isDelete}
     />
   );
 };

@@ -10,6 +10,7 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 class AssetController extends Controller
 {
     //Crear, Actualizar,Eliminar,Ver, Filtrar   
@@ -85,8 +86,12 @@ class AssetController extends Controller
         ]);
     }
 
-    public function index($rol)
+    public function index()
     {
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
+
 
         if ($rol == 'user') {
             $assets = Asset::where('est_ass', 'V')
@@ -132,10 +137,12 @@ class AssetController extends Controller
 
 
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
 
-        $userRole = $request->query('role');
+        $payload = JWTAuth::parseToken()->getPayload();
+        $userRole = $payload->get('role');
+
 
         if (!$userRole) {
             return response()->json([
@@ -146,7 +153,7 @@ class AssetController extends Controller
         }
 
         $asset = Asset::with([
-            'income:id,cod_inc',
+            'income:id,cod_inc,est_inc',
             'category:id,cod_dis,nom_dis',
             'location:id,cod_loc,nam_loc',
             'components:id,nam_com'
@@ -164,7 +171,6 @@ class AssetController extends Controller
         $components = $asset->components->map(function ($component) {
             return [
                 'id' => $component->id,
-                'cod_com' => $component->cod_com,
                 'nam_com' => $component->nam_com,
                 'pivot' => [
                     'description' => $component->pivot->description,
@@ -179,9 +185,8 @@ class AssetController extends Controller
             'id_cat_ass' => $asset->category->id,
             'id_loc_ass' => $asset->location->id,
             'income_code' => $asset->income->cod_inc,
-            'category_code' => $asset->category->cod_dis,
+            'income_est' => $asset->income->est_inc,
             'category_name' => $asset->category->nom_dis,
-            'location_code' => $asset->location->cod_loc,
             'location_name' => $asset->location->nam_loc,
             'cod_ass' => $asset->cod_ass,
             'ser_num_ass' => $asset->ser_num_ass,
@@ -275,16 +280,15 @@ class AssetController extends Controller
         $asset->components()->attach($components);
 
         return response()->json([
-            'message' => 'Activo creado exitosamente.',
-            'asset' => $asset,
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+            ],
         ]);
-
-
     }
-
     public function update(AssetRequest $request, string $id)
     {
-
         $validatedData = $request->validated();
 
         $asset = Asset::findOrFail($id);
@@ -295,14 +299,17 @@ class AssetController extends Controller
         $incomeId = $service['id_inc_ass'];
 
 
-        $income = Income::findOrFail($incomeId);
+        if ($incomeId != $asset->id_inc_ass) {
+            $income = Income::findOrFail($incomeId);
 
-        if ($income->est_inc === 'C') {
-            throw new HttpResponseException(response()->json([
-                'errors' => [
-                    'income' => ['No se pudo actualizar el activo, debido a que el ingreso asociado se encuentra actualmente cerrado.']
-                ]
-            ], 422));
+
+            if ($income->est_inc === 'C') {
+                throw new HttpResponseException(response()->json([
+                    'errors' => [
+                        'income' => ['No se pudo actualizar el activo, debido a que el ingreso asociado se encuentra actualmente cerrado.']
+                    ]
+                ], 422));
+            }
         }
 
 
@@ -314,7 +321,7 @@ class AssetController extends Controller
             'obs_add_ass' => $service['obs_add_ass'] ?? $asset->obs_add_ass,
         ]);
 
-        // Actualizar la relación con los componentes
+
         if (isset($service['components'])) {
             $components = collect($service['components'])->mapWithKeys(function ($component) {
                 return [
@@ -327,16 +334,21 @@ class AssetController extends Controller
             $asset->components()->sync($components);
         }
 
-
         return response()->json([
-            'message' => 'Activo actualizado exitosamente.',
-            'asset' => $asset->fresh(),
+            'asset' => $asset->toArray() + [
+                'category_name' => $asset->category->nom_dis,
+                'location_name' => $asset->location->nam_loc,
+                'income_code' => $asset->income->cod_inc,
+            ],
         ]);
-
-
     }
-    public function search(Request $request, $rol)
+
+    public function search(Request $request)
     {
+
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
+
         $request->validate([
             'term' => 'required|string|max:25',
         ]);
@@ -374,6 +386,8 @@ class AssetController extends Controller
     public function indexWithFilters(Request $request)
     {
 
+        $payload = JWTAuth::parseToken()->getPayload();
+        $rol = $payload->get('role');
 
         $assets = Asset::query();
 
@@ -399,7 +413,6 @@ class AssetController extends Controller
             });
         }
 
-        $rol = $request->input('rol');
 
         // Lógica para usuarios (rol "user")
         if ($rol === 'user') {
