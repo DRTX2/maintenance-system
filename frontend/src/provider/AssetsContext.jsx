@@ -14,6 +14,8 @@ export const AssetsProvider = ({ children }) => {
     locations: [],
     incomes: [],
     categories: [],
+    devices: [],
+    status: [],
   });
 
   useEffect(() => {
@@ -84,6 +86,20 @@ export const AssetsProvider = ({ children }) => {
     if (filters.categories.length > 0) {
       filtered = filtered.filter((asset) =>
         filters.categories.includes(asset.category_data.tip_dis)
+      );
+    }
+
+    // Filtrar por dispositivo
+    if (filters.devices.length > 0) {
+      filtered = filtered.filter((asset) =>
+        filters.devices.includes(asset.category_data.nom_dis)
+      );
+    }
+
+    // Filtrar por estado
+    if (filters.status.length > 0) {
+      filtered = filtered.filter((asset) =>
+        filters.status.includes(asset.est_ass)
       );
     }
 
