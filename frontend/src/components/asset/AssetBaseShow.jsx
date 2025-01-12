@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
@@ -8,82 +8,66 @@ import GenericStyles from "../../generic/styles/GenericStyles";
 import SearchBar from "../../generic/SearchBar";
 import AssetTableShow from "./AssetTableShow";
 import AssetFilters from "../../generic/filters/AssetFilters";
-import axiosInstance from "../../utils/api";
 import { useAssetsContext } from "../../provider/AssetsContext";
 
 const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
-  const { assets, isReady } = useAssetsContext();
-  const [isDelete, setIsDelete] = useState(false);
+  const {
+    isReady,
+    deleteAsset,
+    filterAssetsByTerm,
+    updateFilters,
+    filteredAssets,
+  } = useAssetsContext();
 
-  const fetchAssetsFilter = async (filters = {}) => {
-    console.log(filters);
-    // setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/assets/filters", filters);
-      // setAssets(response.data);
-    } catch (error) {
-      toast.error("No se ha podido filtrar.");
-    } finally {
-      // setIsLoading(false);
-    }
-  };
+  // Esto permite basicamente resetar los filtros cuando se pierda el foco en la pagina de "ver".
+  // Es decir, si va a editar, crear o lo que sea y dejo a medias el search, pues este es resetado.
+  useEffect(() => {
+    return () => {
+      filterAssetsByTerm("");
+    };
+  }, [navigate]);
 
-  const onFetch = async (param) => {
-    if (param === "") {
-      // await fetchAssets();
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.post(`/assets/search/${role}`, {
-        term: param,
-      });
-      // setAssets(response.data);
-    } catch (error) {
-      toast.error("Ha ocurrido un error con la busqueda");
-    }
+  // No hacer un fetch contra la base, sino contra mis datos ya cargados.
+  const onFetch = async (searchTerm) => {
+    filterAssetsByTerm(searchTerm);
   };
 
   // 2. El padre es notifiacdo.
   const handleFilterChange = async (updatedFilters) => {
-    console.log("Updated", updatedFilters);
-    if (!updatedFilters) {
-      toast.error("Filtros no definidos");
+    console.log("filtrar", updatedFilters);
+    if (!updatedFilters || Object.keys(updatedFilters).length === 0) {
+      updateFilters({
+        locations: [],
+        incomes: [],
+        categories: [],
+        devices: [],
+        status: [],
+      });
       return;
     }
 
-    const isFilterEmpty = Object.values(updatedFilters).every(
-      (filter) => !filter || Object.values(filter).every((value) => !value)
-    );
-
-    if (isFilterEmpty) {
-      // await fetchAssets();
-      return;
-    }
-
-    const cleanedData = buildFilterPayload(updatedFilters);
-    await fetchAssetsFilter(cleanedData);
+    const formatted = buildFilterPayload(updatedFilters);
+    console.log("construido", formatted);
+    updateFilters(formatted);
   };
 
-  const processFilter = (filter) => {
-    if (!filter) return [];
-
-    return Object.keys(filter)
-      .filter((key) => filter[key])
-      .map((key) => (isNaN(key) ? key : parseInt(key, 10)));
-  };
-
-  const buildFilterPayload = (selectedValues) => {
-    const payload = {
-      location: processFilter(selectedValues.locations),
-      income: processFilter(selectedValues.incomes),
-      type: processFilter(selectedValues.categories),
-      device: processFilter(selectedValues.devices),
-      status: processFilter(selectedValues.status),
-      rol: role,
+  const buildFilterPayload = (updatedFilters) => {
+    // Procesar los filtros y extraer solo los keys de cada array
+    const processFilter = (filterArray) => {
+      if (!filterArray || filterArray.length === 0) return [];
+      return filterArray.map((item) => item.key); // Extraer los valores "key"
     };
-    return payload;
+
+    // Retornar un objeto con los filtros procesados
+    return {
+      incomes: processFilter(updatedFilters.incomes),
+      locations: processFilter(updatedFilters.locations),
+      categories: processFilter(updatedFilters.categories),
+      devices: processFilter(updatedFilters.devices),
+      status: processFilter(updatedFilters.status),
+      role: role,
+    };
   };
 
   const onCreate = () => {
@@ -95,7 +79,7 @@ const AssetShow = ({ columns, role }) => {
   };
 
   const onDelete = (id, currentState) => {
-    //
+    deleteAsset(id, currentState);
   };
 
   return (
@@ -151,11 +135,10 @@ const AssetShow = ({ columns, role }) => {
               onSearch={onFetch}
             />
 
-            {/* Filtros */}
-            {/* <AssetFilters
+            <AssetFilters
               onFilterChange={handleFilterChange}
-              // onClear={data.fetchAssets}
-            /> */}
+              //  onClear={data.fetchAssets}
+            />
           </Box>
         </Box>
       </Box>
@@ -163,9 +146,7 @@ const AssetShow = ({ columns, role }) => {
       <Box className="flexColumnCenter" paddingTop="20px">
         <AssetTableShow
           isReady={isReady}
-          setIsDelete={setIsDelete}
-          isDelete={isDelete}
-          data={assets}
+          data={filteredAssets}
           columns={columns}
           onDelete={onDelete}
           onView={onView}
