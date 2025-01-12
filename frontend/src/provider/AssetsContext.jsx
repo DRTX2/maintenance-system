@@ -38,8 +38,12 @@ export const AssetsProvider = ({ children }) => {
     if (!term) {
       return assets; // Si no hay término de búsqueda, mostrar todos los activos
     }
+
+    // Convertir tanto el término de búsqueda como el número de serie a minúsculas
+    const lowercasedTerm = term.toLowerCase();
+
     return assets.filter(
-      (asset) => asset.ser_num_ass.includes(term) // Filtrar por el número de serie
+      (asset) => asset.ser_num_ass.toLowerCase().includes(lowercasedTerm) // Filtrar por el número de serie
     );
   }, [assets, term]);
 
