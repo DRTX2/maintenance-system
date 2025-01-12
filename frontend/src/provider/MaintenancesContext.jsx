@@ -1,5 +1,5 @@
 // src/provider/MaintenancesContext.js
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import { handleErrors } from "../utils/validations";
 import axiosInstance from "../utils/api";
@@ -7,13 +7,74 @@ import axiosInstance from "../utils/api";
 const MaintenancesContext = createContext();
 
 export const MaintenancesProvider = ({ children }) => {
-  const [maintenances, setMaintenances] = useState([]);
   const [isReady, setIsReady] = useState(false);
+  const [maintenances, setMaintenances] = useState([]);
+  const [term, setTerm] = useState("");
+  const [filters, setFilters] = useState({
+    types: [],
+    responsibles: [],
+    assets: [],
+  });
+
+  console.log("mantenimientos", maintenances);
 
   useEffect(() => {
     fetchMaintenances();
     setIsReady(true);
   }, []);
+
+  // Filtro para el search
+  const filterMaintenancesByTerm = (searchTerm) => {
+    setTerm(searchTerm);
+  };
+
+  // Establecer los filtros
+  const updateFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const filteredMaintenances = useMemo(() => {
+    let filtered = [...maintenances];
+
+    // Si no hay filtros mantenimientos y no hay termino de busqueda, devolver todos los mantenimientos originales
+    if (
+      Object.keys(filters).every((key) => filters[key].length === 0) &&
+      !term
+    ) {
+      return maintenances;
+    }
+
+    // Filtrar por busqueda
+    if (term) {
+      const lowercasedTerm = term.toLocaleLowerCase();
+      filtered = filtered.filter((maintenance) =>
+        maintenance.cod_main.toLocaleLowerCase().includes(lowercasedTerm)
+      );
+    }
+
+    // Filtrar por tipos
+    if (filters.types.length > 0) {
+      filtered = filtered.filter((maintenance) =>
+        filters.types.includes(maintenance.type_data.id)
+      );
+    }
+
+    // Filtrar por responsables
+    if (filters.responsibles.length > 0) {
+      filtered = filtered.filter((maintenance) =>
+        filters.responsibles.includes(maintenance.responsable_data.dni_res)
+      );
+    }
+
+    // Filtrar por activos
+    if (filters.assets.length > 0) {
+      filtered = filtered.filter((maintenance) =>
+        maintenance.assets.some((id) => filters.assets.includes(id))
+      );
+    }
+
+    return filtered;
+  }, [maintenances, term, filters]);
 
   const fetchMaintenances = async () => {
     try {
@@ -33,7 +94,6 @@ export const MaintenancesProvider = ({ children }) => {
         newMaintenance
       );
 
-      console.log("crenao repoinse", response);
       setMaintenances((prev) => [...prev, response.data.results]);
     } catch (error) {
       console.log("error");
@@ -75,6 +135,9 @@ export const MaintenancesProvider = ({ children }) => {
     <MaintenancesContext.Provider
       value={{
         maintenances,
+        filterMaintenancesByTerm,
+        updateFilters,
+        filteredMaintenances,
         isReady,
         addMaintenance,
         updateMaintenance,

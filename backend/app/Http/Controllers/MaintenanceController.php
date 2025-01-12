@@ -36,9 +36,12 @@ class MaintenanceController extends Controller
                 'created_at' => $maintenance->created_at,
                 'ended_at' => $maintenance->ended_at,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
+                'responsable_data' => $maintenance->responsible,
+                'type_data' => $maintenance->maintenanceType,
                 'type' => $maintenance->maintenanceType->typ_main,
-                'created_at' => $maintenance->created_at,
-                'ended_at' => $maintenance->ended_at,
+                'assets' => $maintenance->maintenanceDetails->map(function ($detail) {
+                    return $detail->id_ass_bel;
+                })
             ];
         });
 

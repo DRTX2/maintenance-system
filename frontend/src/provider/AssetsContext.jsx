@@ -7,8 +7,8 @@ import axiosInstance from "../utils/api";
 const AssetsContext = createContext();
 
 export const AssetsProvider = ({ children }) => {
-  const [assets, setAssets] = useState([]);
   const [isReady, setIsReady] = useState(false);
+  const [assets, setAssets] = useState([]);
   const [term, setTerm] = useState(""); // Estado para el término de búsqueda
   const [filters, setFilters] = useState({
     locations: [],
