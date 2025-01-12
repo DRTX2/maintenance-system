@@ -74,87 +74,92 @@ class ReportController extends Controller
     }
 
     public function maintenancesToAssets()
-{
-    try {
-        $assets = Asset::with('maintenanceDetails.maintenance', 'income')->get();
+    {
+        try {
+            $assets = Asset::with('maintenanceDetails.maintenance', 'income')->get();
 
-        $report = [
-            'desde' => now()->format('d/m/Y'),
-            'assets' => []
-        ];
+            $report = [
+                'desde' => now()->format('d/m/Y'),
+                'assets' => []
+            ];
 
-        foreach ($assets as $asset) {
-            $status = $this->determineMaintenanceStatus($asset);
+            foreach ($assets as $asset) {
+                $status = $this->determineMaintenanceStatus($asset);
 
-            $cumplidos = [];
-            $en_proceso = [];
-            $inconclusos = [];
+                $cumplidos = [];
+                $en_proceso = [];
+                $inconclusos = [];
 
-            foreach ($status as $year => $state) {
-                $maintenanceData = ['años' => [$year]];
-                switch ($state) {
-                    case 'cumplido':
-                        $cumplidos[] = $maintenanceData;
-                        break;
-                    case 'en_proceso':
-                        $en_proceso[] = $maintenanceData;
-                        break;
-                    case 'inconcluso':
-                        $inconclusos[] = $maintenanceData;
-                        break;
+                foreach ($status as $year => $state) {
+                    $maintenanceData = ['años' => [$year]];
+                    switch ($state) {
+                        case 'cumplido':
+                            $cumplidos[] = $maintenanceData;
+                            break;
+                        case 'en_proceso':
+                            $en_proceso[] = $maintenanceData;
+                            break;
+                        case 'inconcluso':
+                            $inconclusos[] = $maintenanceData;
+                            break;
+                    }
                 }
+
+                $report['assets'][] = [
+                    'id' => $asset->id,
+                    'codigo' => $asset->cod_ass,
+                    'serie' => $asset->ser_num_ass,
+                    'mantenimientos' => [
+                        'cumplidos' => $cumplidos,
+                        'en_proceso' => $en_proceso,
+                        'inconclusos' => $inconclusos,
+                    ],
+                ];
             }
 
-            $report['assets'][] = [
-                'id' => $asset->id,
-                'codigo' => $asset->cod_ass,
-                'serie' => $asset->ser_num_ass,
-                'mantenimientos' => [
-                    'cumplidos' => $cumplidos,
-                    'en_proceso' => $en_proceso,
-                    'inconclusos' => $inconclusos,
-                ],
-            ];
+            return response()->json($report, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Ocurrió un error al generar el reporte',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json($report, 200);
-    } catch (Exception $e) {
-        return response()->json([
-            'message' => 'Ocurrió un error al generar el reporte',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
 
     private function determineMaintenanceStatus($asset)
-{
-    $currentYear = now()->year;
-    $ingresoFecha = Carbon::parse($asset->income->date_inc); // Convertir a Carbon para manejar fechas
-    $yearsRequired = [
-        $ingresoFecha->year + 1,
-        $ingresoFecha->year + 2,
-        $ingresoFecha->year + 3,
-    ];
+    {
+        $currentYear = now()->year;
+        $ingresoFecha = Carbon::parse($asset->income->date_inc); // Convertir a Carbon para manejar fechas
+        $yearsRequired = [
+            $ingresoFecha->year + 1,
+            $ingresoFecha->year + 2,
+            $ingresoFecha->year + 3,
+        ];
 
-    // Recopilar los años de mantenimiento realizados
-    $maintenanceYears = [];
-    foreach ($asset->maintenanceDetails as $maintenanceDetail) {
-        $maintenanceYears[] = (int)date('Y', strtotime($maintenanceDetail->maintenance->created_at));
-    }
-    $maintenanceYears = array_unique($maintenanceYears); // Eliminar duplicados
+        // Filtrar años requeridos hasta el año actual
+        $yearsRequired = array_filter($yearsRequired, function ($year) use ($currentYear) {
+            return $year <= $currentYear;
+        });
 
-    // Verificar cada año requerido
-    $status = [];
-    foreach ($yearsRequired as $year) {
-        if (in_array($year, $maintenanceYears)) {
-            $status[$year] = 'cumplido'; // El mantenimiento se realizó en este año
-        } elseif ($year < $currentYear) {
-            $status[$year] = 'inconcluso'; // Este año ya pasó y no hay mantenimiento registrado
-        } else {
-            $status[$year] = 'en_proceso'; // Este año está en curso o aún no ha llegado
+        // Recopilar los años de mantenimiento realizados
+        $maintenanceYears = [];
+        foreach ($asset->maintenanceDetails as $maintenanceDetail) {
+            $maintenanceYears[] = (int)date('Y', strtotime($maintenanceDetail->maintenance->created_at));
         }
-    }
+        $maintenanceYears = array_unique($maintenanceYears); // Eliminar duplicados
 
-    return $status;
-}
+        // Verificar cada año requerido
+        $status = [];
+        foreach ($yearsRequired as $year) {
+            if (in_array($year, $maintenanceYears)) {
+                $status[$year] = 'cumplido'; // El mantenimiento se realizó en este año
+            } elseif ($year < $currentYear) {
+                $status[$year] = 'inconcluso'; // Este año ya pasó y no hay mantenimiento registrado
+            } else {
+                $status[$year] = 'en_proceso'; // Este año está en curso
+            }
+        }
+
+        return $status;
+    }
 }
