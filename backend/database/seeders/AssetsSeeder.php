@@ -70,6 +70,40 @@ class AssetsSeeder extends Seeder
                     ['component_id' => 1, 'description' => 'Tarjeta Madre ASUS RT-AC68U'],
                     ['component_id' => 8, 'description' => 'Placa de Red TP-Link Archer A7'],
                 ]);
+        
 
+        $assets = [
+            [
+                'id_inc_ass' => 5, 
+                'id_cat_ass' => 1,
+                'id_loc_ass' => 1,
+                'cod_ass' => 'ASSET005',
+                'ser_num_ass' => 'SERIAL005',
+                'obs_add_ass' => 'Activo inicial de hace 3 años.',
+                'est_ass' => 'V',
+            ],
+            [
+                'id_inc_ass' => 6, 
+                'id_cat_ass' => 2,
+                'id_loc_ass' => 2,
+                'cod_ass' => 'ASSET006',
+                'ser_num_ass' => 'SERIAL006',
+                'obs_add_ass' => 'Activo ingresado hace 2.5 años.',
+                'est_ass' => 'V',
+            ],
+            [
+                'id_inc_ass' => 7, 
+                'id_cat_ass' => 3,
+                'id_loc_ass' => 1,
+                'cod_ass' => 'ASSET007',
+                'ser_num_ass' => 'SERIAL007',
+                'obs_add_ass' => 'Activo más reciente, de hace 2 años.',
+                'est_ass' => 'V',
+            ],
+        ];
+
+        foreach ($assets as $asset) {
+            Asset::create($asset);
+        }
     }
 }

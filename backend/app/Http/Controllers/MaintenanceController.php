@@ -191,8 +191,6 @@ class MaintenanceController extends Controller
         ], 200);
     }
 
-
-
     public function show($id)
     {
         $maintenance = Maintenance::with([
@@ -385,4 +383,6 @@ class MaintenanceController extends Controller
             'results' => $maintenances,
         ], 200);
     }
+
+    
 }
