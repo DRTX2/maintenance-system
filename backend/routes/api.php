@@ -188,5 +188,6 @@ Route::prefix('report')->group(function () {
     Route::post('/maintenances-by-responsible', [ReportController::class, 'filterByResponsibleAndTime']);
     Route::post('/maintenances-by-asset', [ReportController::class, 'filterByAsset']);
     Route::post('/mandatory-maintenances', [ReportController::class, 'maintenancesToAssets']);
+    Route::post('/formated-mandatory-maintenances', [ReportController::class, 'maintenancesToAssetsFormated']);
 });
 
