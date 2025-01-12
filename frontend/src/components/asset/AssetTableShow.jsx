@@ -51,8 +51,8 @@ const AssetTableShow = ({
     <GenericTable
       data={data}
       dataCount={data.length}
-      setIsDelete={setIsDelete}
-      isDelete={isDelete}
+      setIsDelete={() => {}}
+      isDelete={false}
     >
       {(currentPageData) => (
         <>

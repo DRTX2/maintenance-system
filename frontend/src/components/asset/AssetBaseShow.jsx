@@ -13,8 +13,7 @@ import { useAssetsContext } from "../../provider/AssetsContext";
 
 const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
-  const { assets, isReady } = useAssetsContext();
-  const [isDelete, setIsDelete] = useState(false);
+  const { assets, isReady, deleteAsset } = useAssetsContext();
 
   const fetchAssetsFilter = async (filters = {}) => {
     console.log(filters);
@@ -95,7 +94,7 @@ const AssetShow = ({ columns, role }) => {
   };
 
   const onDelete = (id, currentState) => {
-    //
+    deleteAsset(id, currentState);
   };
 
   return (
@@ -163,8 +162,6 @@ const AssetShow = ({ columns, role }) => {
       <Box className="flexColumnCenter" paddingTop="20px">
         <AssetTableShow
           isReady={isReady}
-          setIsDelete={setIsDelete}
-          isDelete={isDelete}
           data={assets}
           columns={columns}
           onDelete={onDelete}

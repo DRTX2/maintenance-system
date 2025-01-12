@@ -66,12 +66,21 @@ export const AssetsProvider = ({ children }) => {
     }
   };
 
-  const deleteAsset = async (assetId) => {
+  const deleteAsset = async (assetId, currentState) => {
+    const apiRoute =
+      currentState === "H"
+        ? `assets/visible/${assetId}`
+        : `/assets/hide/${assetId}`;
+
     try {
-      await axiosInstance.delete(`/assets/${assetId}`);
-      setAssets((prev) => prev.filter((asset) => asset.id !== assetId));
+      const response = await axiosInstance.put(apiRoute);
+      console.log(response.data);
+      setAssets((prev) =>
+        prev.map((asset) => (asset.id === assetId ? response.data : asset))
+      );
+      toast.success("Visibilidad cambiada con éxito");
     } catch (error) {
-      console.error("Error deleting asset:", error);
+      toast.error("Error deleting asset:", error.response);
     }
   };
 
