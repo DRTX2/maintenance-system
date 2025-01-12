@@ -30,7 +30,13 @@ import Loader from "../../Loader";
 
 const MaintanceBaseShow = ({ columns }) => {
   const navigate = useNavigate();
-  const { maintenances, isReady } = useMaintenancesContext();
+  const {
+    maintenances,
+    filterMaintenancesByTerm,
+    updateFilters,
+    filteredMaintenances,
+    isReady,
+  } = useMaintenancesContext();
   const [isDelete, setIsDelete] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -42,26 +48,15 @@ const MaintanceBaseShow = ({ columns }) => {
     endDate: false,
   });
 
+  useEffect(() => {
+    return () => {
+      filterMaintenancesByTerm("");
+    };
+  }, [navigate]);
+
   const onCreate = () => {
     navigate("/dashboard/maintance/create");
   };
-
-  // const onFetch = async (param) => {
-  //   if (param === "") {
-  //     await fetchData();
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axiosInstance.post(
-  //       "maintenances/search?term=" + param
-  //     );
-  //     setMaintances(response.data.results);
-  //     console.log("Filtro", response.data.results);
-  //   } catch (error) {
-  //     toast.error("No se ha podido filtrar por busqueda.");
-  //   }
-  // };
 
   const onView = (id) => {
     navigate(`/dashboard/maintance/view/${id}`);
@@ -71,79 +66,37 @@ const MaintanceBaseShow = ({ columns }) => {
     navigate(`/dashboard/maintance/edit/${id}`);
   };
 
-  const onDelete = async (id, status) => {
-    const action = `/maintenances/${id}`;
-    const newStatus = status === "V" ? "H" : "V";
-
-    const message =
-      status === "V"
-        ? "Mantenimiento ocultado correctamente"
-        : "Mantenimiento mostrado correctamente";
-
-    try {
-      await axiosInstance.post(action);
-
-      const updatedMaintance = maintenances.map((maintance) =>
-        maintance.id === id ? { ...maintance, vis_main: newStatus } : maintance
-      );
-
-      // setMaintances(updatedMaintance);
-      toast.success(message);
-    } catch (error) {
-      toast.error("No se ha podido ocultar el mantenimiento");
-    }
+  const onFetch = (searchTerm) => {
+    filterMaintenancesByTerm(searchTerm);
   };
-
-  // const fetchMaintenancesFilters = async (filters = {}) => {
-  //   setIsReady(false);
-  //   try {
-  //     const response = await axiosInstance.post(
-  //       "/maintenances/filters",
-  //       filters
-  //     );
-  //     setMaintances(response.data.results);
-  //     setIsReady(true);
-  //   } catch (error) {
-  //     toast.error("No se ha podido filtrar.");
-  //   }
-  // };
 
   const handleFilterChange = async (updatedFilters) => {
-    if (!updatedFilters) {
-      toast.error("Filtros no definidos");
+    if (!updatedFilters || Object.keys(updatedFilters).length === 0) {
+      updateFilters({
+        typeMaintenances: [],
+        responsibles: [],
+        assets: [],
+      });
       return;
     }
 
-    const isFilterEmpty = Object.values(updatedFilters).every(
-      (filter) => !filter || Object.values(filter).every((value) => !value)
-    );
-
-    if (isFilterEmpty) {
-      // await fetchData();
-      return;
-    }
-
-    const cleanedData = buildFilterPayload(updatedFilters);
-    // await fetchMaintenancesFilters(cleanedData);
+    const formattedData = buildFilterPayload(updatedFilters);
+    updateFilters(formattedData);
   };
 
-  const processFilter = (filter) => {
-    if (!filter) return [];
-
-    return Object.keys(filter)
-      .filter((key) => filter[key])
-      .map((key) => (isNaN(key) ? key : parseInt(key, 10)));
-  };
-
-  const buildFilterPayload = (selectedValues) => {
-    const payload = {
-      types: processFilter(selectedValues.types),
-      responsibles: processFilter(selectedValues.responsibles).map((value) => {
-        return typeof value === "number" ? String(value) : value;
-      }),
-      assets: processFilter(selectedValues.assets),
+  const buildFilterPayload = (updatedFilters) => {
+    // Procesar los filtros y extraer solo los keys de cada array
+    const processFilter = (filterArray) => {
+      if (!filterArray || filterArray.length === 0) return [];
+      return filterArray.map((item) => item.key); // Extraer los valores "key"
     };
-    return payload;
+
+    // Retornar un objeto con los filtros procesados
+    return {
+      types: processFilter(updatedFilters.types),
+      responsibles: processFilter(updatedFilters.responsibles),
+      assets: processFilter(updatedFilters.assets),
+    };
   };
 
   const validateForm = () => {
@@ -235,7 +188,7 @@ const MaintanceBaseShow = ({ columns }) => {
     return <Loader />;
   }
 
-  const formattedData = maintenances.map((maintance) => {
+  const formattedData = filteredMaintenances.map((maintance) => {
     return {
       id: maintance.id,
       cod_main: maintance.cod_main,
@@ -295,11 +248,11 @@ const MaintanceBaseShow = ({ columns }) => {
               gap: "16px",
             }}
           >
-            {/* <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} /> */}
-            {/* <MaintanceFilters
+            <SearchBar placeholder={`Buscar por código`} onSearch={onFetch} />
+            <MaintanceFilters
               onFilterChange={handleFilterChange}
-              onClear={fetchData}
-            /> */}
+              // onClear={fetchData}
+            />
           </Box>
 
           <Box

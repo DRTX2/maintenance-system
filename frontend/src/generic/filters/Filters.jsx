@@ -25,7 +25,6 @@ const Filters = ({ data, onFilterChange, onClear }) => {
   };
 
   const handleAutocompleteChange = (key, newValue) => {
-    console.log("Que devuelve", key, newValue);
     setSelectedValues((prev) => {
       const updated = { ...prev, [key]: newValue };
       onFilterChange(updated);

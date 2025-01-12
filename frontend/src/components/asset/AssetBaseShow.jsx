@@ -35,7 +35,6 @@ const AssetShow = ({ columns, role }) => {
 
   // 2. El padre es notifiacdo.
   const handleFilterChange = async (updatedFilters) => {
-    console.log("filtrar", updatedFilters);
     if (!updatedFilters || Object.keys(updatedFilters).length === 0) {
       updateFilters({
         locations: [],
@@ -48,7 +47,6 @@ const AssetShow = ({ columns, role }) => {
     }
 
     const formatted = buildFilterPayload(updatedFilters);
-    console.log("construido", formatted);
     updateFilters(formatted);
   };
 
@@ -66,7 +64,6 @@ const AssetShow = ({ columns, role }) => {
       categories: processFilter(updatedFilters.categories),
       devices: processFilter(updatedFilters.devices),
       status: processFilter(updatedFilters.status),
-      role: role,
     };
   };
 
