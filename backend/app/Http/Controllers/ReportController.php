@@ -209,8 +209,7 @@ class ReportController extends Controller
                     'total' => count($report[$state]),
                     'assets' => $report[$state]
                 ];
-            }
-            foreach (['cumplidos', 'en_proceso', 'inconclusos'] as $state) {
+                
                 if (empty($report[$state]['assets']) || $report[$state]['total'] == 0) {
                     unset($report[$state]);
                 }
