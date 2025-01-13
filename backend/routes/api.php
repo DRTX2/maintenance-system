@@ -114,6 +114,14 @@ Route::prefix('assets')->group(function () {
     Route::post('search', [AssetController::class, 'search']);
     Route::post('filters', [AssetController::class, 'indexWithFilters']);
     Route::post('status', [AssetController::class, 'getStatus']);
+
+
+    //ingrso en lote 
+
+    Route::get('/validateBatch', [AssetController::class, 'validateAssets']);
+
+    Route::get('/storeBatch', [AssetController::class, 'storeBatch']);
+
 });
 
 
@@ -191,4 +199,3 @@ Route::prefix('report')->group(function () {
     Route::post('/mandatory-maintenances', [ReportController::class, 'maintenancesToAssets']);
     Route::post('/formated-mandatory-maintenances', [ReportController::class, 'maintenancesToAssetsFormated']);
 });
-
