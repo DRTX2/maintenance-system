@@ -608,10 +608,10 @@ class AssetController extends Controller
                     ];
                 } else {
 
-                    $asset['category_name'] = $asset->category->nom_dis;
-                    $asset['location_name'] = $location->nam_loc;
-                    $asset['income_code'] = $income->cod_inc;
-                    // Si no hay errores, lo añadimos a los válidos
+                    $asset['category_name'] = $category->nom_dis; // Usando la variable $category que ya recuperaste
+                    $asset['location_name'] = $location->nam_loc; // Usando la variable $location
+                    $asset['income_code'] = $income->cod_inc; // Usando la variable $income
+
                     $validAssets[] = $asset;
                 }
 
