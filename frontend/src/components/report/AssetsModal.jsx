@@ -8,34 +8,13 @@ import GeneralWrapper from "./GeneralWrapper";
 import ModalWrapper from "./ModalWrapper";
 import generateAssetsPDF from "./generateAssetsPDF";
 import { useDataContext } from "./../../provider/DataContext";
+import { useAssetsContext } from "../../provider/AssetsContext";
 
 const AssetsModal = (props) => {
-  const [assets, setAssets] = useState([]);
   const [error, setError] = useState("");
   const [assetSelected, setAssetSelected] = useState("");
   const { data } = useDataContext();
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get("/assets/all");
-        setAssets(response.data);
-      } catch (error) {
-        if (error.response.data.errors) {
-          const message = generateErrorMessage(error.response.data.errors);
-          toast.error(message);
-        } else {
-          toast.error("Error inesperado al obtener activos");
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (!assets) {
-    return null;
-  }
+  const { assets } = useAssetsContext();
 
   const renderAssets = () =>
     assets.length > 0 ? (
@@ -53,7 +32,6 @@ const AssetsModal = (props) => {
     setError("");
   };
 
-
   const handleReport = async () => {
     if (!assetSelected) {
       setError("Debe seleccionar un activo.");
@@ -61,34 +39,34 @@ const AssetsModal = (props) => {
     }
     console.log(assetSelected);
     try {
-  
       const response = await axiosInstance.post(
         "/report/maintenances-by-asset",
-        {asset:assetSelected}
+        { asset: assetSelected }
       );
-      const results=response.data.results;
+      const results = response.data.results;
       console.log(results);
-      
-      const updatedResults = results.map(result => {
+
+      const updatedResults = results.map((result) => {
         // Buscamos el responsable correspondiente en 'data.responsibles' usando el nombre completo
-        const responsible = data.responsibles.find(
-          (responsible) => responsible.nam_res + " " + responsible.las_res === result.responsable
+        const responsible = data?.responsibles.find(
+          (responsible) =>
+            responsible.nam_res + " " + responsible.las_res ===
+            result.responsable
         );
-      
+
         // Si encontramos al responsable, añadimos la cédula
         if (responsible) {
           result.dni_res = responsible.dni_res;
         }
-      
+
         return result;
       });
 
-      generateAssetsPDF(updatedResults);    
-  
+      generateAssetsPDF(updatedResults);
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {
-        toast.error('No se pudo obtener el reporte');
+        toast.error("No se pudo obtener el reporte");
       } else {
         toast.error("Error inesperado al obtener activos.");
       }
