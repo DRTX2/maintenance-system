@@ -118,7 +118,7 @@ Route::prefix('assets')->group(function () {
 
     //ingrso en lote 
 
-    Route::get('/validateBatch', [AssetController::class, 'validateAssets']);
+    Route::post('/validateBatch', [AssetController::class, 'validateAssets']);
 
     Route::get('/storeBatch', [AssetController::class, 'storeBatch']);
 
