@@ -118,10 +118,9 @@ const ResponsiblesModal = (props) => {
       return;
     }
     console.log("Reporte por resposable data");
-    const responsibleData = 
-      data.responsibles.find(
-        (responsible) => (responsible.dni_res === formData.idResponsible)
-      );
+    const responsibleData = data.responsibles.find(
+      (responsible) => responsible.dni_res === formData.idResponsible
+    );
     // Aqui el back me debe devolver un data y ese data lo debo enviar a mi funcion.
     console.log(responsibleData);
     try {

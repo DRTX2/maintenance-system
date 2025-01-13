@@ -3,7 +3,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-const ReusableDatePicker = ({ label, value, onChange, errors, helperText }) => {
+const ReusableDatePicker = ({ label, value, onChange, error, helperText }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
@@ -14,7 +14,7 @@ const ReusableDatePicker = ({ label, value, onChange, errors, helperText }) => {
         slotProps={{
           textField: {
             variant: "outlined",
-            error: !!errors,
+            error: !!error,
             helperText: helperText,
           },
         }}
