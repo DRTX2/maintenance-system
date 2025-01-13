@@ -19,7 +19,7 @@ const AssetsByBatch = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log(location.state);
+  console.log("estado local", location.state);
 
   const { assets } = location.state || { assets: [] };
 
@@ -37,6 +37,7 @@ const AssetsByBatch = () => {
   };
 
   const handleSave = () => {
+    // console.log("Que se envia", { assets: assets });
     // Enviar para guardar ya
   };
 
@@ -60,6 +61,9 @@ const AssetsByBatch = () => {
           borderRadius={4}
           margin="2rem 2rem"
         >
+          <Typography variant="title2" color="#6068A5" fontWeight="bold">
+            Activo
+          </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2" color="#6068A5" fontWeight="bold">
@@ -87,7 +91,7 @@ const AssetsByBatch = () => {
               </Typography>
               <TextField
                 fullWidth
-                value={asset.id_loc_ass}
+                value={asset.location_name}
                 InputProps={{ readOnly: true }}
               />
             </Grid>
@@ -97,7 +101,7 @@ const AssetsByBatch = () => {
               </Typography>
               <TextField
                 fullWidth
-                value={asset.id_inc_ass}
+                value={asset.income_code}
                 InputProps={{ readOnly: true }}
               />
             </Grid>
@@ -107,7 +111,7 @@ const AssetsByBatch = () => {
               </Typography>
               <TextField
                 fullWidth
-                value={asset.id_cat_ass}
+                value={asset.category_name}
                 InputProps={{ readOnly: true }}
               />
             </Grid>

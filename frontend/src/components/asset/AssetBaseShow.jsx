@@ -144,10 +144,7 @@ const AssetShow = ({ columns, role }) => {
               onSearch={onFetch}
             />
 
-            <AssetFilters
-              onFilterChange={handleFilterChange}
-              //  onClear={data.fetchAssets}
-            />
+            <AssetFilters onFilterChange={handleFilterChange} />
           </Box>
         </Box>
       </Box>
