@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Typography,
   Box,
@@ -12,8 +12,10 @@ import {
   TableRow,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+import BatchModal from "./BatchModal";
 
 const AssetsByBatch = () => {
+  const [openBatchModal, setOpenBatchModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -27,7 +29,7 @@ const AssetsByBatch = () => {
   }
 
   const handleBack = () => {
-    // El modal de nuevo
+    setOpenBatchModal(true);
   };
 
   const handleCancel = () => {
@@ -154,6 +156,11 @@ const AssetsByBatch = () => {
           </Button>
         </Box>
       </Box>
+
+      <BatchModal
+        open={openBatchModal}
+        onClose={() => setOpenBatchModal(false)}
+      />
     </>
   );
 };
