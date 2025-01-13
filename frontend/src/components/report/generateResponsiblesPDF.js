@@ -9,9 +9,9 @@ const calculateCenter = (doc, text) => {
   return x;
 };
 
-const generateResponsiblesPDF = (respnsibleDNI, results, inicio, fin) => {
+const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
   console.log("Datos para el PDF:");
-  console.log("Cédula:", respnsibleDNI);
+  console.log("Cédula:", responsibleData.dni_res);
   console.log("Resultados:", results);
   console.log("Fecha inicio:", inicio);
   console.log("Fecha fin:", fin);
@@ -27,13 +27,14 @@ const generateResponsiblesPDF = (respnsibleDNI, results, inicio, fin) => {
   );
 
   // Información del encabezado
-  const responsable = results[0]?.responsable || "N/A";
+  const responsable = responsibleData.nam_res + responsibleData.las_res;
+  console.log(`${responsibleData.nam_res}+ ${responsibleData.las_res}`);
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("Cédula:", 10, 30);
   doc.setFont("helvetica", "normal");
-  doc.text(respnsibleDNI, 25, 30);
+  doc.text(responsibleData.dni_res, 25, 30);
   doc.setFont("helvetica", "bold");
   doc.text("Nombre y apellidos:", 10, 40);
   doc.setFont("helvetica", "normal");
@@ -61,17 +62,36 @@ const generateResponsiblesPDF = (respnsibleDNI, results, inicio, fin) => {
   // Filas de la tabla
 
   const rows = results.map((result) => [
-    dayjs(result.created_at).format("YYYY-MM-DD HH:mm:ss") || "N/A",
+    // Formatear created_at con fallback a "N/A"
+    dayjs(result.created_at).isValid()
+      ? dayjs(result.created_at).format("YYYY-MM-DD HH:mm:ss")
+      : "N/A",
+
+    // Formatear ended_at con fallback a "N/A"
+    dayjs(result.ended_at).isValid()
+      ? dayjs(result.ended_at).format("YYYY-MM-DD HH:mm:ss")
+      : "N/A",
+
+    // Otros campos
     result.cod_main || "N/A",
     result.type || "N/A",
     result.details?.[0]?.asset?.cod_ass || "N/A",
-    (result.details?.[0]?.asset?.activities || [])
+
+    // Listas de actividades, observaciones y componentes reemplazados
+    (result.details || [])
+      .flatMap((detail) => detail.asset?.activities || [])
       .map((a) => a.act_main)
       .join("\n"),
-    (result.details?.[0]?.asset?.observations || [])
+
+    // Todas las observaciones de todos los detalles
+    (result.details || [])
+      .flatMap((detail) => detail.asset?.observations || [])
       .map((o) => o.des_obs)
       .join("\n"),
-    (result.details?.[0]?.asset?.replaced_components || [])
+
+    // Todos los componentes reemplazados de todos los detalles
+    (result.details || [])
+      .flatMap((detail) => detail.asset?.replaced_components || [])
       .map((c) => `${c.nam_com}: ${c.des_rep_com}`)
       .join("\n."),
   ]);

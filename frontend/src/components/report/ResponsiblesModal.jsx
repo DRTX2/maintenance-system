@@ -10,12 +10,14 @@ import utc from "dayjs/plugin/utc";
 import ReusableDatePicker from "./ReusableDatePicker";
 import BaseModal from "./BaseModal";
 import generateResponsiblesPDF from "./generateResponsiblesPDF";
-import { useDataContext } from "../../provider/DataContext";
+import { useDataContext } from "./../../provider/DataContext";
 
 dayjs.extend(utc);
 
 const ResponsiblesModal = (props) => {
-  const { data, isReady } = useDataContext();
+  const [responsibles, setResponsibles] = useState([]);
+  const { data } = useDataContext();
+
   const [formData, setFormData] = useState({
     idResponsible: "",
     startDate: null,
@@ -26,6 +28,27 @@ const ResponsiblesModal = (props) => {
     startDate: false,
     endDate: false,
   });
+
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get("/responsibles");
+        setResponsibles(response.data.results);
+        setIsReady(true);
+      } catch (error) {
+        if (error.response.data.errors) {
+          const message = generateErrorMessage(error.response.data.errors);
+          toast.error(message);
+        } else {
+          toast.error("Error inesperado al obtener responsables.");
+        }
+      }
+    };
+
+    fetchData();
+  }, []);
 
   if (!isReady) {
     return null;
@@ -95,9 +118,12 @@ const ResponsiblesModal = (props) => {
       return;
     }
     console.log("Reporte por resposable data");
-    console.log();
+    const responsibleData = 
+      data.responsibles.find(
+        (responsible) => (responsible.dni_res === formData.idResponsible)
+      );
     // Aqui el back me debe devolver un data y ese data lo debo enviar a mi funcion.
-
+    console.log(responsibleData);
     try {
       const responsible = formData.idResponsible,
         created_at = dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
@@ -119,7 +145,7 @@ const ResponsiblesModal = (props) => {
       const results = response.data.results;
       console.log(results);
 
-      generateResponsiblesPDF(formData.idResponsible, results, inicio, fin);
+      generateResponsiblesPDF(responsibleData, results, inicio, fin);
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {

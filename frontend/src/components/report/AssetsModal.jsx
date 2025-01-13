@@ -7,12 +7,14 @@ import BaseModal from "./BaseModal";
 import GeneralWrapper from "./GeneralWrapper";
 import ModalWrapper from "./ModalWrapper";
 import generateAssetsPDF from "./generateAssetsPDF";
+import { useDataContext } from "./../../provider/DataContext";
 
 const AssetsModal = (props) => {
   const [assets, setAssets] = useState([]);
   const [error, setError] = useState("");
   const [assetSelected, setAssetSelected] = useState("");
-
+  const { data } = useDataContext();
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -51,23 +53,48 @@ const AssetsModal = (props) => {
     setError("");
   };
 
+
   const handleReport = async () => {
     if (!assetSelected) {
       setError("Debe seleccionar un activo.");
       return;
     }
-
+    console.log(assetSelected);
     try {
+  
       const response = await axiosInstance.post(
-        `/report/maintenances-by-asset`,
-        {
-          asset: assetSelected,
-        }
+        "/report/maintenances-by-asset",
+        {asset:assetSelected}
       );
-      generateAssetsPDF(response.data.results);
+      const results=response.data.results;
+      console.log(results);
+      
+      const updatedResults = results.map(result => {
+        // Buscamos el responsable correspondiente en 'data.responsibles' usando el nombre completo
+        const responsible = data.responsibles.find(
+          (responsible) => responsible.nam_res + " " + responsible.las_res === result.responsable
+        );
+      
+        // Si encontramos al responsable, añadimos la cédula
+        if (responsible) {
+          result.dni_res = responsible.dni_res;
+        }
+      
+        return result;
+      });
+
+      generateAssetsPDF(updatedResults);    
+  
     } catch (error) {
-      toast.error("No se ha podido obtener el activo");
+      console.log(error);
+      if (error.response?.data?.errors) {
+        toast.error('No se pudo obtener el reporte');
+      } else {
+        toast.error("Error inesperado al obtener activos.");
+      }
     }
+
+    console.log("Sending", assetSelected);
   };
 
   return (
