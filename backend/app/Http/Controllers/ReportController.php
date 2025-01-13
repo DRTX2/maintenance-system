@@ -66,7 +66,7 @@ class ReportController extends Controller
 
         $maintenances = $this->maintenanceReportService->loadRelations($maintenances)->get();
 
-        $transformedMaintenances = $this->maintenanceReportService->transformMaintenances($maintenances);
+        $transformedMaintenances = $this->maintenanceReportService->transformForSpecificAsset($maintenances, $request->input('asset'));
 
         return response()->json([
             'results' => $transformedMaintenances
