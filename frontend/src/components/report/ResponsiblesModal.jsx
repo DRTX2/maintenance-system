@@ -55,8 +55,8 @@ const ResponsiblesModal = (props) => {
   }
 
   const renderResponsibles = () =>
-    responsibles.length > 0 ? (
-      responsibles.map((responsible) => (
+    data?.responsibles.length > 0 ? (
+      data?.responsibles.map((responsible) => (
         <MenuItem key={responsible.id} value={responsible.dni_res}>
           {`${responsible.dni_res} - ${responsible.nam_res} ${responsible.las_res}`}
         </MenuItem>
