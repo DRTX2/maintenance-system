@@ -12,8 +12,6 @@ const AssetSelector = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
 
-  console.log("lata data es", data);
-
   return (
     <>
       <Typography
