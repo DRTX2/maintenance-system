@@ -57,10 +57,6 @@ const AssetModalTable = ({ open, onClose, assets, onAdd }) => {
     };
   };
 
-  if (!filteredAssets.length > 0) {
-    return null;
-  }
-
   return (
     <Dialog
       open={open}

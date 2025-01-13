@@ -18,6 +18,8 @@ import MaintanceShow from "./components/maintance/show/MaintanceShow";
 import MaintanceView from "./components/maintance/view/MaintanceView";
 import MaintanceEdit from "./components/maintance/edit/MaintanceEdit";
 import Report from "./components/report/Report";
+import AssetsByBatch from "./components/asset/lote/AssetsByBatch";
+import BatchModal from "./components/asset/lote/BatchModal";
 
 function App() {
   return (
@@ -55,6 +57,8 @@ function App() {
             <Route path="maintance/view/:id" element={<MaintanceView />} />
             <Route path="maintance/edit/:id" element={<MaintanceEdit />} />
             <Route path="reports" element={<Report />} />
+            <Route path="bath/modal" element={<BatchModal />} />
+            <Route path="batch" element={<AssetsByBatch />} />
           </Route>
         </Routes>
         {/* End routes */}

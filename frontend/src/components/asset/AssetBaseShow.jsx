@@ -9,9 +9,11 @@ import SearchBar from "../../generic/SearchBar";
 import AssetTableShow from "./AssetTableShow";
 import AssetFilters from "../../generic/filters/AssetFilters";
 import { useAssetsContext } from "../../provider/AssetsContext";
+import BatchModal from "./lote/BatchModal";
 
 const AssetShow = ({ columns, role }) => {
   const navigate = useNavigate();
+  const [openBatch, setOpenBatch] = useState(false);
   const {
     isReady,
     deleteAsset,
@@ -106,14 +108,24 @@ const AssetShow = ({ columns, role }) => {
           >
             <h2 style={{ marginRight: "20px" }}>Activos</h2>
 
-            <Button
-              onClick={onCreate}
-              variant="contained"
-              sx={GenericStyles.buttonStyle}
-              startIcon={<AddIcon />}
-            >
-              Agregar activo
-            </Button>
+            <Box display="flex" gap="1rem">
+              <Button
+                onClick={() => setOpenBatch(true)}
+                variant="contained"
+                sx={GenericStyles.buttonStyle}
+                startIcon={<AddIcon />}
+              >
+                Agregar en lote
+              </Button>
+              <Button
+                onClick={onCreate}
+                variant="contained"
+                sx={GenericStyles.buttonStyle}
+                startIcon={<AddIcon />}
+              >
+                Agregar activo
+              </Button>
+            </Box>
           </Box>
 
           {/* Fila 2 */}
@@ -149,6 +161,8 @@ const AssetShow = ({ columns, role }) => {
           onView={onView}
         />
       </Box>
+
+      <BatchModal open={openBatch} onClose={() => setOpenBatch(false)} />
     </div>
   );
 };
