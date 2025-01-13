@@ -607,6 +607,10 @@ class AssetController extends Controller
                         'errors' => $errors, // Incluye los errores agrupados por campo
                     ];
                 } else {
+
+                    $asset['category_name'] = $asset->category->nom_dis;
+                    $asset['location_name'] = $location->nam_loc;
+                    $asset['income_code'] = $income->cod_inc;
                     // Si no hay errores, lo añadimos a los válidos
                     $validAssets[] = $asset;
                 }
