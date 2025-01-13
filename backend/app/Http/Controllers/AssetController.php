@@ -607,7 +607,11 @@ class AssetController extends Controller
                         'errors' => $errors, // Incluye los errores agrupados por campo
                     ];
                 } else {
-                    // Si no hay errores, lo añadimos a los válidos
+
+                    $asset['category_name'] = $category->nom_dis; // Usando la variable $category que ya recuperaste
+                    $asset['location_name'] = $location->nam_loc; // Usando la variable $location
+                    $asset['income_code'] = $income->cod_inc; // Usando la variable $income
+
                     $validAssets[] = $asset;
                 }
 
