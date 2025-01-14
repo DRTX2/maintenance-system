@@ -120,7 +120,7 @@ Route::prefix('assets')->group(function () {
 
     Route::post('/validateBatch', [AssetController::class, 'validateAssets']);
 
-    Route::get('/storeBatch', [AssetController::class, 'storeBatch']);
+    Route::post('/storeBatch', [AssetController::class, 'storeBatch']);
 
 });
 

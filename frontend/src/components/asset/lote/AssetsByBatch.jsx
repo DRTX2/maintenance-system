@@ -10,23 +10,47 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import BatchModal from "./BatchModal";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../utils/api";
+import { useAssetsContext } from "../../../provider/AssetsContext";
 
 const AssetsByBatch = () => {
+  const { addBatchAssets } = useAssetsContext();
   const [openBatchModal, setOpenBatchModal] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("estado local", location.state);
+  const { assets = { valid_assets: [], invalid_assets: [] } } =
+    location.state || {};
 
-  const { assets } = location.state || { assets: [] };
+  React.useEffect(() => {
+    if (assets.invalid_assets.length > 0) {
+      setSnackbarOpen(true);
+    }
+  }, [assets.invalid_assets]);
 
-  if (!assets) {
-    navigate("/dashboard/assets");
-    return null;
-  }
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
 
   const handleBack = () => {
     setOpenBatchModal(true);
@@ -36,13 +60,75 @@ const AssetsByBatch = () => {
     navigate("/dashboard/assets");
   };
 
-  const handleSave = () => {
-    // console.log("Que se envia", { assets: assets });
-    // Enviar para guardar ya
+  const handleSave = async () => {
+    try {
+      const formatted = { assets: assets.valid_assets };
+      const response = await axiosInstance.post(
+        "/assets/storeBatch",
+        formatted
+      );
+      console.log("Los validos a enviarse son", assets.valid_assets);
+      console.log("Que devolvio", response.data);
+      addBatchAssets(assets.valid_assets);
+      toast.success(response.data.message);
+      navigate("/dashboard/assets");
+    } catch (error) {
+      toast.error("No se ha podido guardar por lote.");
+    }
   };
 
   return (
     <>
+      <Box>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="error"
+            sx={{ width: "100%" }}
+            onClick={handleOpenDialog}
+          >
+            Errores al subir el archivo
+          </Alert>
+        </Snackbar>
+
+        <Dialog
+          open={dialogOpen}
+          onClose={handleCloseDialog}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Errores al subir activos</DialogTitle>
+          <DialogContent>
+            {assets?.invalid_assets?.map((error, index) => (
+              <Box key={index} marginBottom={2}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {error.header}
+                </Typography>
+                <ul>
+                  {Object.entries(error.errors).map(([field, messages], i) => (
+                    <li key={i}>
+                      <Typography>
+                        <strong>{field}:</strong> {messages.join(", ")}
+                      </Typography>
+                    </li>
+                  ))}
+                </ul>
+              </Box>
+            ))}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+              Cerrar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+
       <Typography
         variant="h6"
         color="#6068A5"
@@ -53,99 +139,121 @@ const AssetsByBatch = () => {
         Activos por lote
       </Typography>
 
-      {assets.map((asset, index) => (
-        <Box
-          key={index}
-          p={3}
-          border="1px solid #ddd"
-          borderRadius={4}
-          margin="2rem 2rem"
-        >
-          <Typography variant="title2" color="#6068A5" fontWeight="bold">
-            Activo
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" color="#6068A5" fontWeight="bold">
-                Código
-              </Typography>
-              <TextField
-                fullWidth
-                value={asset.cod_ass}
-                InputProps={{ readOnly: true }}
-              />
+      {assets?.valid_assets.length > 0 ? (
+        assets?.valid_assets?.map((asset, index) => (
+          <Box
+            key={index}
+            p={3}
+            border="1px solid #ddd"
+            borderRadius={4}
+            margin="2rem 2rem"
+          >
+            <Typography variant="title2" color="#6068A5" fontWeight="bold">
+              Activo
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="#6068A5"
+                  fontWeight="bold"
+                >
+                  Código
+                </Typography>
+                <TextField
+                  fullWidth
+                  value={asset?.cod_ass}
+                  InputProps={{ readOnly: true }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="#6068A5"
+                  fontWeight="bold"
+                >
+                  Número de serie
+                </Typography>
+                <TextField
+                  fullWidth
+                  value={asset?.ser_num_ass}
+                  InputProps={{ readOnly: true }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} color="#6068A5">
+                <Typography variant="subtitle2" fontWeight="bold">
+                  Ubicación
+                </Typography>
+                <TextField
+                  fullWidth
+                  value={asset?.location_name}
+                  InputProps={{ readOnly: true }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="#6068A5"
+                  fontWeight="bold"
+                >
+                  Ingreso
+                </Typography>
+                <TextField
+                  fullWidth
+                  value={asset?.income_code}
+                  InputProps={{ readOnly: true }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="subtitle2"
+                  color="#6068A5"
+                  fontWeight="bold"
+                >
+                  Dispositivo
+                </Typography>
+                <TextField
+                  fullWidth
+                  value={asset?.category_name}
+                  InputProps={{ readOnly: true }}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" color="#6068A5" fontWeight="bold">
-                Número de serie
-              </Typography>
-              <TextField
-                fullWidth
-                value={asset.ser_num_ass}
-                InputProps={{ readOnly: true }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} color="#6068A5">
-              <Typography variant="subtitle2" fontWeight="bold">
-                Ubicación
-              </Typography>
-              <TextField
-                fullWidth
-                value={asset.location_name}
-                InputProps={{ readOnly: true }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" color="#6068A5" fontWeight="bold">
-                Ingreso
-              </Typography>
-              <TextField
-                fullWidth
-                value={asset.income_code}
-                InputProps={{ readOnly: true }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" color="#6068A5" fontWeight="bold">
-                Dispositivo
-              </Typography>
-              <TextField
-                fullWidth
-                value={asset.category_name}
-                InputProps={{ readOnly: true }}
-              />
-            </Grid>
-          </Grid>
 
-          {asset.components.length > 0 && (
-            <>
-              <Typography variant="subtitle2" marginTop={4}>
-                Componentes del activo
-              </Typography>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Código</TableCell>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell>Descripción</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {asset.components.map((component, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{component.id}</TableCell>
-                      <TableCell>{component.name || "N/A"}</TableCell>
-                      <TableCell>
-                        {component.pivot?.description || "N/A"}
-                      </TableCell>
+            {asset?.components?.length > 0 && (
+              <>
+                <Typography variant="subtitle2" marginTop={4}>
+                  Componentes del activo
+                </Typography>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Código</TableCell>
+                      <TableCell>Nombre</TableCell>
+                      <TableCell>Descripción</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </>
-          )}
-        </Box>
-      ))}
+                  </TableHead>
+                  <TableBody>
+                    {asset?.valid_assets?.components?.map((component, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{component.id}</TableCell>
+                        <TableCell>{component.name || "N/A"}</TableCell>
+                        <TableCell>
+                          {component.pivot?.description || "N/A"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </>
+            )}
+          </Box>
+        ))
+      ) : (
+        <Typography variant="subtitle1" marginBottom="2rem">
+          No se han encontrado activos validos.
+        </Typography>
+      )}
 
       <Box display="flex" justifyContent="space-between" width="90%">
         <Button variant="outlined" onClick={handleBack}>
@@ -155,7 +263,11 @@ const AssetsByBatch = () => {
           <Button variant="outlined" color="error" onClick={handleCancel}>
             Cancelar
           </Button>
-          <Button variant="contained" onClick={handleSave}>
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            disabled={!assets.valid_assets.length}
+          >
             Guardar
           </Button>
         </Box>
