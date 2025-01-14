@@ -106,6 +106,11 @@ export const AssetsProvider = ({ children }) => {
     return filtered;
   }, [assets, term, filters]); // depende de: assets, term, filters
 
+  // Método para procesar assets cuando es en lote
+  const addBatchAssets = (newAssets) => {
+    setAssets((prev) => [...prev, ...newAssets]);
+  };
+
   // Métodos CRUD para assets
   const addAsset = async (newAsset) => {
     try {
@@ -168,6 +173,7 @@ export const AssetsProvider = ({ children }) => {
         isReady,
         visibleAssets,
         addAsset,
+        addBatchAssets,
         updateAsset,
         deleteAsset,
       }}

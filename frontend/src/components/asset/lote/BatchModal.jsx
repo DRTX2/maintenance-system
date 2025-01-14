@@ -76,10 +76,9 @@ const BatchModal = ({ open, onClose }) => {
       );
 
       if (response.data) {
-        console.log(response.data);
         onClose();
         navigate("/dashboard/batch", {
-          state: { assets: response.data.valid_assets },
+          state: { assets: response.data },
         });
       }
     } catch (error) {
