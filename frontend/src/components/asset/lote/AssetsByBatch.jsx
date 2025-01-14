@@ -67,6 +67,7 @@ const AssetsByBatch = () => {
         "/assets/storeBatch",
         formatted
       );
+      console.log("Los validos a enviarse son", assets.valid_assets);
       console.log("Que devolvio", response.data);
       addBatchAssets(assets.valid_assets);
       toast.success(response.data.message);

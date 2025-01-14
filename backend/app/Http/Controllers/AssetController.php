@@ -611,6 +611,9 @@ class AssetController extends Controller
                     $asset['category_name'] = $category->nom_dis; // Usando la variable $category que ya recuperaste
                     $asset['location_name'] = $location->nam_loc; // Usando la variable $location
                     $asset['income_code'] = $income->cod_inc; // Usando la variable $income
+                    $asset['category_data'] = $category;
+                    $asset['income_data'] = $income;
+                    $asset['location_data'] = $location;
 
                     $validAssets[] = $asset;
                 }
