@@ -634,25 +634,23 @@ class AssetController extends Controller
         ]);
     }
 
-
-
     public function storeBatch(Request $request)
     {
         $assets = $request->input('assets');
 
         $successMessages = [];
         $errorMessages = [];
+        $assetDetails = [];
 
         foreach ($assets as $key => $service) {
-            // Validar cada activo
             try {
-                // Verificar el estado del ingreso asociado
+
                 $income = Income::findOrFail($service['id_inc_ass']);
                 if ($income->est_inc === 'C') {
                     throw new \Exception("El ingreso asociado está cerrado.");
                 }
 
-                // Crear el activo
+
                 $asset = Asset::create([
                     'id_inc_ass' => $service['id_inc_ass'],
                     'id_cat_ass' => $service['id_cat_ass'],
@@ -662,7 +660,7 @@ class AssetController extends Controller
                     'obs_add_ass' => $service['obs_add_ass'] ?? null,
                 ]);
 
-                // Asociar los componentes
+
                 $components = collect($service['components'])->mapWithKeys(function ($component) {
                     return [
                         $component['id'] => [
@@ -672,17 +670,32 @@ class AssetController extends Controller
                 });
                 $asset->components()->attach($components);
 
-                // Mensaje de éxito
+
+                $asset->load(['income', 'category', 'location', 'components']);
+
+
+                $assetDetails[] = [
+                    'id' => $asset->id,
+                    'income_code' => $asset->income->cod_inc,
+                    'category_name' => $asset->category->nom_dis,
+                    'location_name' => $asset->location->nam_loc,
+                    'location_data' => $asset->location,
+                    'income_data' => $asset->income,
+                    'category_data' => $asset->category,
+                    'cod_ass' => $asset->cod_ass,
+                    'ser_num_ass' => $asset->ser_num_ass,
+                    'obs_add_ass' => $asset->obs_add_ass ?? null,
+                    'est_ass' => 'V',
+                ];
+
                 $successMessages[] = "Activo con código '{$service['cod_ass']}' registrado exitosamente.";
 
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                // Si el ingreso o la ubicación no se encuentran
                 $errorMessages[] = [
                     'cod_ass' => $service['cod_ass'],
                     'error' => "No se pudo encontrar el ingreso o la ubicación asociada."
                 ];
             } catch (\Exception $e) {
-                // Cualquier otro error (por ejemplo, ingreso cerrado)
                 $errorMessages[] = [
                     'cod_ass' => $service['cod_ass'],
                     'error' => $e->getMessage()
@@ -690,15 +703,14 @@ class AssetController extends Controller
             }
         }
 
-        // Responder con los mensajes de éxito y error
+
         return response()->json([
             'message' => 'Proceso de registro de activos en lote completado.',
             'success_messages' => $successMessages,
             'error_messages' => $errorMessages,
+            'asset_details' => $assetDetails,
         ]);
     }
-
-
 
 
 }

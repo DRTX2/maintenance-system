@@ -160,7 +160,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const onOpenComponents = async (assetId) => {
     try {
       const response = await axiosInstance.get(
-        `/assets/showForMaintances/${assetId}`
+        `/assets/showForMaintenances/${assetId}`
       );
       setComponentsCatalog(response.data.components);
       setOpenComponents(assetId);
