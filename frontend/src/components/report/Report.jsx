@@ -24,9 +24,27 @@ const Report = () => {
   const [isOpenResponsiblesModal, setIsOpenResponiblesModal] = useState(false);
   const [isOpenAssets, setIsOpenAssets] = useState(false);
 
-  const handleReportMaintenaces = () => {
-    generateMaintenancesPDF();
+  const handleReportMaintenaces = async () => {
+    try {
+      const response = await axiosInstance.post(
+        "/report/maintenancesToAssetsFormated"
+      );
+      const results = response.data.results;
+      console.log(results);
+
+      // generateResponsiblesPDF(results);
+    } catch (error) {
+      console.log(error);
+      if (error.response?.data?.errors) {
+        toast.error("No se pudo obtener el reporte de historial de mantenimientos");
+      } else {
+        toast.error("Error inesperado al obtener mantenimientos.");
+      }
+    }
+    
   };
+
+  
 
   return (
     <Wrapper>

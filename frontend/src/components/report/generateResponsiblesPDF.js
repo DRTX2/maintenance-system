@@ -63,14 +63,7 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
 
   const rows = results.map((result) => [
     // Formatear created_at con fallback a "N/A"
-    dayjs(result.created_at).isValid()
-      ? dayjs(result.created_at).format("YYYY-MM-DD HH:mm:ss")
-      : "N/A",
-
-    // Formatear ended_at con fallback a "N/A"
-    dayjs(result.ended_at).isValid()
-      ? dayjs(result.ended_at).format("YYYY-MM-DD HH:mm:ss")
-      : "N/A",
+    `${dayjs(result.created_at).format("YYYY-MM-DD")} - ${dayjs(result.ended_at).format("YYYY-MM-DD")}`,
 
     // Otros campos
     result.cod_main || "N/A",

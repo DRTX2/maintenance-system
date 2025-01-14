@@ -18,11 +18,13 @@ const ResponsiblesModal = (props) => {
   const [responsibles, setResponsibles] = useState([]);
   const { data } = useDataContext();
 
-  const [formData, setFormData] = useState({
+  const initialState= {
     idResponsible: "",
     startDate: null,
     endDate: null,
-  });
+  };
+  
+  const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({
     idResponsible: false,
     startDate: false,
@@ -121,7 +123,7 @@ const ResponsiblesModal = (props) => {
     const responsibleData = data.responsibles.find(
       (responsible) => responsible.dni_res === formData.idResponsible
     );
-    // Aqui el back me debe devolver un data y ese data lo debo enviar a mi funcion.
+
     console.log(responsibleData);
     try {
       const responsible = formData.idResponsible,
@@ -145,6 +147,7 @@ const ResponsiblesModal = (props) => {
       console.log(results);
 
       generateResponsiblesPDF(responsibleData, results, inicio, fin);
+      setFormData(initialState);
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {

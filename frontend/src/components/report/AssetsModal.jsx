@@ -63,6 +63,8 @@ const AssetsModal = (props) => {
       });
 
       generateAssetsPDF(updatedResults);
+      // limpiar inputs
+      setAssetSelected("");
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {

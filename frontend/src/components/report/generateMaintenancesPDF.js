@@ -8,8 +8,9 @@ const calculateX = (doc, text) => {
   return x;
 };
 
-const generateResponsiblesPDF = () => {
+const generateResponsiblesPDF = (results) => {
   const doc = new jsPDF();
+
   const columns = ["Código", "Número de serie", "2021", "2022", "2025"];
 
   doc.setFont("helvetica", "bold");
@@ -49,6 +50,8 @@ const generateResponsiblesPDF = () => {
     body: rows2,
     startY: doc.lastAutoTable.finalY + 15,
   });
+  doc.text("Incumplidos", 10, 30);
+
 
   doc.save("reporte.pdf");
 };
