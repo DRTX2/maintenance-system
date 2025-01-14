@@ -225,7 +225,6 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
           assets: formatted,
         };
         addMaintenance(dataToSend);
-        toast.success("Mantenimiento creado con éxito, ok");
         navigate("/dashboard/maintance");
       } catch (error) {
         if (error.response.data.errors) {
