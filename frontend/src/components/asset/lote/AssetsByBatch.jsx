@@ -239,14 +239,14 @@ const AssetsByBatch = () => {
                     <>
                       <TableHead>
                         <TableRow>
-                          <TableCell>Código</TableCell>
+                          <TableCell>Nombre</TableCell>
                           <TableCell>Descripción</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {currentPageData.map((component, i) => (
                           <TableRow key={i}>
-                            <TableCell>{component.id}</TableCell>
+                            <TableCell>{component?.name}</TableCell>
                             <TableCell>
                               {component.pivot?.description || "N/A"}
                             </TableCell>
