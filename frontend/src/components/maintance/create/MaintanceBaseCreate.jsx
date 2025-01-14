@@ -159,7 +159,6 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       setCurrentAsset(asset);
       setOpenComponents(true);
     } catch (error) {
-      console.log(error.response);
       toast.error("No se ha podido obtener los componentes.");
     }
   };

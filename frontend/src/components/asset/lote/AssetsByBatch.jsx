@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -22,6 +22,7 @@ import BatchModal from "./BatchModal";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/api";
 import { useAssetsContext } from "../../../provider/AssetsContext";
+import GenericTable from "../../GenericTable";
 
 const AssetsByBatch = () => {
   const { addBatchAssets } = useAssetsContext();
@@ -31,14 +32,18 @@ const AssetsByBatch = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  console.log("existe", location?.state);
+
   const { assets = { valid_assets: [], invalid_assets: [] } } =
     location.state || {};
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (assets.invalid_assets.length > 0) {
       setSnackbarOpen(true);
     }
   }, [assets.invalid_assets]);
+
+  console.log("Que llego", assets.valid_assets);
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -67,9 +72,8 @@ const AssetsByBatch = () => {
         "/assets/storeBatch",
         formatted
       );
-      console.log("Los validos a enviarse son", assets.valid_assets);
-      console.log("Que devolvio", response.data);
-      addBatchAssets(assets.valid_assets);
+
+      addBatchAssets(response.data.asset_details);
       toast.success(response.data.message);
       navigate("/dashboard/assets");
     } catch (error) {
@@ -225,26 +229,33 @@ const AssetsByBatch = () => {
                 <Typography variant="subtitle2" marginTop={4}>
                   Componentes del activo
                 </Typography>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Código</TableCell>
-                      <TableCell>Nombre</TableCell>
-                      <TableCell>Descripción</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {asset?.valid_assets?.components?.map((component, i) => (
-                      <TableRow key={i}>
-                        <TableCell>{component.id}</TableCell>
-                        <TableCell>{component.name || "N/A"}</TableCell>
-                        <TableCell>
-                          {component.pivot?.description || "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <GenericTable
+                  data={asset?.components}
+                  dataCount={asset?.components?.length}
+                  isDelete={false}
+                  setIsDelete={() => {}}
+                >
+                  {(currentPageData) => (
+                    <>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Código</TableCell>
+                          <TableCell>Descripción</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {currentPageData.map((component, i) => (
+                          <TableRow key={i}>
+                            <TableCell>{component.id}</TableCell>
+                            <TableCell>
+                              {component.pivot?.description || "N/A"}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </>
+                  )}
+                </GenericTable>
               </>
             )}
           </Box>
