@@ -572,6 +572,7 @@ class AssetController extends Controller
                     'id_inc_ass.required' => "El ingreso es obligatorio.",
                     'id_cat_ass.required' => "La categoría del activo es obligatoria.",
                     'cod_ass.unique' => "El código de activo '{$asset['cod_ass']}' ya esta registrado en la base de datos.",
+                    'ser_num_ass.unique' => "El número de serie '{$asset['ser_num_ass']} ya esta registrado en la base de datos.",
                     'components.*.id.exists' => "El componente especificado no existe para el activo en la posición {$key}.",
                     'components.*.pivot.description.required' => "La descripción del componente es obligatoria para el activo en la posición {$key}.",
                     'components.*.pivot.description.string' => "La descripción del componente debe ser una cadena de texto para el activo en la posición {$key}.",
