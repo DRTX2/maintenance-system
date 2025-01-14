@@ -42,9 +42,14 @@ const BatchModal = ({ open, onClose }) => {
     reader.onload = (event) => {
       const binaryStr = event.target.result;
       const workbook = XLSX.read(binaryStr, { type: "binary" });
+
+      console.log("Workbook", workbook);
+
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      console.log("Mapeado", jsonData);
 
       const formattedData = jsonData.map((row) => ({
         id_inc_ass: row["Ingreso"], // Mapea la columna "Ingreso"

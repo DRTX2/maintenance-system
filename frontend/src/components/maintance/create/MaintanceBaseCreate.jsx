@@ -152,13 +152,14 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
     // Cargar los datos del catalogo de activo seleccionado.
     try {
       const response = await axiosInstance.get(
-        `/assets/showForMaintances/${id}`
+        `/assets/showForMaintenances/${id}`
       );
       setComponentsCatalog(response.data.components);
       const asset = assetsTable.find((item) => item.id === id);
       setCurrentAsset(asset);
       setOpenComponents(true);
     } catch (error) {
+      console.log(error.response);
       toast.error("No se ha podido obtener los componentes.");
     }
   };
