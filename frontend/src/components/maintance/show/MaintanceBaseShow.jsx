@@ -144,6 +144,10 @@ const MaintanceBaseShow = ({ columns }) => {
 
   const handleReset = () => {
     handleFilterChange({});
+    setErrors({
+      startDate: false,
+      endDate: false,
+    });
     setClearFilters(true);
     return;
   };
