@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AssetRequest;
 use App\Models\Asset;
 use App\Models\Category;
+use App\Models\Component;
 use App\Models\Income;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -609,6 +610,18 @@ class AssetController extends Controller
                     ];
                 } else {
 
+                    foreach ($asset['components'] as &$component) {
+                        try {
+                            // Obtén el nombre del componente por su ID
+                            $componentData = Component::findOrFail($component['id']);
+                            $component['name'] = $componentData->nam_com; // Agrega el nombre del componente
+                        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                            // Si el componente no se encuentra, puedes manejarlo aquí si es necesario
+                            $component['name'] = null; // O asignar un valor por defecto
+                        }
+                    }
+
+
                     $asset['category_name'] = $category->nom_dis; // Usando la variable $category que ya recuperaste
                     $asset['location_name'] = $location->nam_loc; // Usando la variable $location
                     $asset['income_code'] = $income->cod_inc; // Usando la variable $income
@@ -686,7 +699,7 @@ class AssetController extends Controller
                     'cod_ass' => $asset->cod_ass,
                     'ser_num_ass' => $asset->ser_num_ass,
                     'obs_add_ass' => $asset->obs_add_ass ?? null,
-                    'est_ass' => 'V',
+
                 ];
 
                 $successMessages[] = "Activo con código '{$service['cod_ass']}' registrado exitosamente.";
