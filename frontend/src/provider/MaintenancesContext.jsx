@@ -118,16 +118,19 @@ export const MaintenancesProvider = ({ children }) => {
         `/maintenance-detail`,
         newMaintenance
       );
-
       setMaintenances((prev) => [...prev, response.data.results]);
+      toast.success("Mantenimiento creado con éxito");
     } catch (error) {
-      toast.error("Ocurrio un error al crear el mantenimiento.");
+      if (error.response.data.errors) {
+        const message = handleErrors(error.response.data.errors).join("\n");
+        toast.error(message);
+      } else {
+        toast.error("Ha ocurrido un error inesperado");
+      }
     }
   };
 
   const updateMaintenance = async (updateMaintenance) => {
-    console.log("Enviando", updateMaintenance);
-
     try {
       const response = await axiosInstance.put(
         `/maintenance-detail/${updateMaintenance.id_main}`,
@@ -140,7 +143,15 @@ export const MaintenancesProvider = ({ children }) => {
             : maintenance
         )
       );
-    } catch (error) {}
+      toast.success("Mantenimiento actualizado con éxito");
+    } catch (error) {
+      if (error.response.data.errors) {
+        const message = handleErrors(error.response.data.errors).join("\n");
+        toast.error(message);
+      } else {
+        toast.error("Ha ocurrido un error inesperado");
+      }
+    }
   };
 
   const deleteMaintenance = async (maintenanceId) => {
@@ -149,7 +160,15 @@ export const MaintenancesProvider = ({ children }) => {
       setMaintenances((prev) =>
         prev.filter((maintenance) => maintenance.id !== maintenanceId)
       );
-    } catch (error) {}
+      toast.success("Mantenimiento eliminado con éxito");
+    } catch (error) {
+      if (error.response.data.errors) {
+        const message = handleErrors(error.response.data.errors).join("\n");
+        toast.error(message);
+      } else {
+        toast.error("Ha ocurrido un error inesperado");
+      }
+    }
   };
 
   return (
