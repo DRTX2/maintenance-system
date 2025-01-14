@@ -13,7 +13,6 @@ import AddIcon from "@mui/icons-material/Add";
 import * as XLSX from "xlsx";
 import axiosInstance from "../../../utils/api";
 import { toast } from "react-toastify";
-import { handleErrors } from "../../../utils/validations";
 import { useNavigate } from "react-router-dom";
 
 const BatchModal = ({ open, onClose }) => {
