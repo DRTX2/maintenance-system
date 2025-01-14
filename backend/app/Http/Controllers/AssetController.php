@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AssetRequest;
 use App\Models\Asset;
 use App\Models\Category;
+use App\Models\Component;
 use App\Models\Income;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -572,6 +573,7 @@ class AssetController extends Controller
                     'id_inc_ass.required' => "El ingreso es obligatorio.",
                     'id_cat_ass.required' => "La categoría del activo es obligatoria.",
                     'cod_ass.unique' => "El código de activo '{$asset['cod_ass']}' ya esta registrado en la base de datos.",
+                    'ser_num_ass.unique' => "El número de serie '{$asset['ser_num_ass']} ya esta registrado en la base de datos.",
                     'components.*.id.exists' => "El componente especificado no existe para el activo en la posición {$key}.",
                     'components.*.pivot.description.required' => "La descripción del componente es obligatoria para el activo en la posición {$key}.",
                     'components.*.pivot.description.string' => "La descripción del componente debe ser una cadena de texto para el activo en la posición {$key}.",
@@ -607,6 +609,18 @@ class AssetController extends Controller
                         'errors' => $errors, // Incluye los errores agrupados por campo
                     ];
                 } else {
+
+                    foreach ($asset['components'] as &$component) {
+                        try {
+                            // Obtén el nombre del componente por su ID
+                            $componentData = Component::findOrFail($component['id']);
+                            $component['name'] = $componentData->nam_com; // Agrega el nombre del componente
+                        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                            // Si el componente no se encuentra, puedes manejarlo aquí si es necesario
+                            $component['name'] = null; // O asignar un valor por defecto
+                        }
+                    }
+
 
                     $asset['category_name'] = $category->nom_dis; // Usando la variable $category que ya recuperaste
                     $asset['location_name'] = $location->nam_loc; // Usando la variable $location
@@ -685,7 +699,7 @@ class AssetController extends Controller
                     'cod_ass' => $asset->cod_ass,
                     'ser_num_ass' => $asset->ser_num_ass,
                     'obs_add_ass' => $asset->obs_add_ass ?? null,
-                    'est_ass' => 'V',
+
                 ];
 
                 $successMessages[] = "Activo con código '{$service['cod_ass']}' registrado exitosamente.";
