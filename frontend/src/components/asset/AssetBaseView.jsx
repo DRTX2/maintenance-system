@@ -39,7 +39,6 @@ const AssetBaseView = ({
 
     if (isEntityValid && isTableValid) {
       updateAsset(asset);
-      toast.success("Activo actualizado con éxito.");
       setIsEditing(false);
       navigate("/dashboard/assets");
     }

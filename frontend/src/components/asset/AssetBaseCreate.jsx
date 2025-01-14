@@ -160,7 +160,6 @@ const Entry = ({ fields, columns, defaultState }) => {
       addAsset(entity);
       resetFields();
       navigate("/dashboard/assets");
-      toast.success("Activo creado con éxito.");
     }
   };
 

@@ -23,8 +23,6 @@ export const AssetsProvider = ({ children }) => {
     setIsReady(true);
   }, []);
 
-  console.log("nuevo", assets);
-
   // Activos visibles derivados de `assets`
   const visibleAssets = useMemo(() => {
     return assets.filter((asset) => asset.est_ass !== "H");
@@ -116,6 +114,7 @@ export const AssetsProvider = ({ children }) => {
     try {
       const response = await axiosInstance.post("/assets", { asset: newAsset });
       setAssets((prev) => [...prev, response.data.asset]);
+      toast.success("Activo creado con éxito.");
     } catch (error) {
       if (error.response.data.errors) {
         const message = handleErrors(error.response.data.errors).join("\n");
@@ -136,6 +135,7 @@ export const AssetsProvider = ({ children }) => {
           asset.id === updatedAsset.id ? response.data.asset : asset
         )
       );
+      toast.success("Activo actualizado con éxito.");
     } catch (error) {
       if (error.response.data.errors) {
         const message = handleErrors(error.response.data.errors).join("\n");
@@ -159,7 +159,12 @@ export const AssetsProvider = ({ children }) => {
       );
       toast.success("Visibilidad cambiada con éxito");
     } catch (error) {
-      toast.error("Error deleting asset:", error.response);
+      if (error.response.data.errors) {
+        const message = handleErrors(error.response.data.errors).join("\n");
+        toast.error(message);
+      } else {
+        toast.error("No se ha podido crear el activo.");
+      }
     }
   };
 

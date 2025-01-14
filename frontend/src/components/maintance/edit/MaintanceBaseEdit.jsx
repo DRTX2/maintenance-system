@@ -160,7 +160,7 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
   const onOpenComponents = async (assetId) => {
     try {
       const response = await axiosInstance.get(
-        `/assets/showForMaintances/${assetId}`
+        `/assets/showForMaintenances/${assetId}`
       );
       setComponentsCatalog(response.data.components);
       setOpenComponents(assetId);
@@ -235,7 +235,6 @@ const MaintanceBaseEdit = ({ maintance, fields, assets }) => {
         };
         console.log("Envio esto", dataToSend);
         updateMaintenance(dataToSend);
-        toast.success("Mantenimiento creado con éxito");
         navigate("/dashboard/maintance");
       } catch (error) {
         if (error.response.data.errors) {
