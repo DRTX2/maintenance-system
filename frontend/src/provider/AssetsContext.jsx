@@ -18,8 +18,6 @@ export const AssetsProvider = ({ children }) => {
     status: [],
   });
 
-  console.log("contexto", assets);
-
   useEffect(() => {
     fetchAssets();
     setIsReady(true);
