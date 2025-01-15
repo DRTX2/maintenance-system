@@ -15,15 +15,15 @@ import { useDataContext } from "./../../provider/DataContext";
 dayjs.extend(utc);
 
 const ResponsiblesModal = (props) => {
-  const [responsibles, setResponsibles] = useState([]);
+  // const [responsibles, setResponsibles] = useState([]);
   const { data } = useDataContext();
 
-  const initialState= {
+  const initialState = {
     idResponsible: "",
     startDate: null,
     endDate: null,
   };
-  
+
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({
     idResponsible: false,
@@ -31,30 +31,30 @@ const ResponsiblesModal = (props) => {
     endDate: false,
   });
 
-  const [isReady, setIsReady] = useState(false);
+  // const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get("/responsibles");
-        setResponsibles(response.data.results);
-        setIsReady(true);
-      } catch (error) {
-        if (error.response.data.errors) {
-          const message = generateErrorMessage(error.response.data.errors);
-          toast.error(message);
-        } else {
-          toast.error("Error inesperado al obtener responsables.");
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axiosInstance.get("/responsibles");
+  //       setResponsibles(response.data.results);
+  //       setIsReady(true);
+  //     } catch (error) {
+  //       if (error.response.data.errors) {
+  //         const message = generateErrorMessage(error.response.data.errors);
+  //         toast.error(message);
+  //       } else {
+  //         toast.error("Error inesperado al obtener responsables.");
+  //       }
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  if (!isReady) {
-    return null;
-  }
+  // if (!isReady) {
+  //   return null;
+  // }
 
   const renderResponsibles = () =>
     data?.responsibles.length > 0 ? (
@@ -134,14 +134,13 @@ const ResponsiblesModal = (props) => {
       (responsible) => responsible.dni_res === formData.idResponsible
     );
 
-    console.log(responsibleData);
     try {
       const responsible = formData.idResponsible,
         created_at = dayjs(formData.startDate).format("YYYY-MM-DD HH:mm:ss"),
         ended_at = dayjs(formData.endDate).format("YYYY-MM-DD HH:mm:ss");
 
-      const inicio = dayjs(formData.startDate).format("DD-MM-YYYY");
-      const fin = dayjs(formData.endDate).format("DD-MM-YYYY");
+      const inicio = dayjs(formData.startDate).format("MM-DD-YYYY");
+      const fin = dayjs(formData.endDate).format("MM-DD-YYYY");
 
       const formattedData = {
         responsible,
@@ -154,7 +153,6 @@ const ResponsiblesModal = (props) => {
         formattedData
       );
       const results = response.data.results;
-      console.log(results);
 
       generateResponsiblesPDF(responsibleData, results, inicio, fin);
       setFormData(initialState);

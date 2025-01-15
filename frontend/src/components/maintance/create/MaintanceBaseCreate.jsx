@@ -209,6 +209,8 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
           activities: item.activities.map((activity) => activity.id),
         }));
 
+        console.log("que se envia", formatted);
+
         const dataToSend = {
           ...entity,
           assets: formatted,

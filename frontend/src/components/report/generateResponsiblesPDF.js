@@ -11,6 +11,8 @@ const calculateCenter = (doc, text) => {
 
 const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
   const doc = new jsPDF();
+  console.log("en inicio", inicio);
+  console.log("fin", fin);
 
   // Título
   doc.setFont("helvetica", "bold");
@@ -52,10 +54,10 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
       60
     );
   } else {
-    let currentY = 60;
+    let currentY = 55;
 
     results.forEach((result) => {
-      // Código del mantenimiento centrado
+      // Cada encabezado del mantenimiento
       const maintenanceCode = result.cod_main || "N/A";
       doc.setFont("helvetica", "bold");
       doc.text(
@@ -64,23 +66,23 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
         (currentY += 10)
       );
 
-      // Periodo de realización
-      const maintenanceDate = `${dayjs(result.created_at).format(
-        "YYYY-MM-DD"
-      )} - ${dayjs(result.ended_at).format("YYYY-MM-DD")}`;
+      const maintenanceDate = `${dayjs(result.created_at)
+        .add(1, "day")
+        .format(
+          "MM-DD-YYYY"
+        )} - ${dayjs(result.ended_at).add(1, "day").format("MM-DD-YYYY")}`;
       doc.setFont("helvetica", "bold");
       doc.text("Periodo de realización:", 10, (currentY += 10));
       doc.setFont("helvetica", "normal");
       doc.text(maintenanceDate, 60, currentY);
 
-      // Tipo de mantenimiento
       const maintenanceType = result.type || "N/A";
       doc.setFont("helvetica", "bold");
       doc.text("Tipo de mantenimiento:", 10, (currentY += 10));
       doc.setFont("helvetica", "normal");
       doc.text(maintenanceType, 60, currentY);
 
-      // Datos de la tabla por mantenimiento
+      // Columnas del mantenimiento
       const columns = [
         "Código activo",
         "Tareas realizadas",
@@ -88,6 +90,7 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
         "Componentes reemplazados",
       ];
 
+      // Las filas del mantenimiento
       const rows = (result.details || []).map((detail) => [
         detail.asset?.cod_ass || "N/A",
         // Tareas realizadas con viñetas
