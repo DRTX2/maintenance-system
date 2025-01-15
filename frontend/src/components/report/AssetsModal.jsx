@@ -70,7 +70,6 @@ const AssetsModal = (props) => {
       // limpiar inputs
       setAssetSelected("");
     } catch (error) {
-      console.log("probando", error.response);
       if (error.response?.data?.errors) {
         toast.error("No se pudo obtener el reporte");
       } else {
