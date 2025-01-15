@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/api";
 import { useAssetsContext } from "../../../provider/AssetsContext";
 import GenericTable from "../../GenericTable";
+import tableStyles from "../../../generic/styles/TableStyles";
 
 const AssetsByBatch = () => {
   const { addBatchAssets } = useAssetsContext();
@@ -234,7 +235,7 @@ const AssetsByBatch = () => {
                 {asset?.components?.length > 0 && (
                   <>
                     <Typography variant="subtitle2" marginTop={4}>
-                      Componentes del activo
+                      {""}
                     </Typography>
                     <GenericTable
                       data={asset?.components}
@@ -244,7 +245,7 @@ const AssetsByBatch = () => {
                     >
                       {(currentPageData) => (
                         <>
-                          <TableHead>
+                          <TableHead sx={tableStyles.tableHead}>
                             <TableRow>
                               <TableCell>Nombre</TableCell>
                               <TableCell>Descripción</TableCell>
@@ -275,7 +276,12 @@ const AssetsByBatch = () => {
         </Typography>
       )}
 
-      <Box display="flex" justifyContent="space-between" width="90%">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        width="90%"
+        marginTop="2rem"
+      >
         <Button variant="outlined" onClick={handleBack}>
           Volver a subir
         </Button>
