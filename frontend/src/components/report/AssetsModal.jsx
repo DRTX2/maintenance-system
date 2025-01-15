@@ -28,7 +28,6 @@ import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
 const AssetsModal = (props) => {
   const [assetSelected, setAssetSelected] = useState("");
-  const { data } = useDataContext();
   const { assets } = useAssetsContext();
 
   const handleAsset = (assetId) => {
@@ -40,44 +39,19 @@ const AssetsModal = (props) => {
       toast.error("Debe seleccionar un activo.");
       return;
     }
-    console.log(assetSelected);
     try {
       const response = await axiosInstance.post(
         "/report/maintenances-by-asset",
         { asset: assetSelected }
       );
-      const results = response.data.results;
-      console.log("restes", results);
-
-      const updatedResults = results.map((result) => {
-        // Buscamos el responsable correspondiente en 'data.responsibles' usando el nombre completo
-        const responsible = data?.responsibles.find(
-          (responsible) =>
-            responsible.nam_res + " " + responsible.las_res ===
-            result.responsable
-        );
-
-        // Si encontramos al responsable, añadimos la cédula
-        if (responsible) {
-          result.dni_res = responsible.dni_res;
-        }
-
-        return result;
-      });
-
-      console.log("sdfds", updatedResults);
-      generateAssetsPDF(updatedResults);
-      // limpiar inputs
+      const asset = response.data;
+      console.log("respuesta", asset);
+      generateAssetsPDF(asset);
       setAssetSelected("");
     } catch (error) {
-      if (error.response?.data?.errors) {
-        toast.error("No se pudo obtener el reporte");
-      } else {
-        toast.error("Error inesperado al obtener activos.");
-      }
+      console.log(error);
+      toast.error("Error al generar reporte");
     }
-
-    console.log("Sending", assetSelected);
   };
 
   return (

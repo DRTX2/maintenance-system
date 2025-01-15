@@ -34,10 +34,14 @@ class ReportController extends Controller
         }
 
         if ($request->has('created_at') && $request->has('ended_at')) {
-            $maintenances->whereBetween('created_at', [
-                $request->input('created_at'),
-                $request->input('ended_at')
-            ]);
+            $startDate = $request->input('created_at');
+            $endDate = $request->input('ended_at');
+
+            // Filtra los mantenimientos donde:
+            // - La fecha de creación sea mayor o igual a startDate
+            // - La fecha de finalización sea menor o igual a endDate
+            $maintenances->where('created_at', '>=', $startDate)
+                ->where('ended_at', '<=', $endDate);
         }
 
         $maintenances = $this->maintenanceReportService->loadRelations($maintenances)->get();
@@ -56,6 +60,7 @@ class ReportController extends Controller
             "asset" => 'required|exists:assets,id',
         ]);
 
+        $asset = Asset::with('income:id,cod_inc')->find($request->input('asset'));
         $maintenances = Maintenance::query();
 
         if ($request->has('asset') && $request->input('asset')) {
@@ -69,7 +74,11 @@ class ReportController extends Controller
         $transformedMaintenances = $this->maintenanceReportService->transformForSpecificAsset($maintenances, $request->input('asset'));
 
         return response()->json([
-            'results' => $transformedMaintenances
+            'id' => $asset->id,
+            'cod_ass' => $asset->cod_ass,
+            'income' => $asset->income,
+            'ser_num_ass' => $asset->ser_num_ass,
+            'maintenances' => $transformedMaintenances
         ], 200);
     }
 
@@ -163,7 +172,6 @@ class ReportController extends Controller
 
         return $status;
     }
-
 
     public function maintenancesToAssetsFormated()
     {

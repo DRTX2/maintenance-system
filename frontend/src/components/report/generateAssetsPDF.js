@@ -9,7 +9,7 @@ const calculateCenter = (doc, text) => {
   return x;
 };
 
-const generateResponsiblesPDF = (results) => {
+const generateResponsiblesPDF = (asset) => {
   const doc = new jsPDF();
 
   // El titulo
@@ -26,24 +26,24 @@ const generateResponsiblesPDF = (results) => {
   doc.setFont("helvetica", "bold");
   doc.text("Código de ingreso:", 10, 30);
   doc.setFont("helvetica", "normal");
-  doc.text(results[0].asset.income, 43, 30);
+  doc.text(asset?.income.cod_inc, 43, 30);
   doc.setFont("helvetica", "bold");
   doc.text("Código de activo:", 10, 40);
   doc.setFont("helvetica", "normal");
-  doc.text(results[0].asset.cod_ass, 42, 40);
+  doc.text(asset?.cod_ass, 42, 40);
   doc.setFont("helvetica", "bold");
   doc.text("Número de seríe:", 10, 50); // no hay
   doc.setFont("helvetica", "normal");
-  doc.text(results[0].asset.ser_num_ass, 40, 50);
+  doc.text(asset?.ser_num_ass, 40, 50);
 
-  if (results.length === 0) {
+  if (asset?.maintenances?.length === 0) {
     // Si no hay datos
     doc.setFont("helvetica", "normal");
     doc.text(
-      "No se encontraron registros de mantenimientos realizados por este responsable en el período seleccionado.",
+      "No se encontraron registros de mantenimientos para este activo.",
       calculateCenter(
         doc,
-        "No se encontraron registros de mantenimientos realizados por este responsable en el período seleccionado."
+        "No se encontraron registros de mantenimientos para este activo."
       ),
       60
     );
@@ -58,7 +58,7 @@ const generateResponsiblesPDF = (results) => {
       "Componentes reemplazados",
     ];
 
-    const rows = results.map((result) => [
+    const rows = asset?.maintenances?.map((result) => [
       // Fechas formateadas
       `${
         dayjs.utc(result.created_at).isValid()
@@ -71,9 +71,9 @@ const generateResponsiblesPDF = (results) => {
       }`,
 
       // Otros campos con fallback a "N/A"
-      result.cod_main || "N/A",
-      result.type || "N/A",
-      result.dni_res || "N/A",
+      result?.cod_main || "N/A",
+      result?.type || "N/A",
+      result?.dni_res_main || "N/A",
 
       // Actividades, observaciones y componentes reemplazados
       (result?.asset?.activities || [])

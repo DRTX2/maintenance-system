@@ -178,6 +178,8 @@ class MaintenanceDetailController extends Controller
                 'vis_main' => $maintenance->vis_main,
                 'created_at' => $maintenance->created_at,
                 'ended_at' => $maintenance->ended_at,
+                'responsable_Data' => $maintenance->responsible,
+                'type_data' => $maintenance->maintenanceType,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
             ];
@@ -245,6 +247,8 @@ class MaintenanceDetailController extends Controller
                 'vis_main' => $maintenance->vis_main,
                 'created_at' => $maintenance->created_at,
                 'ended_at' => $maintenance->ended_at,
+                'responsable_data' => $maintenance->responsible,
+                'type_data' => $maintenance->maintenanceType,
                 'responsable' => $maintenance->responsible->nam_res . ' ' . $maintenance->responsible->las_res,
                 'type' => $maintenance->maintenanceType->typ_main,
             ];
