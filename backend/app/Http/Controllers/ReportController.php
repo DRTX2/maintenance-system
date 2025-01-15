@@ -56,6 +56,7 @@ class ReportController extends Controller
             "asset" => 'required|exists:assets,id',
         ]);
 
+        $asset = Asset::with('income:id,cod_inc')->find($request->input('asset'));
         $maintenances = Maintenance::query();
 
         if ($request->has('asset') && $request->input('asset')) {
@@ -69,7 +70,11 @@ class ReportController extends Controller
         $transformedMaintenances = $this->maintenanceReportService->transformForSpecificAsset($maintenances, $request->input('asset'));
 
         return response()->json([
-            'results' => $transformedMaintenances
+            'id' => $asset->id,
+            'cod_ass' => $asset->cod_ass,
+            'income' => $asset->income,
+            'ser_num_ass' => $asset->ser_num_ass,
+            'maintenances' => $transformedMaintenances
         ], 200);
     }
 
@@ -139,7 +144,7 @@ class ReportController extends Controller
         // Recopilar los años de mantenimiento realizados
         $maintenanceYears = [];
         foreach ($asset->maintenanceDetails as $maintenanceDetail) {
-            $maintenanceYears[] = (int)date('Y', strtotime($maintenanceDetail->maintenance->created_at));
+            $maintenanceYears[] = (int) date('Y', strtotime($maintenanceDetail->maintenance->created_at));
         }
         $maintenanceYears = array_unique($maintenanceYears); // Eliminar duplicados
 
@@ -209,7 +214,7 @@ class ReportController extends Controller
                     'total' => count($report[$state]),
                     'assets' => $report[$state]
                 ];
-                
+
                 if (empty($report[$state]['assets']) || $report[$state]['total'] == 0) {
                     unset($report[$state]);
                 }
