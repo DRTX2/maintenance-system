@@ -67,6 +67,8 @@ const AssetsModal = (props) => {
 
       console.log("sdfds", updatedResults);
       generateAssetsPDF(updatedResults);
+      // limpiar inputs
+      setAssetSelected("");
     } catch (error) {
       console.log("probando", error.response);
       if (error.response?.data?.errors) {
