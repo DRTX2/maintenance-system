@@ -11,7 +11,6 @@ class AssetsSeeder extends Seeder
 {
     public function run(): void
     {
-
         Asset::create([
             'id_inc_ass' => 1,
             'id_cat_ass' => 5,
@@ -42,11 +41,40 @@ class AssetsSeeder extends Seeder
 
 
         Asset::create([
-            'id_inc_ass' => 3,
-            'id_cat_ass' => 1,
+            'id_inc_ass' => 2,
+            'id_cat_ass' => 5,
             'id_loc_ass' => 1,
             'cod_ass' => 'ACT-003',
             'ser_num_ass' => 'SERIAL-003',
+            'obs_add_ass' => 'Incluye cable de red adicional.',
+            'est_ass' => 'V',
+        ])->components()->attach([
+                    ['component_id' => 13, 'description' => 'Puerto Ethernet 10/100/1000 Mbps'],
+                    ['component_id' => 14, 'description' => 'Chip de Conmutación Broadcom BCM56150'],
+                    ['component_id' => 15, 'description' => 'Placa Base Cisco Catalyst 2960-X'],
+                ]);
+
+        Asset::create([
+            'id_inc_ass' => 5,
+            'id_cat_ass' => 5,
+            'id_loc_ass' => 1,
+            'cod_ass' => 'ACT-004',
+            'ser_num_ass' => 'SERIAL-004',
+            'obs_add_ass' => 'Incluye cable de red adicional.',
+            'est_ass' => 'V',
+        ])->components()->attach([
+                    ['component_id' => 13, 'description' => 'Puerto Ethernet 10/100/1000 Mbps'],
+                    ['component_id' => 14, 'description' => 'Chip de Conmutación Broadcom BCM56150'],
+                    ['component_id' => 15, 'description' => 'Placa Base Cisco Catalyst 2960-X'],
+                ]);
+
+
+        Asset::create([
+            'id_inc_ass' => 5,
+            'id_cat_ass' => 1,
+            'id_loc_ass' => 1,
+            'cod_ass' => 'ACT-005',
+            'ser_num_ass' => 'SERIAL-005',
             'obs_add_ass' => 'Viene con un USB de 16 GB adicional',
             'est_ass' => 'V',
         ])->components()->attach([
@@ -61,11 +89,11 @@ class AssetsSeeder extends Seeder
 
 
         Asset::create([
-            'id_inc_ass' => 4,
+            'id_inc_ass' => 6,
             'id_cat_ass' => 3,
             'id_loc_ass' => 1,
-            'cod_ass' => 'ACT-004',
-            'ser_num_ass' => 'SERIAL-004',
+            'cod_ass' => 'ACT-006',
+            'ser_num_ass' => 'SERIAL-006',
             'obs_add_ass' => 'Incluye un cable de conexión USB adicional',
             'est_ass' => 'V',
         ])->components()->attach([
@@ -75,11 +103,11 @@ class AssetsSeeder extends Seeder
                     ['component_id' => 12, 'description' => 'Placa Base HP OfficeJet Pro 9015'],
                 ]);
         Asset::create([
-            'id_inc_ass' => 5,
+            'id_inc_ass' => 7,
             'id_cat_ass' => 5,
             'id_loc_ass' => 1,
-            'cod_ass' => 'ACT-005',
-            'ser_num_ass' => 'SERIAL-005',
+            'cod_ass' => 'ACT-007',
+            'ser_num_ass' => 'SERIAL-007',
             'obs_add_ass' => 'Incluye cable de red adicional.',
             'est_ass' => 'V',
         ])->components()->attach([
@@ -89,11 +117,11 @@ class AssetsSeeder extends Seeder
                 ]);
 
         Asset::create([
-            'id_inc_ass' => 6,
+            'id_inc_ass' => 8,
             'id_cat_ass' => 4,
             'id_loc_ass' => 1,
-            'cod_ass' => 'ACT-006',
-            'ser_num_ass' => 'SERIAL-006',
+            'cod_ass' => 'ACT-008',
+            'ser_num_ass' => 'SERIAL-008',
             'obs_add_ass' => 'Incluye un adaptador de red',
             'est_ass' => 'V',
         ])->components()->attach([
@@ -102,43 +130,7 @@ class AssetsSeeder extends Seeder
                 ]);
 
 
-        $assets = [
-            [
-                'id_inc_ass' => 7,
-                'id_cat_ass' => 1,
-                'id_loc_ass' => 1,
-                'cod_ass' => 'ACT-007',
-                'ser_num_ass' => 'SERIAL-007',
-                'obs_add_ass' => 'Activo inicial de hace 3 años.',
-                'est_ass' => 'V',
-            ],
-            [
-                'id_inc_ass' => 8,
-                'id_cat_ass' => 2,
-                'id_loc_ass' => 2,
-                'cod_ass' => 'ACT-008',
-                'ser_num_ass' => 'SERIAL-008',
-                'obs_add_ass' => 'Activo ingresado hace 2.5 años.',
-                'est_ass' => 'V',
-            ],
-            [
-                'id_inc_ass' => 9,
-                'id_cat_ass' => 3,
-                'id_loc_ass' => 1,
-                'cod_ass' => 'ACT-009',
-                'ser_num_ass' => 'SERIAL-009',
-                'obs_add_ass' => 'Activo más reciente, de hace 2 años.',
-                'est_ass' => 'V',
-            ],
-        ];
 
-
-
-
-
-        foreach ($assets as $asset) {
-            Asset::create($asset);
-        }
 
 
     }
