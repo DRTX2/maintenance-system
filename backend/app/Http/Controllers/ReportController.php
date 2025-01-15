@@ -73,48 +73,52 @@ class ReportController extends Controller
         ], 200);
     }
 
-    public function maintenancesToAssets()
+    public function generateMaintenanceReport()
     {
         try {
-            $assets = Asset::with('maintenanceDetails.maintenance', 'income')->get();
+            $assets = Asset::with(['maintenanceDetails.maintenance', 'income'])->get();
 
             $report = [
                 'desde' => now()->format('d/m/Y'),
-                'assets' => []
+                'cumplidos' => [],
+                'en_proceso' => [],
+                'inconclusos' => []
             ];
 
             foreach ($assets as $asset) {
                 $status = $this->determineMaintenanceStatus($asset);
 
-                $cumplidos = [];
-                $en_proceso = [];
-                $inconclusos = [];
-
                 foreach ($status as $year => $state) {
-                    $maintenanceData = ['años' => [$year]];
+                    $entry = [
+                        'id' => $asset->id,
+                        'codigo' => $asset->cod_ass,
+                        'serie' => $asset->ser_num_ass,
+                        'año' => $year
+                    ];
+
                     switch ($state) {
                         case 'cumplido':
-                            $cumplidos[] = $maintenanceData;
+                            $report['cumplidos'][] = $entry;
                             break;
                         case 'en_proceso':
-                            $en_proceso[] = $maintenanceData;
+                            $report['en_proceso'][] = $entry;
                             break;
                         case 'inconcluso':
-                            $inconclusos[] = $maintenanceData;
+                            $report['inconclusos'][] = $entry;
                             break;
                     }
                 }
+            }
 
-                $report['assets'][] = [
-                    'id' => $asset->id,
-                    'codigo' => $asset->cod_ass,
-                    'serie' => $asset->ser_num_ass,
-                    'mantenimientos' => [
-                        'cumplidos' => $cumplidos,
-                        'en_proceso' => $en_proceso,
-                        'inconclusos' => $inconclusos,
-                    ],
+            foreach (['cumplidos', 'en_proceso', 'inconclusos'] as $state) {
+                $report[$state] = [
+                    'total' => count($report[$state]),
+                    'assets' => $report[$state]
                 ];
+
+                if ($report[$state]['total'] === 0) {
+                    unset($report[$state]);
+                }
             }
 
             return response()->json($report, 200);
@@ -129,29 +133,31 @@ class ReportController extends Controller
     private function determineMaintenanceStatus($asset)
     {
         $currentYear = now()->year;
-        $ingresoFecha = Carbon::parse($asset->income->date_inc); // Convertir a Carbon para manejar fechas
+        $ingresoFecha = optional($asset->income)->date_inc ? Carbon::parse($asset->income->date_inc) : null;
+
+        if (!$ingresoFecha) {
+            return []; // Si no hay fecha de ingreso, no hay años que verificar.
+        }
+
         $yearsRequired = [
             $ingresoFecha->year + 1,
             $ingresoFecha->year + 2,
             $ingresoFecha->year + 3,
         ];
 
-        // Recopilar los años de mantenimiento realizados
-        $maintenanceYears = [];
-        foreach ($asset->maintenanceDetails as $maintenanceDetail) {
-            $maintenanceYears[] = (int)date('Y', strtotime($maintenanceDetail->maintenance->created_at));
-        }
-        $maintenanceYears = array_unique($maintenanceYears); // Eliminar duplicados
+        $maintenanceYears = collect($asset->maintenanceDetails)
+            ->map(fn($detail) => Carbon::parse($detail->maintenance->created_at)->year)
+            ->unique()
+            ->toArray();
 
-        // Verificar cada año requerido
         $status = [];
         foreach ($yearsRequired as $year) {
             if (in_array($year, $maintenanceYears)) {
-                $status[$year] = 'cumplido'; // El mantenimiento se realizó en este año
+                $status[$year] = 'cumplido';
             } elseif ($year < $currentYear) {
-                $status[$year] = 'inconcluso'; // Este año ya pasó y no hay mantenimiento registrado
+                $status[$year] = 'inconcluso';
             } else {
-                $status[$year] = 'en_proceso'; // Este año está en curso o aún no ha llegado
+                $status[$year] = 'en_proceso';
             }
         }
 
@@ -162,56 +168,55 @@ class ReportController extends Controller
     public function maintenancesToAssetsFormated()
     {
         try {
-            $assets = Asset::with(['maintenanceDetails.maintenance'])->get();
+            $assets = Asset::with(['maintenanceDetails.maintenance', 'income'])->get();
 
-            // Inicializar el reporte
             $report = [
-                'desde' => now()->format('01/01/Y'), // Fecha de inicio
-                'cumplidos' => [],
-                'en_proceso' => [],
-                'inconclusos' => [],
+                'cumplidos' => [
+                    'total' => 0,
+                    'assets' => [],
+                ],
+                'en_proceso' => [
+                    'total' => 0,
+                    'assets' => [],
+                ],
+                'inconclusos' => [
+                    'total' => 0,
+                    'assets' => [],
+                ],
             ];
 
-            // Recorrer los activos
             foreach ($assets as $asset) {
-                $status = $this->determineMaintenanceStatus($asset);
+                $mantenimientos = [];
+                $cumplidos = true; // Para verificar si todos son "Sí"
+                $inconcluso = false; // Para verificar si hay pendientes en el pasado
 
-                // Agrupar los años de cada estado
-                $groupedYears = [
-                    'cumplido' => [],
-                    'en_proceso' => [],
-                    'inconcluso' => []
-                ];
+                foreach ($this->determineMaintenanceStatus($asset) as $year => $state) {
+                    $mantenimientos[$year] = ($state === 'cumplido') ? 'Sí' : 'No';
 
-                foreach ($status as $year => $state) {
-                    $groupedYears[$state][] = $year;
-                }
-
-                // Agregar el activo a cada estado si aplica
-                foreach (['cumplido', 'en_proceso', 'inconcluso'] as $state) {
-                    if (!empty($groupedYears[$state])) {
-                        $entry = [
-                            'id_asset' => $asset->id,
-                            'codigo' => $asset->cod_ass,
-                            'serie' => $asset->ser_num_ass,
-                            'años' => $groupedYears[$state],
-                        ];
-
-                        // Agregar el activo al reporte en el estado correspondiente
-                        $report[$state][] = $entry;
+                    if ($state !== 'cumplido') {
+                        $cumplidos = false;
+                        if ($year < now()->year) {
+                            $inconcluso = true;
+                        }
                     }
                 }
-            }
 
-            // Para calcular el total de cada estado
-            foreach (['cumplidos', 'en_proceso', 'inconclusos'] as $state) {
-                $report[$state] = [
-                    'total' => count($report[$state]),
-                    'assets' => $report[$state]
+                $entry = [
+                    'codigo' => $asset->cod_ass,
+                    'serie' => $asset->ser_num_ass,
+                    'fechaAdquisicion' => $asset->income->date_inc,
+                    'mantenimientos' => $mantenimientos,
                 ];
-                
-                if (empty($report[$state]['assets']) || $report[$state]['total'] == 0) {
-                    unset($report[$state]);
+
+                if ($cumplidos) {
+                    $report['cumplidos']['assets'][] = $entry;
+                    $report['cumplidos']['total']++;
+                } elseif ($inconcluso) {
+                    $report['inconclusos']['assets'][] = $entry;
+                    $report['inconclusos']['total']++;
+                } else {
+                    $report['en_proceso']['assets'][] = $entry;
+                    $report['en_proceso']['total']++;
                 }
             }
 
