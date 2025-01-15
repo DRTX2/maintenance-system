@@ -33,8 +33,6 @@ const Report = () => {
       );
       const results = response.data.results;
       console.log(results);
-
-      // generateResponsiblesPDF(results);
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {
