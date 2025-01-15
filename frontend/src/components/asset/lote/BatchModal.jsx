@@ -49,18 +49,39 @@ const BatchModal = ({ open, onClose }) => {
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-      console.log("Mapeado", jsonData);
+      const formattedData = jsonData.map((row) => {
+        const assetData = {
+          id_inc_ass: row["Ingreso"], // Asigna "Ingreso" a "id_inc_ass"
+          id_cat_ass: parseInt(row["Categoria"], 10), // Convierte "Categoria" a un número entero
+          id_loc_ass: row["Localización"], // Asigna "Localización" a "id_loc_ass"
+          cod_ass: row["Codigo Activo"], // Asigna "Codigo Activo" a "cod_ass"
+          ser_num_ass: row["Numero de Serie"], // Asigna "Numero de Serie" a "ser_num_ass"
+          obs_add_ass: "", // Inicializa un valor vacío por defecto
+          components: row["Componentes"] || [], // Guarda los componentes tal cual en la propiedad 'components'
+        };
 
-      const formattedData = jsonData.map((row) => ({
-        id_inc_ass: row["Ingreso"], // Mapea la columna "Ingreso"
-        id_cat_ass: parseInt(row["Categoria"], 10), // Convierte la categoría a entero
-        id_loc_ass: row["Localización"], // Mapea la columna "Localización"
-        cod_ass: row["Codigo Activo"], // Mapea la columna "Codigo Activo"
-        ser_num_ass: row["Numero de Serie"], // Mapea la columna "Numero de Serie"
-        obs_add_ass: "", // Por defecto vacío o agregar un valor genérico
-        components: [], // Lista de componentes vacía (agregar lógica según se necesite)
-      }));
+        if (assetData.components.length > 0) {
+          const componentsArray = assetData.components
+            .split(";")
+            .map((component) => {
+              const [id, description] = component.split(":");
 
+              return {
+                id: parseInt(id, 10),
+                pivot: {
+                  description: description?.trim(),
+                },
+              };
+            })
+            .filter((component) => component.id && component.pivot.description);
+
+          assetData.components = componentsArray;
+        }
+
+        return assetData;
+      });
+
+      console.log("Lo que se tiene al final es", formattedData);
       setData(formattedData); // Guardar datos en el estado
     };
     reader.readAsBinaryString(file); // Leer el archivo como binario

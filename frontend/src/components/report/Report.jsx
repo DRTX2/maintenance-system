@@ -10,6 +10,8 @@ import ReportItem from "./ReportItem";
 import ResponsiblesModal from "./ResponsiblesModal";
 import AssetsModal from "./AssetsModal";
 import generateMaintenancesPDF from "./generateMaintenancesPDF";
+import axiosInstance from "../../utils/api";
+import { toast } from "react-toastify";
 
 const Report = () => {
   const role = getDecodedToken()?.role;
@@ -36,15 +38,14 @@ const Report = () => {
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {
-        toast.error("No se pudo obtener el reporte de historial de mantenimientos");
+        toast.error(
+          "No se pudo obtener el reporte de historial de mantenimientos"
+        );
       } else {
         toast.error("Error inesperado al obtener mantenimientos.");
       }
     }
-    
   };
-
-  
 
   return (
     <Wrapper>

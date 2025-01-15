@@ -1,4 +1,16 @@
-import { TextField, Typography, MenuItem, Button } from "@mui/material";
+import {
+  TextField,
+  Typography,
+  MenuItem,
+  Button,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Box,
+  IconButton,
+} from "@mui/material";
+import DoneIcon from "@mui/icons-material/Done";
 import { useEffect, useState } from "react";
 import { generateErrorMessage } from "../../utils/validations";
 import axiosInstance from "../../utils/api";
@@ -9,32 +21,23 @@ import ModalWrapper from "./ModalWrapper";
 import generateAssetsPDF from "./generateAssetsPDF";
 import { useDataContext } from "./../../provider/DataContext";
 import { useAssetsContext } from "../../provider/AssetsContext";
+import tableStyles from "../../generic/styles/TableStyles";
+import GenericTable from "../GenericTable";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
 const AssetsModal = (props) => {
-  const [error, setError] = useState("");
   const [assetSelected, setAssetSelected] = useState("");
   const { data } = useDataContext();
   const { assets } = useAssetsContext();
 
-  const renderAssets = () =>
-    assets.length > 0 ? (
-      assets.map((asset) => (
-        <MenuItem key={asset.id} value={asset.id}>
-          {`${asset.cod_ass} - ${asset.ser_num_ass}`}
-        </MenuItem>
-      ))
-    ) : (
-      <MenuItem>No se han encontrado activos</MenuItem>
-    );
-
   const handleAsset = (assetId) => {
     setAssetSelected(assetId);
-    setError("");
   };
 
   const handleReport = async () => {
     if (!assetSelected) {
-      setError("Debe seleccionar un activo.");
+      toast.error("Debe seleccionar un activo.");
       return;
     }
     console.log(assetSelected);
@@ -44,7 +47,7 @@ const AssetsModal = (props) => {
         { asset: assetSelected }
       );
       const results = response.data.results;
-      console.log(results);
+      console.log("restes", results);
 
       const updatedResults = results.map((result) => {
         // Buscamos el responsable correspondiente en 'data.responsibles' usando el nombre completo
@@ -62,11 +65,12 @@ const AssetsModal = (props) => {
         return result;
       });
 
+      console.log("sdfds", updatedResults);
       generateAssetsPDF(updatedResults);
       // limpiar inputs
       setAssetSelected("");
     } catch (error) {
-      console.log(error);
+      console.log("probando", error.response);
       if (error.response?.data?.errors) {
         toast.error("No se pudo obtener el reporte");
       } else {
@@ -85,18 +89,59 @@ const AssetsModal = (props) => {
     >
       <GeneralWrapper>
         <ModalWrapper>
-          <Typography>Activo</Typography>
-          <TextField
-            select
-            label="Seleccione algún activo"
-            value={assetSelected || ""}
-            onChange={(e) => handleAsset(e.target.value)}
-            sx={{ width: "50%" }}
-            error={!!error}
-            helperText={error}
-          >
-            {renderAssets()}
-          </TextField>
+          <Box sx={{ width: "100%" }}>
+            {assets?.length > 0 ? (
+              <>
+                <GenericTable
+                  data={assets}
+                  dataCount={assets.length}
+                  isDelete={false}
+                  setIsDelete={() => {}}
+                >
+                  {(currentPageData) => (
+                    <>
+                      <TableHead sx={tableStyles.tableHead}>
+                        <TableRow>
+                          <TableCell>Código</TableCell>
+                          <TableCell>Número de serie</TableCell>
+                          <TableCell>{""}</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {currentPageData.map((row) => (
+                          <TableRow key={row.id}>
+                            <TableCell>{row.cod_ass}</TableCell>
+                            <TableCell>{row.ser_num_ass}</TableCell>
+                            <TableCell>
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAsset(row.id);
+                                }}
+                                color={
+                                  row.id === assetSelected
+                                    ? "primary"
+                                    : "default"
+                                }
+                              >
+                                {row.id === assetSelected ? (
+                                  <RadioButtonCheckedIcon />
+                                ) : (
+                                  <RadioButtonUncheckedIcon />
+                                )}
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </>
+                  )}
+                </GenericTable>
+              </>
+            ) : (
+              <Typography>No se han encontrado datos.</Typography>
+            )}
+          </Box>
         </ModalWrapper>
         <ModalWrapper>
           <Button variant="contained" onClick={handleReport}>

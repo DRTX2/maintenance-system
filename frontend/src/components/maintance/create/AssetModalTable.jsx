@@ -10,7 +10,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import GenericTable from "../../GenericTable";
 import SearchBar from "../../../generic/SearchBar";
@@ -19,8 +18,9 @@ import AssetFilters from "../../../generic/filters/AssetFilters";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import categoryViewStyles from "../../../generic/styles/ViewStyles";
+import tableStyles from "../../../generic/styles/TableStyles";
 
-const AssetModalTable = ({ open, onClose, assets, onAdd }) => {
+const AssetModalTable = ({ open, onClose, onAdd }) => {
   const { filteredAssets, updateFilters, filterAssetsByTerm } =
     useAssetsContext();
 
@@ -62,12 +62,18 @@ const AssetModalTable = ({ open, onClose, assets, onAdd }) => {
       open={open}
       onClose={onClose}
       PaperProps={{
-        sx: { width: "800px", maxWidth: "1500px" },
+        sx: { width: "900px", maxWidth: "1600px" },
       }}
     >
       <DialogTitle>Añadir activos</DialogTitle>
       <DialogContent>
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            margin: "1rem 0",
+          }}
+        >
           {/* Filtros */}
           <SearchBar
             placeholder={`Buscar por número de serie`}
@@ -86,13 +92,14 @@ const AssetModalTable = ({ open, onClose, assets, onAdd }) => {
           >
             {(currentPageData) => (
               <>
-                <TableHead>
+                <TableHead sx={tableStyles.tableHead}>
                   <TableRow>
                     <TableCell>Código</TableCell>
                     <TableCell>Número de serie</TableCell>
                     <TableCell>Ubicación</TableCell>
                     <TableCell>Ingreso</TableCell>
                     <TableCell>Categoria</TableCell>
+                    <TableCell>{""}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
