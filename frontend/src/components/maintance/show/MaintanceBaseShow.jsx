@@ -265,7 +265,6 @@ const MaintanceBaseShow = ({ columns }) => {
               onFilterChange={handleFilterChange}
               clearFilters={clearFilters}
               setClearFilters={setClearFilters}
-              // onClear={fetchData}
             />
           </Box>
 

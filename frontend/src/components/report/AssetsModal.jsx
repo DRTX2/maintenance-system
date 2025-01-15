@@ -28,7 +28,6 @@ import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
 const AssetsModal = (props) => {
   const [assetSelected, setAssetSelected] = useState("");
-  const { data } = useDataContext();
   const { assets } = useAssetsContext();
 
   const handleAsset = (assetId) => {
@@ -46,7 +45,7 @@ const AssetsModal = (props) => {
         { asset: assetSelected }
       );
       const asset = response.data;
-      console.log("Que devolvio", asset);
+      console.log("respuesta", asset);
       generateAssetsPDF(asset);
       setAssetSelected("");
     } catch (error) {

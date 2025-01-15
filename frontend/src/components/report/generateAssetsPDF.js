@@ -71,9 +71,9 @@ const generateResponsiblesPDF = (asset) => {
       }`,
 
       // Otros campos con fallback a "N/A"
-      result.cod_main || "N/A",
-      result.type || "N/A",
-      result.dni_res_main || "N/A",
+      result?.cod_main || "N/A",
+      result?.type || "N/A",
+      result?.dni_res_main || "N/A",
 
       // Actividades, observaciones y componentes reemplazados
       (result?.asset?.activities || [])

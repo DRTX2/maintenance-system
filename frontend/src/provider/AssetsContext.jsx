@@ -69,35 +69,35 @@ export const AssetsProvider = ({ children }) => {
     }
 
     // Filtrar por ubicacion
-    if (filters.locations.length > 0) {
+    if (filters?.locations?.length > 0) {
       filtered = filtered.filter((asset) =>
         filters.locations.includes(asset.location_data.id)
       );
     }
 
     // Filtrar ingresos
-    if (filters.incomes.length > 0) {
+    if (filters?.incomes?.length > 0) {
       filtered = filtered.filter((asset) =>
         filters.incomes.includes(asset.income_data.id)
       );
     }
 
     // Filtrar por categoria
-    if (filters.categories.length > 0) {
+    if (filters?.categories?.length > 0) {
       filtered = filtered.filter((asset) =>
         filters.categories.includes(asset.category_data.tip_dis)
       );
     }
 
     // Filtrar por dispositivo
-    if (filters.devices.length > 0) {
+    if (filters?.devices?.length > 0) {
       filtered = filtered.filter((asset) =>
         filters.devices.includes(asset.category_data.nom_dis)
       );
     }
 
     // Filtrar por estado
-    if (filters.status.length > 0) {
+    if (filters?.status?.length > 0) {
       filtered = filtered.filter((asset) =>
         filters.status.includes(asset.est_ass)
       );
