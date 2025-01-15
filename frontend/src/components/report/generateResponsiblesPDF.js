@@ -10,6 +10,8 @@ const calculateCenter = (doc, text) => {
 };
 
 const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
+  console.log("repuesta back", results);
+
   const doc = new jsPDF();
   console.log("en inicio", inicio);
   console.log("fin", fin);
@@ -66,15 +68,16 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
         (currentY += 10)
       );
 
-      const maintenanceDate = `${dayjs(result.created_at)
-        .add(1, "day")
+      const maintenanceDate = `${dayjs
+        .utc(result.created_at)
         .format(
           "MM-DD-YYYY"
-        )} - ${dayjs(result.ended_at).add(1, "day").format("MM-DD-YYYY")}`;
+        )} - ${dayjs.utc(result.ended_at).format("MM-DD-YYYY")}`;
       doc.setFont("helvetica", "bold");
       doc.text("Periodo de realización:", 10, (currentY += 10));
       doc.setFont("helvetica", "normal");
       doc.text(maintenanceDate, 60, currentY);
+      console.log("fecha de manteminiento", maintenanceDate);
 
       const maintenanceType = result.type || "N/A";
       doc.setFont("helvetica", "bold");
@@ -115,7 +118,7 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
         headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0] },
       });
 
-      currentY = doc.lastAutoTable.finalY + 10;
+      currentY = doc.lastAutoTable.finalY + 5;
     });
   }
 

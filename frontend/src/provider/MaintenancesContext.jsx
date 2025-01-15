@@ -17,6 +17,7 @@ export const MaintenancesProvider = ({ children }) => {
     dates: { startDate: null, endDate: null },
   });
 
+  console.log("mantenimientos", maintenances);
   useEffect(() => {
     fetchMaintenances();
     setIsReady(true);

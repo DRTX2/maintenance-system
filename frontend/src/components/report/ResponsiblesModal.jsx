@@ -153,6 +153,7 @@ const ResponsiblesModal = (props) => {
         formattedData
       );
       const results = response.data.results;
+      console.log("resultados reporte", results);
 
       generateResponsiblesPDF(responsibleData, results, inicio, fin);
       setFormData(initialState);
