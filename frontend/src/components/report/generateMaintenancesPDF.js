@@ -142,9 +142,12 @@ const generateMaintenancesPDF = (results) => {
           [
             item.codigo,
             item.serie,
-            ...añosHeaders.map((año) =>
-              item.mantenimientos[año] === "Sí" ? "Realizado" : "Por realizar"
-            ),
+            ...añosHeaders.map((año) => {
+              const estado = item.mantenimientos[año];
+              if (estado === "Sí") return "Realizado";
+              if (estado === "No") return "Por realizar";
+              return "Sin realizar";
+            }),
           ],
         ],
         startY: startY,

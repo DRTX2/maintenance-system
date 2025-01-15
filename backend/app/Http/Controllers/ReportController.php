@@ -199,8 +199,14 @@ class ReportController extends Controller
                 $inconcluso = false; // Para verificar si hay pendientes en el pasado
 
                 foreach ($this->determineMaintenanceStatus($asset) as $year => $state) {
-                    $mantenimientos[$year] = ($state === 'cumplido') ? 'Sí' : 'No';
-
+                    if ($state === 'cumplido') {
+                        $mantenimientos[$year] = 'Sí';
+                    } elseif ($state === 'inconcluso') {
+                        $mantenimientos[$year] = ''; // Año inconcluso tendrá valor vacío
+                    } else {
+                        $mantenimientos[$year] = 'No'; // En proceso se mantiene como "No"
+                    }
+                
                     if ($state !== 'cumplido') {
                         $cumplidos = false;
                         if ($year < now()->year) {
