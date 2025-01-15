@@ -126,10 +126,8 @@ const ResponsiblesModal = (props) => {
     const hasErrors = Object.values(newErrors).length > 0;
 
     if (hasErrors) {
-      toast.error("Hay errores pendientes");
       return;
     }
-    console.log("Reporte por resposable data");
     const responsibleData = data.responsibles.find(
       (responsible) => responsible.dni_res === formData.idResponsible
     );
