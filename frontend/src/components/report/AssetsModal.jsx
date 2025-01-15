@@ -44,7 +44,7 @@ const AssetsModal = (props) => {
         { asset: assetSelected }
       );
       const results = response.data.results;
-      console.log(results);
+      console.log("restes", results);
 
       const updatedResults = results.map((result) => {
         // Buscamos el responsable correspondiente en 'data.responsibles' usando el nombre completo
@@ -62,9 +62,10 @@ const AssetsModal = (props) => {
         return result;
       });
 
+      console.log("sdfds", updatedResults);
       generateAssetsPDF(updatedResults);
     } catch (error) {
-      console.log(error);
+      console.log("probando", error.response);
       if (error.response?.data?.errors) {
         toast.error("No se pudo obtener el reporte");
       } else {

@@ -104,6 +104,18 @@ const ResponsiblesModal = (props) => {
       newErrors.endDate = "Ingrese una fecha válida";
     }
 
+    if (formData.startDate && formData.endDate) {
+      const start = dayjs(formData.startDate);
+      const end = dayjs(formData.endDate);
+
+      if (start.isAfter(end)) {
+        newErrors.startDate =
+          "La fecha de inicio no puede ser mayor que la fecha de fin";
+        newErrors.endDate =
+          "La fecha de fin no puede ser menor que la fecha de inicio";
+      }
+    }
+
     return newErrors;
   };
 

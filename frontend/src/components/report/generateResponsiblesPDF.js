@@ -61,40 +61,42 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
 
   // Filas de la tabla
 
-  const rows = results.map((result) => [
-    // Formatear created_at con fallback a "N/A"
-    dayjs(result.created_at).isValid()
-      ? dayjs(result.created_at).format("YYYY-MM-DD HH:mm:ss")
-      : "N/A",
+  const rows = results.map((result) => {
+    const created_at = dayjs(result.created_at).isValid()
+      ? dayjs(result.created_at).format("YYYY-MM-DD")
+      : "N/A";
 
-    // Formatear ended_at con fallback a "N/A"
-    dayjs(result.ended_at).isValid()
-      ? dayjs(result.ended_at).format("YYYY-MM-DD HH:mm:ss")
-      : "N/A",
+    const ended_at = dayjs(result.ended_at).isValid()
+      ? dayjs(result.ended_at).format("YYYY-MM-DD")
+      : "N/A";
 
-    // Otros campos
-    result.cod_main || "N/A",
-    result.type || "N/A",
-    result.details?.[0]?.asset?.cod_ass || "N/A",
+    return [
+      created_at + "\n" + ended_at,
 
-    // Listas de actividades, observaciones y componentes reemplazados
-    (result.details || [])
-      .flatMap((detail) => detail.asset?.activities || [])
-      .map((a) => a.act_main)
-      .join("\n"),
+      // Otros campos
+      result.cod_main || "N/A",
+      result.type || "N/A",
+      result.details?.[0]?.asset?.cod_ass || "N/A",
 
-    // Todas las observaciones de todos los detalles
-    (result.details || [])
-      .flatMap((detail) => detail.asset?.observations || [])
-      .map((o) => o.des_obs)
-      .join("\n"),
+      // Listas de actividades, observaciones y componentes reemplazados
+      (result.details || [])
+        .flatMap((detail) => detail.asset?.activities || [])
+        .map((a) => a.act_main)
+        .join("\n"),
 
-    // Todos los componentes reemplazados de todos los detalles
-    (result.details || [])
-      .flatMap((detail) => detail.asset?.replaced_components || [])
-      .map((c) => `${c.nam_com}: ${c.des_rep_com}`)
-      .join("\n."),
-  ]);
+      // Todas las observaciones de todos los detalles
+      (result.details || [])
+        .flatMap((detail) => detail.asset?.observations || [])
+        .map((o) => o.des_obs)
+        .join("\n"),
+
+      // Todos los componentes reemplazados de todos los detalles
+      (result.details || [])
+        .flatMap((detail) => detail.asset?.replaced_components || [])
+        .map((c) => `${c.nam_com}: ${c.des_rep_com}`)
+        .join("\n."),
+    ];
+  });
 
   if (rows.length === 0) {
     // Si no hay datos

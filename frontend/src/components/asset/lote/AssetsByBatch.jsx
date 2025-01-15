@@ -96,7 +96,7 @@ const AssetsByBatch = () => {
             sx={{ width: "100%" }}
             onClick={handleOpenDialog}
           >
-            Errores al subir el archivo
+            Archivo con algunos errores
           </Alert>
         </Snackbar>
 
@@ -106,7 +106,7 @@ const AssetsByBatch = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>Errores al subir activos</DialogTitle>
+          <DialogTitle>El archivo contuvo algunos errores</DialogTitle>
           <DialogContent>
             {assets?.invalid_assets?.map((error, index) => (
               <Box key={index} marginBottom={2}>
@@ -144,125 +144,134 @@ const AssetsByBatch = () => {
       </Typography>
 
       {assets?.valid_assets.length > 0 ? (
-        assets?.valid_assets?.map((asset, index) => (
-          <Box
-            key={index}
-            p={3}
-            border="1px solid #ddd"
-            borderRadius={4}
-            margin="2rem 2rem"
-          >
-            <Typography variant="title2" color="#6068A5" fontWeight="bold">
-              Activo
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="subtitle2"
-                  color="#6068A5"
-                  fontWeight="bold"
-                >
-                  Código
+        <GenericTable
+          data={assets.valid_assets}
+          dataCount={assets.valid_assets.length}
+          isDelete={false}
+          setIsDelete={() => {}}
+        >
+          {(currentPageData) =>
+            currentPageData.map((asset, index) => (
+              <Box
+                key={index}
+                p={3}
+                border="1px solid #ddd"
+                borderRadius={4}
+                margin="2rem 2rem"
+              >
+                <Typography variant="title2" color="#6068A5" fontWeight="bold">
+                  Activo
                 </Typography>
-                <TextField
-                  fullWidth
-                  value={asset?.cod_ass}
-                  InputProps={{ readOnly: true }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="subtitle2"
-                  color="#6068A5"
-                  fontWeight="bold"
-                >
-                  Número de serie
-                </Typography>
-                <TextField
-                  fullWidth
-                  value={asset?.ser_num_ass}
-                  InputProps={{ readOnly: true }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} color="#6068A5">
-                <Typography variant="subtitle2" fontWeight="bold">
-                  Ubicación
-                </Typography>
-                <TextField
-                  fullWidth
-                  value={asset?.location_name}
-                  InputProps={{ readOnly: true }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="subtitle2"
-                  color="#6068A5"
-                  fontWeight="bold"
-                >
-                  Ingreso
-                </Typography>
-                <TextField
-                  fullWidth
-                  value={asset?.income_code}
-                  InputProps={{ readOnly: true }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="subtitle2"
-                  color="#6068A5"
-                  fontWeight="bold"
-                >
-                  Dispositivo
-                </Typography>
-                <TextField
-                  fullWidth
-                  value={asset?.category_name}
-                  InputProps={{ readOnly: true }}
-                />
-              </Grid>
-            </Grid>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Typography
+                      variant="subtitle2"
+                      color="#6068A5"
+                      fontWeight="bold"
+                    >
+                      Código
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      value={asset?.cod_ass}
+                      InputProps={{ readOnly: true }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography
+                      variant="subtitle2"
+                      color="#6068A5"
+                      fontWeight="bold"
+                    >
+                      Número de serie
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      value={asset?.ser_num_ass}
+                      InputProps={{ readOnly: true }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} color="#6068A5">
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Ubicación
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      value={asset?.location_name}
+                      InputProps={{ readOnly: true }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography
+                      variant="subtitle2"
+                      color="#6068A5"
+                      fontWeight="bold"
+                    >
+                      Ingreso
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      value={asset?.income_code}
+                      InputProps={{ readOnly: true }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography
+                      variant="subtitle2"
+                      color="#6068A5"
+                      fontWeight="bold"
+                    >
+                      Dispositivo
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      value={asset?.category_name}
+                      InputProps={{ readOnly: true }}
+                    />
+                  </Grid>
+                </Grid>
 
-            {asset?.components?.length > 0 && (
-              <>
-                <Typography variant="subtitle2" marginTop={4}>
-                  Componentes del activo
-                </Typography>
-                <GenericTable
-                  data={asset?.components}
-                  dataCount={asset?.components?.length}
-                  isDelete={false}
-                  setIsDelete={() => {}}
-                >
-                  {(currentPageData) => (
-                    <>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Nombre</TableCell>
-                          <TableCell>Descripción</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {currentPageData.map((component, i) => (
-                          <TableRow key={i}>
-                            <TableCell>{component?.name}</TableCell>
-                            <TableCell>
-                              {component.pivot?.description || "N/A"}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </>
-                  )}
-                </GenericTable>
-              </>
-            )}
-          </Box>
-        ))
+                {asset?.components?.length > 0 && (
+                  <>
+                    <Typography variant="subtitle2" marginTop={4}>
+                      Componentes del activo
+                    </Typography>
+                    <GenericTable
+                      data={asset?.components}
+                      dataCount={asset?.components?.length}
+                      isDelete={false}
+                      setIsDelete={() => {}}
+                    >
+                      {(currentPageData) => (
+                        <>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Nombre</TableCell>
+                              <TableCell>Descripción</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {currentPageData.map((component, i) => (
+                              <TableRow key={i}>
+                                <TableCell>{component?.name}</TableCell>
+                                <TableCell>
+                                  {component.pivot?.description || "N/A"}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </>
+                      )}
+                    </GenericTable>
+                  </>
+                )}
+              </Box>
+            ))
+          }
+        </GenericTable>
       ) : (
         <Typography variant="subtitle1" marginBottom="2rem">
-          No se han encontrado activos validos.
+          No se han encontrado activos válidos.
         </Typography>
       )}
 
