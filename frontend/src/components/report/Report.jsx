@@ -29,10 +29,11 @@ const Report = () => {
   const handleReportMaintenaces = async () => {
     try {
       const response = await axiosInstance.post(
-        "/report/maintenancesToAssetsFormated"
+        "/report/formated-mandatory-maintenances"
       );
-      const results = response.data.results;
-      console.log(results);
+      const results = response.data;
+      console.log("Que se obtiene", results);
+      generateMaintenancesPDF(response.data);
     } catch (error) {
       console.log(error);
       if (error.response?.data?.errors) {
