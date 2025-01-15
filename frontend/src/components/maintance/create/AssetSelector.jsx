@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import { Box, TextField, MenuItem, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import AssetModalTable from "./AssetModalTable";
 
-const AssetSelector = ({
-  data,
-  onAdd,
-  error,
-  helperText,
-  setErrorAsset,
-  setHelperTextAsset,
-}) => {
+const AssetSelector = ({ data, onAdd }) => {
   const [openModal, setOpenModal] = useState(false);
 
   return (

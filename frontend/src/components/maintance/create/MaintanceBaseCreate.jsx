@@ -11,7 +11,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TablePagination,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
@@ -23,9 +22,7 @@ import {
   handleErrors,
 } from "../../../utils/validations";
 import { toast } from "react-toastify";
-
 import axiosInstance from "../../../utils/api";
-
 import tableStyles from "../../../generic/styles/TableStyles";
 import DynamicField from "../../../generic/DynamicField";
 import AssetSelector from "./AssetSelector";
@@ -50,10 +47,6 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
   const [errors, setErrors] = useState({});
   const [isDelete, setIsDelete] = useState(false);
   const navigate = useNavigate();
-
-  // Mensajes para el select del asset ya que es un componente separado al dynamic.
-  const [errorAsset, setErrorAsset] = useState(false);
-  const [helperTextAsset, setHelperTextAsset] = useState("");
 
   const handleFieldChange = (key, value) => {
     setEntity((prev) => ({ ...prev, [key]: value }));
@@ -94,13 +87,10 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
       activities: [],
       observations: [],
       replaced_components: [],
-      isAdded: true, // Añadimos el campo isAdded al activo
+      isAdded: true,
     };
 
     setAssetsTable((prev) => [...prev, updatedAsset]);
-
-    setErrorAsset(false);
-    setHelperTextAsset("");
   };
 
   // Actividades
@@ -198,8 +188,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
 
   const handleCreate = async () => {
     if (assetsTable.length === 0) {
-      setErrorAsset(true);
-      setHelperTextAsset("Debe agregar al menos un activo.");
+      toast.error("Debe agregar al menos un activo");
     }
 
     if (validateAll()) {
@@ -277,14 +266,7 @@ const MaintanceBaseCreate = ({ fields, columns, defaultState, assets }) => {
             </Grid2>
           ))}
           <Grid2 item size={{ xs: 12, sm: 6, md: 6 }} key="assetsSelector">
-            <AssetSelector
-              data={assets}
-              onAdd={handleAddAsset}
-              error={errorAsset}
-              helperText={helperTextAsset}
-              setErrorAsset={setErrorAsset}
-              setHelperTextAsset={setHelperTextAsset}
-            />
+            <AssetSelector data={assets} onAdd={handleAddAsset} />
           </Grid2>
         </Grid2>
 
