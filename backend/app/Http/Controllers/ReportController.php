@@ -34,10 +34,14 @@ class ReportController extends Controller
         }
 
         if ($request->has('created_at') && $request->has('ended_at')) {
-            $maintenances->whereBetween('created_at', [
-                $request->input('created_at'),
-                $request->input('ended_at')
-            ]);
+            $startDate = $request->input('created_at');
+            $endDate = $request->input('ended_at');
+
+            // Filtra los mantenimientos donde:
+            // - La fecha de creación sea mayor o igual a startDate
+            // - La fecha de finalización sea menor o igual a endDate
+            $maintenances->where('created_at', '>=', $startDate)
+                ->where('ended_at', '<=', $endDate);
         }
 
         $maintenances = $this->maintenanceReportService->loadRelations($maintenances)->get();

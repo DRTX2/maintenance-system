@@ -59,6 +59,14 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
     let currentY = 55;
 
     results.forEach((result) => {
+      // Si el espacio restante es menor que el necesario, agregar una nueva página
+      const spaceLeft = doc.internal.pageSize.height - currentY - 20; // Espacio disponible en la página
+      if (spaceLeft < 40) {
+        // Si el espacio es muy pequeño
+        doc.addPage(); // Agrega una nueva página
+        currentY = 15; // Reinicia el margen superior en la nueva página
+      }
+
       // Cada encabezado del mantenimiento
       const maintenanceCode = result.cod_main || "N/A";
       doc.setFont("helvetica", "bold");
