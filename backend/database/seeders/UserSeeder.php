@@ -27,5 +27,21 @@ class UserSeeder extends Seeder
             "role" => "user",
             "dni_usr" => "1716909690"
         ]);
+
+        User::create([
+            "name"=> "Administrador base",
+            "email" => "admin@gmail.com",
+            "password"=> Hash::make("admin123"),
+            "role"=> "admin",
+            "dni_usr"=> "1111111111"
+        ]);
+
+        User::create([
+            "name"=> "Usuario Normal",
+            "email" => "user@gmail.com",
+            "password"=> Hash::make("user123"),
+            "role"=> "user",
+            "dni_usr"=> "1111111111"
+        ]);
     }
 }
