@@ -55,14 +55,14 @@ export const MaintenancesProvider = ({ children }) => {
     // Filtrar por tipos
     if (filters?.types?.length > 0) {
       filtered = filtered.filter((maintenance) =>
-        filters.types.includes(maintenance.type_data.id)
+        filters.types.includes(maintenance?.type_data.id)
       );
     }
 
     // Filtrar por responsables
     if (filters?.responsibles?.length > 0) {
       filtered = filtered.filter((maintenance) =>
-        filters.responsibles.includes(maintenance.responsable_data.dni_res)
+        filters.responsibles.includes(maintenance?.responsable_data.dni_res)
       );
     }
 

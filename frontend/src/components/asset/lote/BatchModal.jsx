@@ -109,7 +109,10 @@ const BatchModal = ({ open, onClose }) => {
         });
       }
     } catch (error) {
-      toast.error("No se ha podido procesar por lotes");
+      console.log(error.response);
+      toast.error(
+        "No se ha podido procesar por lotes, puesto que existen algunos campos vacios o incorrectos"
+      );
     }
   };
 

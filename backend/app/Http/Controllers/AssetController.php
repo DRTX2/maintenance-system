@@ -328,6 +328,9 @@ class AssetController extends Controller
 
         return response()->json([
             'asset' => $asset->toArray() + [
+                'category_data' => $asset->category,
+                'location_data' => $asset->location,
+                'income_data' => $asset->income,
                 'category_name' => $asset->category->nom_dis,
                 'location_name' => $asset->location->nam_loc,
                 'income_code' => $asset->income->cod_inc,
@@ -383,6 +386,9 @@ class AssetController extends Controller
 
         return response()->json([
             'asset' => $asset->toArray() + [
+                'category_data' => $asset->category,
+                'location_data' => $asset->location,
+                'income_data' => $asset->income,
                 'category_name' => $asset->category->nom_dis,
                 'location_name' => $asset->location->nam_loc,
                 'income_code' => $asset->income->cod_inc,
