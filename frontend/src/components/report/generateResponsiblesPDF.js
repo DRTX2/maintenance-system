@@ -115,7 +115,7 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
         headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0] },
       });
 
-      currentY = doc.lastAutoTable.finalY + 10;
+      currentY = doc.lastAutoTable.finalY + 5;
     });
   }
 
