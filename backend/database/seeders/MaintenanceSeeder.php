@@ -18,8 +18,130 @@ class MaintenanceSeeder extends Seeder
         DB::transaction(function () {
 
 
+
             $maintenances = [
                 [
+
+                    [
+                        'dni_res_main' => '1724567890',
+                        'cod_main' => 'MA-2021',
+                        'id_typ_main' => 1,
+                        'vis_main' => 'V',
+                        'created_at' => Carbon::parse('2021-06-15'),
+                        'ended_at' => Carbon::parse('2021-06-20'),
+                        'details' => [
+                            [
+                                'id_ass_bel' => 1, // ID del activo
+                                'observations' => [
+                                    ['des_obs' => 'Revisión general del switch.'],
+                                ],
+                                'replaced_components' => [
+                                    ['id_com_bel' => 15, 'des_rep_com' => 'La placa base presenta fallas de alimentación.'],
+                                ],
+                                'activities' => [1], // ID de actividad realizada
+                            ],
+                        ],
+                    ],
+                    [
+                        'dni_res_main' => '1724567890',
+                        'cod_main' => 'MA-2022',
+                        'id_typ_main' => 1,
+                        'vis_main' => 'V',
+                        'created_at' => Carbon::parse('2022-05-10'),
+                        'ended_at' => Carbon::parse('2022-05-15'),
+                        'details' => [
+                            [
+                                'id_ass_bel' => 1, // ID del activo
+                                'observations' => [
+                                    ['des_obs' => 'Actualización del firmware del switch.'],
+                                ],
+                                'replaced_components' => [
+                                    ['id_com_bel' => 14, 'des_rep_com' => 'El chip de conmutación no cumple con los estándares actuales.'],
+                                ],
+                                'activities' => [1],
+                            ],
+                        ],
+                    ],
+                    [
+                        'dni_res_main' => '1724567890',
+                        'cod_main' => 'MA-2023',
+                        'id_typ_main' => 1,
+                        'vis_main' => 'V',
+                        'created_at' => Carbon::parse('2023-03-01'),
+                        'ended_at' => Carbon::parse('2023-03-06'),
+                        'details' => [
+                            [
+                                'id_ass_bel' => 1, // ID del activo
+                                'observations' => [
+                                    ['des_obs' => 'Prueba de rendimiento del switch.'],
+                                ],
+                                'replaced_components' => [
+                                    ['id_com_bel' => 13, 'des_rep_com' => 'Puerto Ethernet dañado por uso continuo.'],
+                                ],
+                                'activities' => [1],
+                            ],
+                        ],
+                    ],
+                    [
+                        'dni_res_main' => '1724567890',
+                        'cod_main' => 'MA-2022-B',
+                        'id_typ_main' => 1,
+                        'vis_main' => 'V',
+                        'created_at' => Carbon::parse('2022-07-10'),
+                        'ended_at' => Carbon::parse('2022-07-15'),
+                        'details' => [
+                            [
+                                'id_ass_bel' => 2, // ID del activo relacionado
+                                'observations' => [
+                                    ['des_obs' => 'Ajustes en configuración VLAN.'],
+                                ],
+                                'replaced_components' => [
+                                    ['id_com_bel' => 14, 'des_rep_com' => 'Chip de conmutación actualizado.'],
+                                ],
+                                'activities' => [1],
+                            ],
+                        ],
+                    ],
+                    [
+                        'dni_res_main' => '1724567890',
+                        'cod_main' => 'MA-2023-B',
+                        'id_typ_main' => 1,
+                        'vis_main' => 'V',
+                        'created_at' => Carbon::parse('2023-05-20'),
+                        'ended_at' => Carbon::parse('2023-05-25'),
+                        'details' => [
+                            [
+                                'id_ass_bel' => 2, // ID del activo relacionado
+                                'observations' => [
+                                    ['des_obs' => 'Revisión de la conectividad por fallos intermitentes.'],
+                                ],
+                                'replaced_components' => [],
+                                'activities' => [1],
+                            ],
+                        ],
+                    ],
+                    [
+                        'dni_res_main' => '1724567890',
+                        'cod_main' => 'MA-2024',
+                        'id_typ_main' => 1,
+                        'vis_main' => 'V',
+                        'created_at' => Carbon::parse('2024-03-10'),
+                        'ended_at' => Carbon::parse('2024-03-15'),
+                        'details' => [
+                            [
+                                'id_ass_bel' => 2, // ID del activo relacionado
+                                'observations' => [
+                                    ['des_obs' => 'Sustitución de ventilador por ruido excesivo.'],
+                                ],
+                                'replaced_components' => [
+                                    ['id_com_bel' => 15, 'des_rep_com' => 'Ventilador sustituido por uno más eficiente.'],
+                                ],
+                                'activities' => [1],
+                            ],
+                        ],
+                    ],
+
+                    //David
                     'dni_res_main' => '1724567890',
                     'cod_main' => 'MA-101',
                     'id_typ_main' => 1,
@@ -28,7 +150,7 @@ class MaintenanceSeeder extends Seeder
                     'ended_at' => Carbon::now()->subDays(1),
                     'details' => [
                         [
-                            'id_ass_bel' => 1, // ID del activo relacionado
+                            'id_ass_bel' => 3, // ID del activo relacionado
                             'observations' => [
                                 ['des_obs' => 'El ventilador no funciona correctamente.'],
                                 ['des_obs' => 'Se observan piezas desgastadas.'],
