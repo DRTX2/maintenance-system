@@ -19,6 +19,10 @@ const GenericTable = ({ children, data, dataCount, setIsDelete, isDelete }) => {
         setCurrentPage(totalPages - 1); // Retroceder una página de manera segura
       }
 
+      if (data.length === 0) {
+        setCurrentPage(0);
+      }
+
       setIsDelete(false); // Resetear el flag de eliminación
     }
   }, [isDelete, data.length, currentPage, rowsPerPage, setIsDelete]);

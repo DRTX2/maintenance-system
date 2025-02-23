@@ -85,6 +85,7 @@ class MaintenanceResponseService
                     'created_at' => $maintenance->created_at,
                     // 'created_at' => $maintenance->created_at->setTimezone('UTC'),
                     'ended_at' => $maintenance->ended_at,
+                    'dni_res_main' => $maintenance->dni_res_main,
                     'asset' => [
                         'income' => $detail->asset->income->cod_inc,
                         'cod_ass' => $detail->asset->cod_ass,

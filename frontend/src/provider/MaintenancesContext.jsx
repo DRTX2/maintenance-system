@@ -17,6 +17,7 @@ export const MaintenancesProvider = ({ children }) => {
     dates: { startDate: null, endDate: null },
   });
 
+  console.log("mantenimientos", maintenances);
   useEffect(() => {
     fetchMaintenances();
     setIsReady(true);
@@ -52,28 +53,28 @@ export const MaintenancesProvider = ({ children }) => {
     }
 
     // Filtrar por tipos
-    if (filters.types.length > 0) {
+    if (filters?.types?.length > 0) {
       filtered = filtered.filter((maintenance) =>
-        filters.types.includes(maintenance.type_data.id)
+        filters.types.includes(maintenance?.type_data.id)
       );
     }
 
     // Filtrar por responsables
-    if (filters.responsibles.length > 0) {
+    if (filters?.responsibles?.length > 0) {
       filtered = filtered.filter((maintenance) =>
-        filters.responsibles.includes(maintenance.responsable_data.dni_res)
+        filters.responsibles.includes(maintenance?.responsable_data.dni_res)
       );
     }
 
     // Filtrar por activos
-    if (filters.assets.length > 0) {
+    if (filters?.assets?.length > 0) {
       filtered = filtered.filter((maintenance) =>
         maintenance.assets.some((id) => filters.assets.includes(id))
       );
     }
 
     // filtrar por fecha
-    if (filters.dates.startDate && filters.dates.endDate) {
+    if (filters?.dates?.startDate && filters?.dates?.endDate) {
       const createdAtInput = filters.dates.startDate;
       const endedAtInput = filters.dates.endDate;
 
@@ -118,6 +119,7 @@ export const MaintenancesProvider = ({ children }) => {
         `/maintenance-detail`,
         newMaintenance
       );
+      console.log("ese add", response.data);
       setMaintenances((prev) => [...prev, response.data.results]);
       toast.success("Mantenimiento creado con éxito");
     } catch (error) {

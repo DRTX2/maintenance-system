@@ -10,13 +10,11 @@ const calculateCenter = (doc, text) => {
 };
 
 const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
-  console.log("Datos para el PDF:");
-  console.log("Cédula:", responsibleData.dni_res);
-  console.log("Resultados:", results);
-  console.log("Fecha inicio:", inicio);
-  console.log("Fecha fin:", fin);
+  console.log("repuesta back", results);
 
   const doc = new jsPDF();
+  console.log("en inicio", inicio);
+  console.log("fin", fin);
 
   // Título
   doc.setFont("helvetica", "bold");
@@ -26,10 +24,8 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
     20
   );
 
-  // Información del encabezado
-  const responsable = responsibleData.nam_res + responsibleData.las_res;
-  console.log(`${responsibleData.nam_res}+ ${responsibleData.las_res}`);
-
+  // Información del encabezado general
+  const responsable = `${responsibleData.nam_res} ${responsibleData.las_res}`;
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("Cédula:", 10, 30);
@@ -48,49 +44,8 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
   doc.setFont("helvetica", "normal");
   doc.text(fin, 83, 50);
 
-  // Columnas de la tabla
-  const columns = [
-    "Fecha",
-    "Código",
-    "Tipo",
-    "Código activo",
-    "Tareas realizadas",
-    "Observaciones",
-    "Componentes reemplazados",
-  ];
-
-  // Filas de la tabla
-
-  const rows = results.map((result) => [
-    // Formatear created_at con fallback a "N/A"
-    `${dayjs(result.created_at).format("YYYY-MM-DD")} - ${dayjs(result.ended_at).format("YYYY-MM-DD")}`,
-
-    // Otros campos
-    result.cod_main || "N/A",
-    result.type || "N/A",
-    result.details?.[0]?.asset?.cod_ass || "N/A",
-
-    // Listas de actividades, observaciones y componentes reemplazados
-    (result.details || [])
-      .flatMap((detail) => detail.asset?.activities || [])
-      .map((a) => a.act_main)
-      .join("\n"),
-
-    // Todas las observaciones de todos los detalles
-    (result.details || [])
-      .flatMap((detail) => detail.asset?.observations || [])
-      .map((o) => o.des_obs)
-      .join("\n"),
-
-    // Todos los componentes reemplazados de todos los detalles
-    (result.details || [])
-      .flatMap((detail) => detail.asset?.replaced_components || [])
-      .map((c) => `${c.nam_com}: ${c.des_rep_com}`)
-      .join("\n."),
-  ]);
-
-  if (rows.length === 0) {
-    // Si no hay datos
+  if (results.length === 0) {
+    // Mensaje si no hay datos
     doc.setFont("helvetica", "normal");
     doc.text(
       "No se encontraron registros de mantenimientos realizados por este responsable en el período seleccionado.",
@@ -101,13 +56,77 @@ const generateResponsiblesPDF = (responsibleData, results, inicio, fin) => {
       60
     );
   } else {
-    // Generar la tabla
-    doc.autoTable({
-      head: [columns],
-      body: rows,
-      startY: 70,
-      theme: "grid",
-      headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0] },
+    let currentY = 55;
+
+    results.forEach((result) => {
+      // Si el espacio restante es menor que el necesario, agregar una nueva página
+      const spaceLeft = doc.internal.pageSize.height - currentY - 20; // Espacio disponible en la página
+      if (spaceLeft < 40) {
+        // Si el espacio es muy pequeño
+        doc.addPage(); // Agrega una nueva página
+        currentY = 15; // Reinicia el margen superior en la nueva página
+      }
+
+      // Cada encabezado del mantenimiento
+      const maintenanceCode = result.cod_main || "N/A";
+      doc.setFont("helvetica", "bold");
+      doc.text(
+        maintenanceCode,
+        calculateCenter(doc, maintenanceCode),
+        (currentY += 10)
+      );
+
+      const maintenanceDate = `${dayjs
+        .utc(result.created_at)
+        .format(
+          "MM-DD-YYYY"
+        )} - ${dayjs.utc(result.ended_at).format("MM-DD-YYYY")}`;
+      doc.setFont("helvetica", "bold");
+      doc.text("Periodo de realización:", 10, (currentY += 10));
+      doc.setFont("helvetica", "normal");
+      doc.text(maintenanceDate, 60, currentY);
+      console.log("fecha de manteminiento", maintenanceDate);
+
+      const maintenanceType = result.type || "N/A";
+      doc.setFont("helvetica", "bold");
+      doc.text("Tipo de mantenimiento:", 10, (currentY += 10));
+      doc.setFont("helvetica", "normal");
+      doc.text(maintenanceType, 60, currentY);
+
+      // Columnas del mantenimiento
+      const columns = [
+        "Código activo",
+        "Tareas realizadas",
+        "Observaciones",
+        "Componentes reemplazados",
+      ];
+
+      // Las filas del mantenimiento
+      const rows = (result.details || []).map((detail) => [
+        detail.asset?.cod_ass || "N/A",
+        // Tareas realizadas con viñetas
+        (detail.asset?.activities || [])
+          .map((a) => `- ${a.act_main}`)
+          .join("\n") || "",
+        // Observaciones con viñetas
+        (detail.asset?.observations || [])
+          .map((o) => `- ${o.des_obs}`)
+          .join("\n") || "",
+        // Componentes reemplazados con viñetas
+        (detail.asset?.replaced_components || [])
+          .map((c) => `- ${c.nam_com}: ${c.des_rep_com}`)
+          .join("\n") || "",
+      ]);
+
+      doc.autoTable({
+        head: [columns],
+        body: rows,
+        startY: currentY + 10,
+        theme: "grid",
+        headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0] },
+      });
+
+      currentY = doc.lastAutoTable.finalY + 5;
     });
   }
 

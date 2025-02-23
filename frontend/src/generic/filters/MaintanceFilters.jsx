@@ -73,7 +73,6 @@ const MaintanceFilters = ({
       onFilterChange={onFilterChange}
       clearFilters={clearFilters}
       setClearFilters={setClearFilters}
-      // onClear={onClear}
     />
   );
 };

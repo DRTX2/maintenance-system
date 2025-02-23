@@ -74,7 +74,7 @@ const AssetShow = ({ columns, role }) => {
   };
 
   const onView = (id) => {
-    navigate(`/dashboard/assets/show/${id}?role=${role}`);
+    navigate(`/dashboard/assets/show/${id}`);
   };
 
   const onDelete = (id, currentState) => {

@@ -13,10 +13,68 @@ class AssetsSeeder extends Seeder
     {
         Asset::create([
             'id_inc_ass' => 1,
+            'id_cat_ass' => 5,
+            'id_loc_ass' => 1,
+            'cod_ass' => 'ACT-001',
+            'ser_num_ass' => 'SERIAL-001',
+            'obs_add_ass' => 'Incluye cable de red adicional.',
+            'est_ass' => 'V',
+        ])->components()->attach([
+                    ['component_id' => 13, 'description' => 'Puerto Ethernet 10/100/1000 Mbps'],
+                    ['component_id' => 14, 'description' => 'Chip de Conmutación Broadcom BCM56150'],
+                    ['component_id' => 15, 'description' => 'Placa Base Cisco Catalyst 2960-X'],
+                ]);
+
+        Asset::create([
+            'id_inc_ass' => 2,
+            'id_cat_ass' => 5,
+            'id_loc_ass' => 1,
+            'cod_ass' => 'ACT-002',
+            'ser_num_ass' => 'SERIAL-002',
+            'obs_add_ass' => 'Incluye cable de red adicional.',
+            'est_ass' => 'V',
+        ])->components()->attach([
+                    ['component_id' => 13, 'description' => 'Puerto Ethernet 10/100/1000 Mbps'],
+                    ['component_id' => 14, 'description' => 'Chip de Conmutación Broadcom BCM56150'],
+                    ['component_id' => 15, 'description' => 'Placa Base Cisco Catalyst 2960-X'],
+                ]);
+
+
+        Asset::create([
+            'id_inc_ass' => 2,
+            'id_cat_ass' => 5,
+            'id_loc_ass' => 1,
+            'cod_ass' => 'ACT-003',
+            'ser_num_ass' => 'SERIAL-003',
+            'obs_add_ass' => 'Incluye cable de red adicional.',
+            'est_ass' => 'V',
+        ])->components()->attach([
+                    ['component_id' => 13, 'description' => 'Puerto Ethernet 10/100/1000 Mbps'],
+                    ['component_id' => 14, 'description' => 'Chip de Conmutación Broadcom BCM56150'],
+                    ['component_id' => 15, 'description' => 'Placa Base Cisco Catalyst 2960-X'],
+                ]);
+
+        Asset::create([
+            'id_inc_ass' => 5,
+            'id_cat_ass' => 5,
+            'id_loc_ass' => 1,
+            'cod_ass' => 'ACT-004',
+            'ser_num_ass' => 'SERIAL-004',
+            'obs_add_ass' => 'Incluye cable de red adicional.',
+            'est_ass' => 'V',
+        ])->components()->attach([
+                    ['component_id' => 13, 'description' => 'Puerto Ethernet 10/100/1000 Mbps'],
+                    ['component_id' => 14, 'description' => 'Chip de Conmutación Broadcom BCM56150'],
+                    ['component_id' => 15, 'description' => 'Placa Base Cisco Catalyst 2960-X'],
+                ]);
+
+
+        Asset::create([
+            'id_inc_ass' => 5,
             'id_cat_ass' => 1,
             'id_loc_ass' => 1,
-            'cod_ass' => 'ASSET001',
-            'ser_num_ass' => 'SERIAL001',
+            'cod_ass' => 'ACT-005',
+            'ser_num_ass' => 'SERIAL-005',
             'obs_add_ass' => 'Viene con un USB de 16 GB adicional',
             'est_ass' => 'V',
         ])->components()->attach([
@@ -31,11 +89,11 @@ class AssetsSeeder extends Seeder
 
 
         Asset::create([
-            'id_inc_ass' => 2,
+            'id_inc_ass' => 6,
             'id_cat_ass' => 3,
             'id_loc_ass' => 1,
-            'cod_ass' => 'ASSET002',
-            'ser_num_ass' => 'SERIAL002',
+            'cod_ass' => 'ACT-006',
+            'ser_num_ass' => 'SERIAL-006',
             'obs_add_ass' => 'Incluye un cable de conexión USB adicional',
             'est_ass' => 'V',
         ])->components()->attach([
@@ -45,11 +103,11 @@ class AssetsSeeder extends Seeder
                     ['component_id' => 12, 'description' => 'Placa Base HP OfficeJet Pro 9015'],
                 ]);
         Asset::create([
-            'id_inc_ass' => 3,
+            'id_inc_ass' => 7,
             'id_cat_ass' => 5,
             'id_loc_ass' => 1,
-            'cod_ass' => 'ASSET003',
-            'ser_num_ass' => 'SERIAL003',
+            'cod_ass' => 'ACT-007',
+            'ser_num_ass' => 'SERIAL-007',
             'obs_add_ass' => 'Incluye cable de red adicional.',
             'est_ass' => 'V',
         ])->components()->attach([
@@ -59,51 +117,21 @@ class AssetsSeeder extends Seeder
                 ]);
 
         Asset::create([
-            'id_inc_ass' => 4,
+            'id_inc_ass' => 8,
             'id_cat_ass' => 4,
             'id_loc_ass' => 1,
-            'cod_ass' => 'ASSET004',
-            'ser_num_ass' => 'SERIAL004',
+            'cod_ass' => 'ACT-008',
+            'ser_num_ass' => 'SERIAL-008',
             'obs_add_ass' => 'Incluye un adaptador de red',
             'est_ass' => 'V',
         ])->components()->attach([
                     ['component_id' => 1, 'description' => 'Tarjeta Madre ASUS RT-AC68U'],
                     ['component_id' => 8, 'description' => 'Placa de Red TP-Link Archer A7'],
                 ]);
-        
 
-        $assets = [
-            [
-                'id_inc_ass' => 5, 
-                'id_cat_ass' => 1,
-                'id_loc_ass' => 1,
-                'cod_ass' => 'ASSET005',
-                'ser_num_ass' => 'SERIAL005',
-                'obs_add_ass' => 'Activo inicial de hace 3 años.',
-                'est_ass' => 'V',
-            ],
-            [
-                'id_inc_ass' => 6, 
-                'id_cat_ass' => 2,
-                'id_loc_ass' => 2,
-                'cod_ass' => 'ASSET006',
-                'ser_num_ass' => 'SERIAL006',
-                'obs_add_ass' => 'Activo ingresado hace 2.5 años.',
-                'est_ass' => 'V',
-            ],
-            [
-                'id_inc_ass' => 7, 
-                'id_cat_ass' => 3,
-                'id_loc_ass' => 1,
-                'cod_ass' => 'ASSET007',
-                'ser_num_ass' => 'SERIAL007',
-                'obs_add_ass' => 'Activo más reciente, de hace 2 años.',
-                'est_ass' => 'V',
-            ],
-        ];
 
-        foreach ($assets as $asset) {
-            Asset::create($asset);
-        }
+
+
+
     }
 }

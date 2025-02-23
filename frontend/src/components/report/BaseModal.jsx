@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 
 const BaseModal = ({ open, handleClose, label, children }) => {
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle
         sx={{
           display: "flex",
